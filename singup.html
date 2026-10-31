@@ -1,0 +1,302 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account - Smart Digital Library</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+
+            background:
+                radial-gradient(circle at top left, #ffffff 0%, transparent 35%),
+                linear-gradient(135deg, #e3f2fd, #ffffff, #bbdefb);
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 430px;
+
+            background: white;
+            padding: 35px;
+
+            border-radius: 22px;
+
+            box-shadow: 0 15px 45px rgba(0,0,0,0.14);
+        }
+
+        .auth-logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .auth-card h1 {
+            text-align: center;
+            color: #173a63;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #173a63;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px;
+
+            border: 1px solid #d7e0ea;
+            border-radius: 10px;
+
+            outline: none;
+            font-size: 15px;
+        }
+
+        .form-group input:focus {
+            border-color: #1565c0;
+            box-shadow: 0 0 0 3px rgba(21,101,192,0.10);
+        }
+
+        .signup-btn {
+            width: 100%;
+            border: none;
+
+            padding: 14px;
+
+            background: #1565c0;
+            color: white;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .signup-btn:hover {
+            background: #0d47a1;
+        }
+
+        .login-text {
+            text-align: center;
+            margin-top: 22px;
+            color: #666;
+        }
+
+        .login-text a {
+            color: #1565c0;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+
+            color: #173a63;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 500px) {
+
+            .auth-card {
+                padding: 27px 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            📚
+        </div>
+
+        <h1>
+            Create Account
+        </h1>
+
+        <p class="auth-subtitle">
+            Join Smart Digital Library
+        </p>
+
+        <form id="signupForm">
+
+            <div class="form-group">
+
+                <label>
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create password"
+                    required>
+
+            </div>
+
+            <button
+                type="submit"
+                class="signup-btn">
+
+                Create Account
+
+            </button>
+
+        </form>
+
+        <p class="login-text">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </p>
+
+        <a
+            href="index.html"
+            class="back-home">
+
+            ← Back to Library
+
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("signupForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!name || !email || !password) {
+
+        alert("Please fill all fields.");
+
+        return;
+
+    }
+
+    try {
+
+        const response = await fetch("/api/signup", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            localStorage.setItem("libraryUserName", name);
+            localStorage.setItem("libraryUserEmail", email);
+
+            alert("Account created successfully!");
+
+            window.location.href = "login.html";
+
+        } else {
+
+            alert(data.message);
+
+        }
+
+    } catch (error) {
+
+        alert("Unable to connect to the server.");
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
+```
+

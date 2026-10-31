@@ -1,0 +1,1418 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML & CSS - Complete Textbook | Smart Digital Library</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,"Times New Roman",serif;background:#eaf0f7;color:#222;line-height:1.8}
+.topbar{background:#173a63;color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-family:Arial}
+.topbar a{color:white;text-decoration:none}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;padding:9px 14px;border-radius:5px;cursor:pointer;background:#1565c0;color:white;font-family:Arial}
+button:hover{background:#0d47a1}
+.progress-area{position:sticky;top:0;background:white;z-index:5;padding:8px 5%;font-family:Arial;box-shadow:0 2px 5px #ccc}
+.progress-track{height:7px;background:#dce5ef;border-radius:10px;margin-top:5px}
+.progress-fill{height:100%;width:0;background:#1565c0;border-radius:10px}
+.layout{display:grid;grid-template-columns:260px 1fr;max-width:1250px;margin:25px auto;gap:20px;padding:0 15px}
+.sidebar{background:#173a63;color:white;padding:20px;border-radius:7px;height:fit-content;position:sticky;top:85px;max-height:80vh;overflow:auto;font-family:Arial}
+.sidebar h3{margin-bottom:12px}
+.sidebar a{display:block;color:#e3f2fd;text-decoration:none;padding:7px 4px;border-bottom:1px solid #ffffff22;font-size:13px}
+.sidebar a:hover{background:#ffffff18;color:white}
+.book{min-width:0}
+.page{background:white;padding:55px 65px;margin-bottom:20px;min-height:850px;box-shadow:0 2px 12px #00000012;position:relative}
+.cover{min-height:850px;display:flex;flex-direction:column;justify-content:center;text-align:center;border-top:12px solid #1565c0}
+.cover .logo{font-size:55px}
+.cover h1{font-size:43px;color:#173a63;line-height:1.3;margin:25px 0}
+.cover h2{font-size:23px;color:#1565c0;font-weight:normal}
+.cover .edition{margin-top:65px}
+h1,h2,h3{color:#173a63;line-height:1.4}
+h2{font-size:27px;margin:25px 0 15px;border-bottom:2px solid #dce8f5;padding-bottom:8px}
+h3{font-size:20px;margin:22px 0 10px}
+p{margin:12px 0;text-align:justify}
+ul,ol{margin:10px 0 15px 28px}
+li{margin:5px 0}
+pre{background:#172536;color:#e3f2fd;padding:18px;border-radius:6px;overflow-x:auto;margin:15px 0;font-size:14px;line-height:1.6}
+code{font-family:Consolas,monospace}
+.inline{background:#eaf2fb;color:#173a63;padding:2px 5px;border-radius:3px}
+.note{background:#eaf4ff;border-left:4px solid #1565c0;padding:14px;margin:18px 0}
+.example{background:#f5f7fa;border:1px solid #d8e1eb;padding:15px;margin:15px 0;border-radius:5px}
+table{border-collapse:collapse;width:100%;margin:15px 0}
+th,td{border:1px solid #cbd5e1;padding:10px;text-align:left}
+th{background:#e3f2fd;color:#173a63}
+.exercise{background:#f1f6fc;padding:16px;border-radius:5px;margin-top:22px}
+.exercise h3{margin-top:0}
+.page-footer{position:absolute;bottom:20px;left:65px;right:65px;border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:space-between;color:#777;font-size:12px}
+.chapter-label{font-family:Arial;color:#1565c0;font-weight:bold;letter-spacing:2px}
+.toc a{color:#1565c0;text-decoration:none}
+.toc li{padding:3px}
+footer{text-align:center;padding:25px;background:#173a63;color:white;font-family:Arial}
+@media(max-width:800px){
+.layout{grid-template-columns:1fr}
+.sidebar{position:relative;top:auto;max-height:300px}
+.page{padding:30px 23px;min-height:750px}
+.page-footer{left:23px;right:23px}
+.cover h1{font-size:32px}
+}
+@media print{
+body{background:white}
+.topbar,.progress-area,.sidebar,.actions,footer{display:none!important}
+.layout{display:block;margin:0;padding:0}
+.page{box-shadow:none;margin:0;page-break-after:always;min-height:0;padding:35px 45px}
+.page-footer{position:static;margin-top:40px}
+}
+</style>
+</head>
+
+<body>
+
+    <header class="topbar">
+    <a href="index.html" class="back-link">
+        <span class="back-icon">←</span>
+        <span>Back to Library</span>
+    </a>
+
+    <div class="actions">
+        <button id="bookmarkButton" onclick="toggleBookmark()">☆ Bookmark</button>
+        <button onclick="location.href='qr.html?book=html-css'">QR Code</button>
+        <button onclick="window.print()">Print Book</button>
+    </div>
+</header>
+<div class="progress-area">
+    <div>Reading Progress: <span id="progressText">0%</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="layout">
+
+<aside class="sidebar">
+    <h3>📖 Table of Contents</h3>
+    <a href="#cover">Book Cover</a>
+    <a href="#publication">Publication</a>
+    <a href="#preface">Preface</a>
+    <a href="#toc">Contents</a>
+    <a href="#chapter1">1. Introduction to Web Development</a>
+    <a href="#chapter2">2. Introduction to HTML</a>
+    <a href="#chapter3">3. HTML Document Structure</a>
+    <a href="#chapter4">4. Text, Links and Lists</a>
+    <a href="#chapter5">5. Images, Audio and Video</a>
+    <a href="#chapter6">6. Tables and Forms</a>
+    <a href="#chapter7">7. Introduction to CSS</a>
+    <a href="#chapter8">8. CSS Selectors and Properties</a>
+    <a href="#chapter9">9. CSS Box Model</a>
+    <a href="#chapter10">10. Flexbox and Grid</a>
+    <a href="#chapter11">11. Responsive Web Design</a>
+    <a href="#chapter12">12. Practical Website Project</a>
+    <a href="#glossary">Glossary</a>
+    <a href="#references">References</a>
+</aside>
+
+<main class="book">
+
+<section class="page cover" id="cover">
+    <div class="logo">📘</div>
+    <h1>HTML & CSS</h1>
+    <h2>A Complete Beginner to Intermediate Textbook</h2>
+    <p style="text-align:center;margin-top:35px">Learn the Fundamentals of Web Development</p>
+    <div class="edition">
+        <h3>SMART DIGITAL LIBRARY</h3>
+        <p style="text-align:center">Educational Digital Book Series</p>
+        <p style="text-align:center">First Edition | 2026</p>
+    </div>
+    <div class="page-footer"><span>HTML & CSS Textbook</span><span>Cover</span></div>
+</section>
+
+<section class="page" id="publication">
+    <div class="chapter-label">BOOK INFORMATION</div>
+    <h2>Publication Details</h2>
+    <p><b>Book Title:</b> HTML & CSS - A Complete Beginner to Intermediate Textbook</p>
+    <p><b>Author:</b> Smart Digital Library Team</p>
+    <p><b>Publisher:</b> Smart Digital Library</p>
+    <p><b>Edition:</b> First Edition, 2026</p>
+    <p><b>Subject:</b> Web Development</p>
+    <p><b>Language:</b> English</p>
+    <p><b>Book Level:</b> Beginner to Intermediate</p>
+
+    <h3>Copyright Notice</h3>
+    <p>This educational book has been prepared for learning and academic purposes. The explanations and examples are original educational material created for the Smart Digital Library project.</p>
+
+    <div class="note">
+        <b>Learning Notice:</b> Readers can use the examples in this book for practice, classroom learning and personal educational projects.
+    </div>
+
+    <h3>About This Book</h3>
+    <p>This textbook introduces the two fundamental technologies used to create web pages: HTML and CSS. It begins with basic concepts and gradually moves towards practical website development.</p>
+    <div class="page-footer"><span>Publication Details</span><span>Page 1</span></div>
+</section>
+
+<section class="page" id="preface">
+    <div class="chapter-label">INTRODUCTION</div>
+    <h2>Preface</h2>
+    <p>The internet has become an important part of modern life. People use websites for education, communication, shopping, banking, entertainment and business. Every website needs a structure and a visual design. HTML and CSS are two essential technologies that make this possible.</p>
+    <p>HTML stands for HyperText Markup Language. It defines the structure and meaning of web content. CSS stands for Cascading Style Sheets. It controls the appearance and layout of that content.</p>
+    <p>This book is designed for students who want to understand web development from the beginning. No previous programming experience is required. Each chapter explains concepts in a progressive manner and includes code examples to help readers practise.</p>
+
+    <h3>Learning Objectives</h3>
+    <ul>
+        <li>Understand how websites and web pages work.</li>
+        <li>Learn the structure and syntax of HTML.</li>
+        <li>Create headings, paragraphs, links, lists and tables.</li>
+        <li>Add images, audio and video to web pages.</li>
+        <li>Build forms to collect user information.</li>
+        <li>Style web pages using CSS.</li>
+        <li>Understand layouts, Flexbox, Grid and responsive design.</li>
+        <li>Create a basic multi-section website.</li>
+    </ul>
+    <div class="page-footer"><span>Preface</span><span>Page 2</span></div>
+</section>
+
+<section class="page toc" id="toc">
+    <div class="chapter-label">CONTENTS</div>
+    <h2>Table of Contents</h2>
+    <ol>
+        <li><a href="#chapter1">Introduction to Web Development</a></li>
+        <li><a href="#chapter2">Introduction to HTML</a></li>
+        <li><a href="#chapter3">HTML Document Structure</a></li>
+        <li><a href="#chapter4">Text, Links and Lists</a></li>
+        <li><a href="#chapter5">Images, Audio and Video</a></li>
+        <li><a href="#chapter6">HTML Tables and Forms</a></li>
+        <li><a href="#chapter7">Introduction to CSS</a></li>
+        <li><a href="#chapter8">CSS Selectors and Properties</a></li>
+        <li><a href="#chapter9">CSS Box Model</a></li>
+        <li><a href="#chapter10">Flexbox and CSS Grid</a></li>
+        <li><a href="#chapter11">Responsive Web Design</a></li>
+        <li><a href="#chapter12">Practical Website Project</a></li>
+        <li><a href="#glossary">Glossary</a></li>
+        <li><a href="#references">References</a></li>
+    </ol>
+    <div class="note"><b>How to use this book:</b> Read each chapter in order, type the code examples into your editor, run them in a browser and complete the exercises.</div>
+    <div class="page-footer"><span>Table of Contents</span><span>Page 3</span></div>
+</section>
+
+<section class="page" id="chapter1">
+    <div class="chapter-label">CHAPTER 01</div>
+    <h2>Introduction to Web Development</h2>
+
+    <h3>1.1 What is Web Development?</h3>
+    <p>Web development is the process of creating, building and maintaining websites and web applications. It includes designing the appearance of a website, writing its code, managing information and making sure that the website works correctly in different browsers and devices.</p>
+    <p>A website may contain text, images, videos, buttons, forms, menus and interactive features. These elements work together to provide information and services to users.</p>
+
+    <h3>1.2 What is a Website?</h3>
+    <p>A website is a collection of related web pages available through a common domain name. For example, an educational website may contain a home page, courses page, contact page and student login page.</p>
+
+    <h3>1.3 What is a Web Page?</h3>
+    <p>A web page is a single document that can be viewed using a web browser. It is commonly written using HTML and styled using CSS. A browser reads the document and displays its content to the user.</p>
+
+    <h3>1.4 Front-End Development</h3>
+    <p>Front-end development deals with the part of a website that users can see and interact with. It includes page structure, colours, typography, navigation, buttons and layouts.</p>
+    <ul>
+        <li><b>HTML:</b> Defines the structure and content.</li>
+        <li><b>CSS:</b> Controls the visual presentation.</li>
+        <li><b>JavaScript:</b> Adds behaviour and interactivity.</li>
+    </ul>
+
+    <h3>1.5 Back-End Development</h3>
+    <p>Back-end development manages the server-side operations of a website. It may handle user accounts, authentication, databases, file storage and business logic. Common back-end technologies include Node.js, PHP, Python, Java and server-side frameworks.</p>
+
+    <h3>1.6 How a Website Works</h3>
+    <ol>
+        <li>A user enters a website address in a browser.</li>
+        <li>The browser requests the website from a server.</li>
+        <li>The server sends the required files or data.</li>
+        <li>The browser reads HTML, CSS and JavaScript.</li>
+        <li>The browser displays the web page.</li>
+    </ol>
+
+    <h3>1.7 Tools Required for Web Development</h3>
+    <table>
+        <tr><th>Tool</th><th>Purpose</th></tr>
+        <tr><td>Visual Studio Code</td><td>Writing and editing code</td></tr>
+        <tr><td>Google Chrome</td><td>Viewing and testing web pages</td></tr>
+        <tr><td>HTML</td><td>Creating page structure</td></tr>
+        <tr><td>CSS</td><td>Designing page appearance</td></tr>
+        <tr><td>Developer Tools</td><td>Inspecting and debugging web pages</td></tr>
+    </table>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Define web development.</li>
+            <li>What is the difference between a website and a web page?</li>
+            <li>Name three technologies used in front-end development.</li>
+            <li>Explain the basic working process of a website.</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. Web development is the process of creating and maintaining websites.</p>
+        <p>2. A website is a collection of pages; a web page is one individual document.</p>
+        <p>3. HTML, CSS and JavaScript.</p>
+        <p>4. A browser requests files from a server and displays the returned content.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 1 - Introduction to Web Development</span><span>Page 4</span></div>
+</section>
+
+<section class="page" id="chapter2">
+    <div class="chapter-label">CHAPTER 02</div>
+    <h2>Introduction to HTML</h2>
+
+    <h3>2.1 What is HTML?</h3>
+    <p>HTML stands for HyperText Markup Language. It is the standard markup language used to create the structure of web pages. HTML tells a browser what type of content is present, such as headings, paragraphs, images, links, lists and tables.</p>
+    <p>HTML is a markup language rather than a general-purpose programming language. It uses elements and tags to describe the meaning and structure of content.</p>
+
+    <h3>2.2 History of HTML</h3>
+    <p>HTML was developed by Tim Berners-Lee while working on the World Wide Web. It has evolved through several versions. HTML5 introduced important features for modern websites, including semantic elements, audio, video and improved form controls.</p>
+
+    <h3>2.3 What are HTML Tags?</h3>
+    <p>HTML tags are keywords written inside angle brackets. Most elements use an opening tag and a closing tag. The closing tag contains a forward slash.</p>
+    <pre><code>&lt;p&gt;This is a paragraph.&lt;/p&gt;</code></pre>
+    <p>In this example, <code class="inline">&lt;p&gt;</code> is the opening tag, the sentence is the content, and <code class="inline">&lt;/p&gt;</code> is the closing tag.</p>
+
+    <h3>2.4 HTML Elements</h3>
+    <p>An HTML element generally consists of an opening tag, content and a closing tag. Some elements, such as images and line breaks, are void elements and do not have closing tags.</p>
+    <pre><code>&lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+&lt;p&gt;Learn HTML step by step.&lt;/p&gt;
+&lt;hr&gt;
+&lt;img src="photo.jpg" alt="Sample photo"&gt;</code></pre>
+
+    <h3>2.5 HTML Attributes</h3>
+    <p>Attributes provide additional information about an element. They are written inside the opening tag and usually contain a name and value.</p>
+    <pre><code>&lt;a href="https://example.com" target="_blank"&gt;
+    Visit Website
+&lt;/a&gt;
+
+&lt;img src="book.jpg" alt="Programming Book" width="200"&gt;</code></pre>
+    <p>Here, <code class="inline">href</code> specifies a link destination. The <code class="inline">src</code> attribute specifies an image file, while <code class="inline">alt</code> provides alternative text.</p>
+
+    <h3>2.6 Common HTML Tags</h3>
+    <table>
+        <tr><th>Tag</th><th>Purpose</th></tr>
+        <tr><td>&lt;h1&gt; to &lt;h6&gt;</td><td>Headings</td></tr>
+        <tr><td>&lt;p&gt;</td><td>Paragraph</td></tr>
+        <tr><td>&lt;a&gt;</td><td>Hyperlink</td></tr>
+        <tr><td>&lt;img&gt;</td><td>Image</td></tr>
+        <tr><td>&lt;ul&gt;</td><td>Unordered list</td></tr>
+        <tr><td>&lt;ol&gt;</td><td>Ordered list</td></tr>
+        <tr><td>&lt;li&gt;</td><td>List item</td></tr>
+        <tr><td>&lt;div&gt;</td><td>Generic block container</td></tr>
+        <tr><td>&lt;span&gt;</td><td>Generic inline container</td></tr>
+    </table>
+
+    <div class="note"><b>Important:</b> HTML tags should be properly nested. Always use meaningful elements and provide alternative text for informative images.</div>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>What is the full form of HTML?</li>
+            <li>What is an HTML element?</li>
+            <li>What is the purpose of an attribute?</li>
+            <li>Write the HTML tag used to create a hyperlink.</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. HyperText Markup Language.</p>
+        <p>2. An element is a structured HTML component made using tags and content.</p>
+        <p>3. An attribute provides additional information about an element.</p>
+        <p>4. The anchor tag: &lt;a&gt;.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 2 - Introduction to HTML</span><span>Page 5</span></div>
+</section>
+
+<section class="page" id="chapter3">
+    <div class="chapter-label">CHAPTER 03</div>
+    <h2>HTML Document Structure</h2>
+
+    <h3>3.1 Basic Structure of an HTML Document</h3>
+    <p>Every standard HTML document follows a basic structure. This structure helps browsers understand the document type, language, metadata and visible content.</p>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport"
+          content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My First Website&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome&lt;/h1&gt;
+    &lt;p&gt;This is my first web page.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+    <h3>3.2 Explanation of Document Elements</h3>
+    <ul>
+        <li><b>&lt;!DOCTYPE html&gt;:</b> Declares that the document uses HTML5.</li>
+        <li><b>&lt;html&gt;:</b> The root element of the document.</li>
+        <li><b>&lt;head&gt;:</b> Contains metadata and linked resources.</li>
+        <li><b>&lt;meta&gt;:</b> Provides information about the document.</li>
+        <li><b>&lt;title&gt;:</b> Defines the browser tab title.</li>
+        <li><b>&lt;body&gt;:</b> Contains the visible page content.</li>
+    </ul>
+
+    <h3>3.3 Headings</h3>
+    <p>HTML provides six heading levels, from H1 to H6. H1 represents the highest-level heading, while H6 represents the lowest-level heading. Headings create a logical content hierarchy.</p>
+    <pre><code>&lt;h1&gt;Main Heading&lt;/h1&gt;
+&lt;h2&gt;Section Heading&lt;/h2&gt;
+&lt;h3&gt;Subsection Heading&lt;/h3&gt;</code></pre>
+
+    <h3>3.4 Paragraphs and Line Breaks</h3>
+    <p>The paragraph element is used for blocks of text. The line break element moves following content to a new line without creating a new paragraph.</p>
+    <pre><code>&lt;p&gt;HTML is used to structure content.&lt;/p&gt;
+&lt;p&gt;CSS is used to style content.&lt;/p&gt;
+
+First Line&lt;br&gt;
+Second Line</code></pre>
+
+    <h3>3.5 Semantic HTML</h3>
+    <p>Semantic HTML elements describe the meaning of different parts of a page. They help browsers, search engines and assistive technologies understand the page structure.</p>
+    <pre><code>&lt;header&gt;Website Header&lt;/header&gt;
+&lt;nav&gt;Navigation Links&lt;/nav&gt;
+&lt;main&gt;
+    &lt;section&gt;
+        &lt;h2&gt;About Us&lt;/h2&gt;
+        &lt;p&gt;Information about our website.&lt;/p&gt;
+    &lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;Copyright Information&lt;/footer&gt;</code></pre>
+
+    <h3>3.6 Semantic and Non-Semantic Elements</h3>
+    <p>Elements such as <code class="inline">&lt;header&gt;</code>, <code class="inline">&lt;main&gt;</code> and <code class="inline">&lt;article&gt;</code> have a clear meaning. Elements such as <code class="inline">&lt;div&gt;</code> and <code class="inline">&lt;span&gt;</code> are generic containers.</p>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>What is the purpose of DOCTYPE?</li>
+            <li>What is the difference between head and body?</li>
+            <li>How many heading levels are available in HTML?</li>
+            <li>What is semantic HTML?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. It declares the document as HTML5.</p>
+        <p>2. Head contains metadata; body contains visible content.</p>
+        <p>3. Six heading levels, H1 to H6.</p>
+        <p>4. Semantic HTML uses meaningful elements to describe content structure.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 3 - HTML Document Structure</span><span>Page 6</span></div>
+</section>
+
+<section class="page" id="chapter4">
+    <div class="chapter-label">CHAPTER 04</div>
+    <h2>Text, Links and Lists</h2>
+
+    <h3>4.1 Text Formatting</h3>
+    <p>HTML provides elements for giving text special meaning or presentation. For example, strong indicates importance, while em indicates emphasis.</p>
+    <pre><code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt; text.&lt;/p&gt;
+&lt;p&gt;This word is &lt;em&gt;emphasized&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Water formula: H&lt;sub&gt;2&lt;/sub&gt;O&lt;/p&gt;
+&lt;p&gt;Mathematics: X&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;&lt;mark&gt;Highlighted text&lt;/mark&gt;&lt;/p&gt;</code></pre>
+
+    <h3>4.2 Hyperlinks</h3>
+    <p>A hyperlink connects one web resource to another. The anchor element creates hyperlinks. Its href attribute specifies the destination.</p>
+    <pre><code>&lt;a href="https://www.example.com"&gt;
+    Open Example Website
+&lt;/a&gt;
+
+&lt;a href="about.html"&gt;About Us&lt;/a&gt;
+
+&lt;a href="mailto:info@example.com"&gt;
+    Send Email
+&lt;/a&gt;</code></pre>
+    <p>Links can point to external websites, pages within the same website, email addresses or specific sections of a page.</p>
+
+    <h3>4.3 Ordered Lists</h3>
+    <p>An ordered list displays items in a sequence, usually with numbers or letters.</p>
+    <pre><code>&lt;ol&gt;
+    &lt;li&gt;Open the editor.&lt;/li&gt;
+    &lt;li&gt;Create an HTML file.&lt;/li&gt;
+    &lt;li&gt;Write HTML code.&lt;/li&gt;
+    &lt;li&gt;Open it in a browser.&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+
+    <h3>4.4 Unordered Lists</h3>
+    <p>An unordered list displays items without a specific numerical order. Browsers usually show bullet points.</p>
+    <pre><code>&lt;ul&gt;
+    &lt;li&gt;HTML&lt;/li&gt;
+    &lt;li&gt;CSS&lt;/li&gt;
+    &lt;li&gt;JavaScript&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+    <h3>4.5 Description Lists</h3>
+    <p>A description list is useful for displaying terms and their explanations.</p>
+    <pre><code>&lt;dl&gt;
+    &lt;dt&gt;HTML&lt;/dt&gt;
+    &lt;dd&gt;Defines the structure of web pages.&lt;/dd&gt;
+
+    &lt;dt&gt;CSS&lt;/dt&gt;
+    &lt;dd&gt;Controls the appearance of web pages.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
+
+    <h3>4.6 Nested Lists</h3>
+    <p>A list can contain another list inside one of its items. This is useful for representing categories and subcategories.</p>
+    <pre><code>&lt;ul&gt;
+    &lt;li&gt;Web Development
+        &lt;ul&gt;
+            &lt;li&gt;HTML&lt;/li&gt;
+            &lt;li&gt;CSS&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Which tag creates a hyperlink?</li>
+            <li>What is the difference between OL and UL?</li>
+            <li>Which element indicates important text?</li>
+            <li>What is a nested list?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. The anchor element, &lt;a&gt;.</p>
+        <p>2. OL creates an ordered list; UL creates an unordered list.</p>
+        <p>3. The &lt;strong&gt; element.</p>
+        <p>4. A list placed inside another list item.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 4 - Text, Links and Lists</span><span>Page 7</span></div>
+</section>
+
+<section class="page" id="chapter5">
+    <div class="chapter-label">CHAPTER 05</div>
+    <h2>Images, Audio and Video</h2>
+
+    <h3>5.1 Adding Images</h3>
+    <p>Images make websites more informative and visually attractive. HTML uses the image element to display an image file. The src attribute specifies the file location, and alt provides alternative text.</p>
+    <pre><code>&lt;img src="library.jpg"
+     alt="A digital library"
+     width="400"
+     height="250"&gt;</code></pre>
+
+    <h3>5.2 Image Paths</h3>
+    <p>An image can be stored in the same folder as the HTML file or inside another folder. A relative path identifies the image location in relation to the current document.</p>
+    <pre><code>&lt;!-- Image in the same folder --&gt;
+&lt;img src="book.jpg" alt="Book"&gt;
+
+&lt;!-- Image inside an images folder --&gt;
+&lt;img src="images/book.jpg" alt="Book"&gt;</code></pre>
+
+    <h3>5.3 Importance of Alternative Text</h3>
+    <p>Alternative text describes an image when it cannot be displayed. Screen readers can also use it to communicate image information to people who cannot see the image. Decorative images may use an empty alt attribute.</p>
+
+    <h3>5.4 Adding Audio</h3>
+    <p>The audio element allows a web page to include sound files. The controls attribute displays browser playback controls.</p>
+    <pre><code>&lt;audio controls&gt;
+    &lt;source src="audio.mp3" type="audio/mpeg"&gt;
+    Your browser does not support audio.
+&lt;/audio&gt;</code></pre>
+
+    <h3>5.5 Adding Video</h3>
+    <p>The video element displays video content directly on a web page. Common attributes include controls, width, height, poster and muted.</p>
+    <pre><code>&lt;video width="500" controls poster="cover.jpg"&gt;
+    &lt;source src="lesson.mp4" type="video/mp4"&gt;
+    Your browser does not support video.
+&lt;/video&gt;</code></pre>
+
+    <h3>5.6 Figure and Caption</h3>
+    <p>The figure element groups media content with a caption. The figcaption element provides the caption.</p>
+    <pre><code>&lt;figure&gt;
+    &lt;img src="computer.jpg" alt="Computer"
+         width="300"&gt;
+    &lt;figcaption&gt;
+        Figure 1: A desktop computer.
+    &lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+
+    <div class="note"><b>Best Practice:</b> Use descriptive alt text, optimise image file sizes and choose suitable media formats to improve accessibility and page loading.</div>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Which HTML element displays an image?</li>
+            <li>What is the purpose of the alt attribute?</li>
+            <li>Which element is used to add audio?</li>
+            <li>What does the controls attribute do?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. &lt;img&gt;.</p>
+        <p>2. It provides alternative text for an image.</p>
+        <p>3. &lt;audio&gt;.</p>
+        <p>4. It displays playback controls to the user.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 5 - Images, Audio and Video</span><span>Page 8</span></div>
+</section>
+
+<section class="page" id="chapter6">
+    <div class="chapter-label">CHAPTER 06</div>
+    <h2>HTML Tables and Forms</h2>
+
+    <h3>6.1 Introduction to HTML Tables</h3>
+    <p>HTML tables display information in rows and columns. They are useful for structured data such as student records, book inventories, marksheets and schedules.</p>
+    <p>The table element creates the table. The tr element creates a row, th creates a header cell and td creates a data cell.</p>
+
+    <h3>6.2 Creating a Table</h3>
+    <pre><code>&lt;table border="1"&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Student Name&lt;/th&gt;
+        &lt;th&gt;Course&lt;/th&gt;
+        &lt;th&gt;Marks&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Rahul&lt;/td&gt;
+        &lt;td&gt;BCA&lt;/td&gt;
+        &lt;td&gt;85&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Aman&lt;/td&gt;
+        &lt;td&gt;BCA&lt;/td&gt;
+        &lt;td&gt;90&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+    <h3>6.3 Table Sections</h3>
+    <p>Large tables can use thead, tbody and tfoot to group header rows, body rows and footer rows. These elements make the table structure easier to understand.</p>
+
+    <h3>6.4 Introduction to HTML Forms</h3>
+    <p>Forms collect information from users. They are commonly used for registration, login, feedback, search and contact pages. A form may contain text fields, email fields, password fields, checkboxes, radio buttons and submit buttons.</p>
+
+    <h3>6.5 Creating a Registration Form</h3>
+    <pre><code>&lt;form action="/register" method="post"&gt;
+
+    &lt;label for="name"&gt;Full Name:&lt;/label&gt;
+    &lt;input type="text" id="name"
+           name="name" required&gt;
+
+    &lt;label for="email"&gt;Email:&lt;/label&gt;
+    &lt;input type="email" id="email"
+           name="email" required&gt;
+
+    &lt;label for="password"&gt;Password:&lt;/label&gt;
+    &lt;input type="password" id="password"
+           name="password" required&gt;
+
+    &lt;button type="submit"&gt;Register&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+    <h3>6.6 Important Input Types</h3>
+    <table>
+        <tr><th>Input Type</th><th>Purpose</th></tr>
+        <tr><td>text</td><td>Single-line text</td></tr>
+        <tr><td>email</td><td>Email address</td></tr>
+        <tr><td>password</td><td>Password entry</td></tr>
+        <tr><td>number</td><td>Numeric input</td></tr>
+        <tr><td>date</td><td>Date selection</td></tr>
+        <tr><td>radio</td><td>Select one option from a group</td></tr>
+        <tr><td>checkbox</td><td>Select one or more options</td></tr>
+        <tr><td>file</td><td>Choose a file</td></tr>
+        <tr><td>submit</td><td>Submit the form</td></tr>
+    </table>
+
+    <h3>6.7 GET and POST Methods</h3>
+    <p>The GET method generally requests information from a server. Form data sent using GET is commonly included in the URL. The POST method sends data in the request body and is commonly used for submitting form information.</p>
+    <div class="note"><b>Security Note:</b> The POST method alone does not encrypt information. Websites should use HTTPS and proper server-side validation. Passwords must be securely handled by the back end.</div>
+
+    <h3>6.8 Form Validation</h3>
+    <p>HTML provides attributes such as required, minlength, maxlength and pattern for basic browser-side validation. Server-side validation is also necessary because browser validation can be bypassed.</p>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Which tag creates a table row?</li>
+            <li>What is the purpose of the th element?</li>
+            <li>What is an HTML form?</li>
+            <li>Explain the difference between GET and POST.</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. &lt;tr&gt;.</p>
+        <p>2. It creates a table header cell.</p>
+        <p>3. A form collects information from users.</p>
+        <p>4. GET commonly sends parameters in the URL; POST sends data in the request body.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 6 - HTML Tables and Forms</span><span>Page 9</span></div>
+</section>
+
+<section class="page" id="chapter7">
+    <div class="chapter-label">CHAPTER 07</div>
+    <h2>Introduction to CSS</h2>
+
+    <h3>7.1 What is CSS?</h3>
+    <p>CSS stands for Cascading Style Sheets. It is used to control the visual appearance of HTML documents. CSS can change colours, fonts, spacing, borders, backgrounds, layouts and responsive behaviour.</p>
+    <p>HTML describes what content is present, while CSS describes how that content should look.</p>
+
+    <h3>7.2 Basic CSS Syntax</h3>
+    <p>A CSS rule contains a selector and a declaration block. Each declaration contains a property and a value.</p>
+    <pre><code>p {
+    color: blue;
+    font-size: 18px;
+}</code></pre>
+    <ul>
+        <li><b>Selector:</b> Selects the HTML element.</li>
+        <li><b>Property:</b> Identifies what should change.</li>
+        <li><b>Value:</b> Defines the new setting.</li>
+    </ul>
+
+    <h3>7.3 Three Ways to Apply CSS</h3>
+    <p><b>1. Inline CSS:</b> Written directly inside an HTML element using the style attribute.</p>
+    <pre><code>&lt;p style="color: blue;"&gt;
+    This is a blue paragraph.
+&lt;/p&gt;</code></pre>
+
+    <p><b>2. Internal CSS:</b> Written inside a style element in the document head.</p>
+    <pre><code>&lt;head&gt;
+    &lt;style&gt;
+        h1 {
+            color: green;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;</code></pre>
+
+    <p><b>3. External CSS:</b> Written in a separate .css file and connected using a link element.</p>
+    <pre><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></pre>
+    <p>External CSS is useful for maintaining consistent styles across multiple pages.</p>
+
+    <h3>7.4 CSS Colours</h3>
+    <p>CSS supports named colours, hexadecimal values, RGB and HSL colour formats.</p>
+    <pre><code>h1 {
+    color: navy;
+}
+
+p {
+    color: #333333;
+}
+
+button {
+    background-color: rgb(21, 101, 192);
+}</code></pre>
+
+    <h3>7.5 CSS Backgrounds</h3>
+    <p>Background properties control the background colour and images of an element.</p>
+    <pre><code>body {
+    background-color: #f0f5fb;
+}
+
+.banner {
+    background-image: url("banner.jpg");
+    background-size: cover;
+    background-position: center;
+}</code></pre>
+
+    <h3>7.6 CSS Fonts and Text</h3>
+    <p>CSS provides properties to control font family, size, weight, alignment, line height and text decoration.</p>
+    <pre><code>p {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.6;
+    text-align: justify;
+}</code></pre>
+
+    <h3>7.7 Why Use External CSS?</h3>
+    <ul>
+        <li>It keeps HTML and design separate.</li>
+        <li>It makes code easier to maintain.</li>
+        <li>One stylesheet can style many pages.</li>
+        <li>It supports a consistent website design.</li>
+    </ul>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>What is the full form of CSS?</li>
+            <li>What is a CSS selector?</li>
+            <li>Name the three methods of applying CSS.</li>
+            <li>Why is external CSS useful?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. Cascading Style Sheets.</p>
+        <p>2. A selector identifies the HTML elements to style.</p>
+        <p>3. Inline, internal and external CSS.</p>
+        <p>4. It allows styles to be reused and maintained separately.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 7 - Introduction to CSS</span><span>Page 10</span></div>
+</section>
+
+<section class="page" id="chapter8">
+    <div class="chapter-label">CHAPTER 08</div>
+    <h2>CSS Selectors and Properties</h2>
+
+    <h3>8.1 What are CSS Selectors?</h3>
+    <p>CSS selectors identify which HTML elements should receive a particular style. Different selectors are useful for styling individual elements, groups of elements or elements with specific relationships.</p>
+
+    <h3>8.2 Element Selector</h3>
+    <p>An element selector selects all elements with a given tag name.</p>
+    <pre><code>p {
+    color: #333;
+}</code></pre>
+
+    <h3>8.3 Class Selector</h3>
+    <p>A class selector selects elements with a particular class attribute. A class name begins with a dot in CSS.</p>
+    <pre><code>.highlight {
+    background-color: yellow;
+    padding: 10px;
+}</code></pre>
+    <pre><code>&lt;p class="highlight"&gt;
+    Important information
+&lt;/p&gt;</code></pre>
+
+    <h3>8.4 ID Selector</h3>
+    <p>An ID selector targets an element with a specific id attribute. It begins with a hash symbol.</p>
+    <pre><code>#main-heading {
+    color: darkblue;
+}</code></pre>
+
+    <h3>8.5 Universal Selector</h3>
+    <p>The universal selector matches all elements.</p>
+    <pre><code>* {
+    box-sizing: border-box;
+}</code></pre>
+
+    <h3>8.6 Grouping Selector</h3>
+    <p>Multiple selectors can share the same declarations by separating them with commas.</p>
+    <pre><code>h1, h2, h3 {
+    font-family: Arial, sans-serif;
+    color: navy;
+}</code></pre>
+
+    <h3>8.7 Descendant Selector</h3>
+    <p>A descendant selector selects elements located anywhere inside another element.</p>
+    <pre><code>article p {
+    line-height: 1.8;
+}</code></pre>
+
+    <h3>8.8 Pseudo-Classes</h3>
+    <p>Pseudo-classes select elements based on a particular state or condition. They are useful for interactive designs.</p>
+    <pre><code>a:hover {
+    color: red;
+}
+
+button:focus {
+    outline: 2px solid blue;
+}
+
+li:first-child {
+    font-weight: bold;
+}</code></pre>
+
+    <h3>8.9 CSS Specificity and Cascade</h3>
+    <p>When multiple CSS rules apply to the same element, the browser uses the cascade to determine which declaration takes effect. Specificity is one factor in this decision. In general, ID selectors have greater specificity than class selectors, and class selectors have greater specificity than element selectors. The origin, importance and order of declarations also matter.</p>
+
+    <h3>8.10 Common CSS Properties</h3>
+    <table>
+        <tr><th>Property</th><th>Purpose</th></tr>
+        <tr><td>color</td><td>Text colour</td></tr>
+        <tr><td>background-color</td><td>Background colour</td></tr>
+        <tr><td>font-size</td><td>Text size</td></tr>
+        <tr><td>margin</td><td>Outer spacing</td></tr>
+        <tr><td>padding</td><td>Inner spacing</td></tr>
+        <tr><td>border</td><td>Element border</td></tr>
+        <tr><td>display</td><td>Layout behaviour</td></tr>
+        <tr><td>width</td><td>Element width</td></tr>
+    </table>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Which symbol is used for a class selector?</li>
+            <li>Which symbol is used for an ID selector?</li>
+            <li>What is the universal selector?</li>
+            <li>What does the :hover pseudo-class do?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. A dot (.).</p>
+        <p>2. A hash symbol (#).</p>
+        <p>3. It selects all elements.</p>
+        <p>4. It applies styles when the pointer is over an element.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 8 - CSS Selectors and Properties</span><span>Page 11</span></div>
+</section>
+
+<section class="page" id="chapter9">
+    <div class="chapter-label">CHAPTER 09</div>
+    <h2>CSS Box Model</h2>
+
+    <h3>9.1 Introduction to the Box Model</h3>
+    <p>In CSS, every element is represented as a rectangular box. The CSS box model explains how the dimensions and spacing of that box are calculated. It consists of four main areas: content, padding, border and margin.</p>
+
+    <h3>9.2 Content</h3>
+    <p>The content area contains the actual text, image or other material inside an element. The width and height properties usually control this area when using the default content-box model.</p>
+
+    <h3>9.3 Padding</h3>
+    <p>Padding is the space between the content and its border. It creates inner spacing.</p>
+    <pre><code>.card {
+    padding: 20px;
+}</code></pre>
+
+    <h3>9.4 Border</h3>
+    <p>A border surrounds the content and padding. CSS allows developers to control its width, style and colour.</p>
+    <pre><code>.card {
+    border: 2px solid #1565c0;
+}</code></pre>
+
+    <h3>9.5 Margin</h3>
+    <p>Margin is the space outside the border. It separates one element from other elements.</p>
+    <pre><code>.card {
+    margin: 20px;
+}</code></pre>
+
+    <h3>9.6 Complete Box Model Example</h3>
+    <pre><code>.box {
+    width: 300px;
+    padding: 20px;
+    border: 5px solid black;
+    margin: 15px;
+}</code></pre>
+    <p>With the default content-box model, the total horizontal space occupied by this box is 300 + 40 + 10 + 30 = 380 pixels, excluding any effects from neighbouring layout rules.</p>
+
+    <h3>9.7 Box-Sizing Property</h3>
+    <p>The box-sizing property controls how the width and height of an element are calculated. The border-box value includes padding and border inside the declared width and height.</p>
+    <pre><code>* {
+    box-sizing: border-box;
+}</code></pre>
+    <p>This rule makes layouts easier to manage because the declared width includes the content, padding and border.</p>
+
+    <h3>9.8 Display Property</h3>
+    <p>The display property controls how an element participates in layout. Common values include block, inline, inline-block, flex, grid and none.</p>
+    <ul>
+        <li><b>Block:</b> Usually starts on a new line and takes available width.</li>
+        <li><b>Inline:</b> Flows within text and does not normally accept width and height in the same way as block elements.</li>
+        <li><b>Inline-block:</b> Flows inline while allowing width and height.</li>
+        <li><b>None:</b> Removes the element from the layout.</li>
+    </ul>
+
+    <div class="note"><b>Practical Tip:</b> The universal box-sizing rule is commonly used in modern stylesheets to make sizing calculations more predictable.</div>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Name the four parts of the CSS box model.</li>
+            <li>What is padding?</li>
+            <li>What is the difference between margin and padding?</li>
+            <li>What does box-sizing: border-box do?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. Content, padding, border and margin.</p>
+        <p>2. Space between content and border.</p>
+        <p>3. Padding is inside the border; margin is outside it.</p>
+        <p>4. It includes padding and border within the declared dimensions.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 9 - CSS Box Model</span><span>Page 12</span></div>
+</section>
+
+<section class="page" id="chapter10">
+    <div class="chapter-label">CHAPTER 10</div>
+    <h2>Flexbox and CSS Grid</h2>
+
+    <h3>10.1 Introduction to CSS Layout</h3>
+    <p>CSS layout systems help developers arrange content on a web page. Modern websites often use Flexbox and CSS Grid to create organised layouts that adapt to different screen sizes.</p>
+
+    <h3>10.2 What is Flexbox?</h3>
+    <p>Flexbox, or the Flexible Box Layout, is a one-dimensional layout system. It is designed to arrange items in a row or a column and control their alignment and spacing.</p>
+
+    <h3>10.3 Creating a Flex Container</h3>
+    <pre><code>.container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.item {
+    padding: 20px;
+    background: #e3f2fd;
+}</code></pre>
+    <p>The display property activates Flexbox. The gap property creates spacing between items. Justify-content controls alignment along the main axis, while align-items controls alignment along the cross axis.</p>
+
+    <h3>10.4 Important Flexbox Properties</h3>
+    <table>
+        <tr><th>Property</th><th>Purpose</th></tr>
+        <tr><td>flex-direction</td><td>Sets row or column direction</td></tr>
+        <tr><td>justify-content</td><td>Aligns items along the main axis</td></tr>
+        <tr><td>align-items</td><td>Aligns items along the cross axis</td></tr>
+        <tr><td>flex-wrap</td><td>Allows items to wrap</td></tr>
+        <tr><td>gap</td><td>Sets spacing between items</td></tr>
+        <tr><td>flex-grow</td><td>Controls how an item grows</td></tr>
+    </table>
+
+    <h3>10.5 What is CSS Grid?</h3>
+    <p>CSS Grid is a two-dimensional layout system. It can organise content into rows and columns at the same time. It is especially useful for page layouts, galleries and card collections.</p>
+
+    <h3>10.6 Creating a Grid Layout</h3>
+    <pre><code>.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.grid-item {
+    background: #e3f2fd;
+    padding: 25px;
+}</code></pre>
+    <p>The repeat function creates repeated column definitions. The fr unit represents a fraction of the available space.</p>
+
+    <h3>10.7 Flexbox vs Grid</h3>
+    <table>
+        <tr><th>Flexbox</th><th>CSS Grid</th></tr>
+        <tr><td>One-dimensional layout</td><td>Two-dimensional layout</td></tr>
+        <tr><td>Works mainly in a row or column</td><td>Works with rows and columns</td></tr>
+        <tr><td>Useful for navigation and alignment</td><td>Useful for complete page and card layouts</td></tr>
+        <tr><td>Arranges items along one main axis</td><td>Controls both axes together</td></tr>
+    </table>
+
+    <h3>10.8 When to Use Each Layout</h3>
+    <p>Use Flexbox when arranging a group of items in one direction, such as a navigation bar or a row of buttons. Use Grid when arranging content in a structured row-and-column layout, such as a dashboard or image gallery. Both systems can be used together in the same website.</p>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>What is Flexbox?</li>
+            <li>What is CSS Grid?</li>
+            <li>Which CSS property activates Flexbox?</li>
+            <li>Write one difference between Flexbox and Grid.</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. A one-dimensional CSS layout system.</p>
+        <p>2. A two-dimensional CSS layout system.</p>
+        <p>3. display: flex.</p>
+        <p>4. Flexbox is mainly one-dimensional, while Grid manages rows and columns together.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 10 - Flexbox and CSS Grid</span><span>Page 13</span></div>
+</section>
+
+<section class="page" id="chapter11">
+    <div class="chapter-label">CHAPTER 11</div>
+    <h2>Responsive Web Design</h2>
+
+    <h3>11.1 What is Responsive Web Design?</h3>
+    <p>Responsive Web Design is an approach to building websites that adapt to different screen sizes and devices. A responsive website should remain readable and usable on desktop computers, laptops, tablets and smartphones.</p>
+
+    <h3>11.2 Why is Responsive Design Important?</h3>
+    <ul>
+        <li>People access websites using different devices.</li>
+        <li>Content should remain readable on small screens.</li>
+        <li>Navigation should be easy to use.</li>
+        <li>Images and layouts should fit the available space.</li>
+        <li>Users should not need unnecessary horizontal scrolling.</li>
+    </ul>
+
+    <h3>11.3 Viewport Meta Tag</h3>
+    <p>The viewport meta tag helps browsers display pages using the device's screen width. It is an important part of responsive design.</p>
+    <pre><code>&lt;meta name="viewport"
+content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+
+    <h3>11.4 Flexible Widths</h3>
+    <p>Responsive layouts often use percentages, flexible units and maximum widths instead of fixed dimensions everywhere.</p>
+    <pre><code>.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}</code></pre>
+
+    <h3>11.5 Media Queries</h3>
+    <p>Media queries allow CSS rules to apply only when certain conditions are met, such as a maximum viewport width.</p>
+    <pre><code>.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}</code></pre>
+    <p>In this example, the layout changes from three columns to two columns on medium screens and one column on smaller screens.</p>
+
+    <h3>11.6 Mobile-First Design</h3>
+    <p>Mobile-first design means starting with the layout for smaller screens and then adding styles for larger screens. This approach encourages developers to focus on essential content and simple layouts.</p>
+
+    <h3>11.7 Responsive Images</h3>
+    <p>Images should fit their containers without overflowing. The max-width property is commonly used for this purpose. For different image sources at different screen sizes, HTML also provides the picture and srcset features.</p>
+
+    <h3>11.8 Testing Responsive Websites</h3>
+    <ol>
+        <li>Open the website in a browser.</li>
+        <li>Open browser developer tools.</li>
+        <li>Enable the device toolbar.</li>
+        <li>Select different device sizes.</li>
+        <li>Check text, images, navigation and spacing.</li>
+        <li>Fix any overflow or readability problems.</li>
+    </ol>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>Define responsive web design.</li>
+            <li>Why is the viewport meta tag important?</li>
+            <li>What is a media query?</li>
+            <li>Explain mobile-first design.</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. It makes websites adapt to different screen sizes.</p>
+        <p>2. It helps the browser use the device's actual viewport width.</p>
+        <p>3. A CSS feature that applies styles under specified conditions.</p>
+        <p>4. It means designing for smaller screens first and enhancing the layout for larger screens.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 11 - Responsive Web Design</span><span>Page 14</span></div>
+</section>
+
+<section class="page" id="chapter12">
+    <div class="chapter-label">CHAPTER 12</div>
+    <h2>Practical Website Project</h2>
+
+    <h3>12.1 Project Introduction</h3>
+    <p>In this chapter, we will create a simple educational website using HTML and CSS. The project will contain a header, navigation menu, introduction section, course cards and footer.</p>
+    <p>This practical activity combines the concepts learned in the previous chapters. It also demonstrates how HTML structure and CSS design work together.</p>
+
+    <h3>12.2 Project Objectives</h3>
+    <ul>
+        <li>Create a complete HTML document.</li>
+        <li>Add a navigation menu.</li>
+        <li>Display educational course information.</li>
+        <li>Use CSS to design cards and sections.</li>
+        <li>Make the website responsive.</li>
+    </ul>
+
+    <h3>12.3 Step One: Create the Project Files</h3>
+    <p>Create a folder named <b>education-website</b>. Inside the folder, create two files:</p>
+    <pre><code>education-website/
+    index.html
+    style.css</code></pre>
+
+    <h3>12.4 Step Two: Write HTML Code</h3>
+    <p>Open index.html and add the following code:</p>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport"
+          content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Education Website&lt;/title&gt;
+    &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;
+    &lt;h1&gt;Smart Learning&lt;/h1&gt;
+    &lt;nav&gt;
+        &lt;a href="#home"&gt;Home&lt;/a&gt;
+        &lt;a href="#courses"&gt;Courses&lt;/a&gt;
+        &lt;a href="#about"&gt;About&lt;/a&gt;
+        &lt;a href="#contact"&gt;Contact&lt;/a&gt;
+    &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+    &lt;section id="home" class="hero"&gt;
+        &lt;h2&gt;Welcome to Smart Learning&lt;/h2&gt;
+        &lt;p&gt;Learn new skills through digital education.&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;section id="courses" class="courses"&gt;
+        &lt;h2&gt;Our Courses&lt;/h2&gt;
+
+        &lt;div class="cards"&gt;
+            &lt;article class="card"&gt;
+                &lt;h3&gt;HTML&lt;/h3&gt;
+                &lt;p&gt;Learn the structure of web pages.&lt;/p&gt;
+            &lt;/article&gt;
+
+            &lt;article class="card"&gt;
+                &lt;h3&gt;CSS&lt;/h3&gt;
+                &lt;p&gt;Learn to design attractive websites.&lt;/p&gt;
+            &lt;/article&gt;
+
+            &lt;article class="card"&gt;
+                &lt;h3&gt;JavaScript&lt;/h3&gt;
+                &lt;p&gt;Learn to add interaction to websites.&lt;/p&gt;
+            &lt;/article&gt;
+        &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;section id="about" class="about"&gt;
+        &lt;h2&gt;About Us&lt;/h2&gt;
+        &lt;p&gt;We provide simple educational resources
+        for students and beginners.&lt;/p&gt;
+    &lt;/section&gt;
+&lt;/main&gt;
+
+&lt;footer id="contact"&gt;
+    &lt;p&gt;Smart Learning | Educational Website&lt;/p&gt;
+&lt;/footer&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+    <h3>12.5 Step Three: Write CSS Code</h3>
+    <p>Open style.css and add the following styles:</p>
+    <pre><code>* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #243447;
+    background: #f4f7fb;
+}
+
+header {
+    background: #173a63;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 8px;
+}
+
+.hero {
+    text-align: center;
+    padding: 70px 20px;
+    background: #e3f2fd;
+}
+
+.courses, .about {
+    padding: 35px 8%;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px #00000012;
+}
+
+footer {
+    background: #173a63;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+@media (max-width: 700px) {
+    header {
+        flex-direction: column;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}</code></pre>
+
+    <h3>12.6 Step Four: Run the Project</h3>
+    <ol>
+        <li>Save both files.</li>
+        <li>Open the project folder.</li>
+        <li>Open index.html in a web browser.</li>
+        <li>Check the navigation and course cards.</li>
+        <li>Resize the browser to test the responsive layout.</li>
+    </ol>
+
+    <h3>12.7 Expected Result</h3>
+    <p>The browser should display an educational website with a blue header, navigation links, a welcome section, three course cards and a footer. On smaller screens, the cards should appear in a single column.</p>
+
+    <h3>12.8 Project Improvements</h3>
+    <p>The project can be improved by adding course detail pages, images, a registration form, JavaScript interactions, user authentication and database connectivity. These features can turn a simple static website into a larger web application.</p>
+
+    <div class="exercise">
+        <h3>Chapter Exercises</h3>
+        <ol>
+            <li>What is the purpose of the link element in the project?</li>
+            <li>Why is CSS Grid used for the course cards?</li>
+            <li>What is the purpose of the media query?</li>
+            <li>How can the website be improved?</li>
+        </ol>
+        <h3>Quick Answers</h3>
+        <p>1. It connects the external CSS file to the HTML document.</p>
+        <p>2. It arranges the cards into a structured grid layout.</p>
+        <p>3. It changes the layout for smaller screens.</p>
+        <p>4. By adding more pages, forms, interactions and back-end features.</p>
+    </div>
+    <div class="page-footer"><span>Chapter 12 - Practical Website Project</span><span>Page 15</span></div>
+</section>
+
+<section class="page" id="glossary">
+    <div class="chapter-label">REFERENCE SECTION</div>
+    <h2>Glossary</h2>
+    <p><b>Attribute:</b> Additional information provided inside an HTML element.</p>
+    <p><b>Browser:</b> Software used to access and display websites.</p>
+    <p><b>CSS:</b> Cascading Style Sheets, used to style web documents.</p>
+    <p><b>Domain:</b> A human-readable address used to access a website.</p>
+    <p><b>Element:</b> A component of an HTML document.</p>
+    <p><b>Flexbox:</b> A one-dimensional CSS layout system.</p>
+    <p><b>Front End:</b> The user-facing part of a website.</p>
+    <p><b>HTML:</b> HyperText Markup Language, used to structure web content.</p>
+    <p><b>HTTP:</b> Hypertext Transfer Protocol, used for communication between web clients and servers.</p>
+    <p><b>Hyperlink:</b> A connection to another page or resource.</p>
+    <p><b>JavaScript:</b> A programming language commonly used to add interactivity to websites.</p>
+    <p><b>Media Query:</b> A CSS feature that applies styles under specified conditions.</p>
+    <p><b>Responsive Design:</b> An approach that adapts layouts to different devices.</p>
+    <p><b>Selector:</b> A CSS pattern used to identify elements for styling.</p>
+    <p><b>Semantic HTML:</b> HTML that uses meaningful elements to describe content.</p>
+    <p><b>Server:</b> A computer or software system that provides resources or services to clients.</p>
+    <p><b>Tag:</b> Markup written inside angle brackets to define an HTML element.</p>
+    <p><b>URL:</b> Uniform Resource Locator, the address of a resource on the web.</p>
+    <div class="page-footer"><span>Glossary</span><span>Page 16</span></div>
+</section>
+
+<section class="page" id="references">
+    <div class="chapter-label">REFERENCE SECTION</div>
+    <h2>References and Further Learning</h2>
+    <p>The following resources can be used to study HTML and CSS in greater depth. They provide documentation, tutorials and practical examples.</p>
+
+    <h3>1. MDN Web Docs</h3>
+    <p>MDN provides detailed documentation and learning guides for HTML, CSS and JavaScript.</p>
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML Documentation</a></p>
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS Documentation</a></p>
+
+    <h3>2. W3C</h3>
+    <p>The World Wide Web Consortium develops web standards and guidelines.</p>
+    <p><a href="https://www.w3.org/" target="_blank">W3C Official Website</a></p>
+
+    <h3>3. WHATWG HTML Standard</h3>
+    <p>The WHATWG HTML Standard describes the current HTML language and browser behaviour.</p>
+    <p><a href="https://html.spec.whatwg.org/" target="_blank">HTML Living Standard</a></p>
+
+    <h3>4. W3Schools</h3>
+    <p>W3Schools provides beginner-friendly tutorials and interactive examples.</p>
+    <p><a href="https://www.w3schools.com/html/" target="_blank">HTML Tutorial</a></p>
+    <p><a href="https://www.w3schools.com/css/" target="_blank">CSS Tutorial</a></p>
+
+    <h3>Conclusion</h3>
+    <p>HTML and CSS are essential foundations of web development. HTML provides the structure and meaning of content, while CSS controls its visual presentation and layout. By understanding these technologies and practising regularly, students can create accessible, attractive and responsive websites.</p>
+    <p>This book has introduced the basic concepts, important elements, styling methods and practical techniques required to begin building websites. The next step is to practise these concepts and gradually explore JavaScript and back-end development.</p>
+
+    <div class="note">
+        <h3>End of Book</h3>
+        <p style="text-align:center"><b>Smart Digital Library</b></p>
+        <p style="text-align:center">Learn • Practise • Build • Improve</p>
+    </div>
+    <div class="page-footer"><span>References and Conclusion</span><span>Page 17</span></div>
+</section>
+
+</main>
+</div>
+
+<footer>
+    <p>© 2026 Smart Digital Library | HTML & CSS Educational Textbook</p>
+</footer>
+
+<script>
+const bookKey = "html-css-progress";
+const bookmarkKey = "html-css-bookmark";
+
+function toggleBookmark() {
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    localStorage.setItem(bookmarkKey, String(!saved));
+
+    updateBookmarkButton();
+
+    alert(saved ? "Bookmark removed." : "Book bookmarked successfully!");
+}
+
+function updateBookmarkButton() {
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+    const button = document.getElementById("bookmarkButton");
+
+    if (button) {
+        button.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+    }
+}
+
+function updateProgress() {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+
+    const progress = scrollable > 0
+        ? Math.round((window.scrollY / scrollable) * 100)
+        : 0;
+
+    document.getElementById("progressFill").style.width = progress + "%";
+    document.getElementById("progressText").textContent = progress + "%";
+
+    localStorage.setItem(bookKey, progress);
+
+    saveReadingHistory(progress);
+}
+
+function saveReadingHistory(progress) {
+    let history = [];
+
+    try {
+        history = JSON.parse(localStorage.getItem("readingHistory") || "[]");
+
+        if (!Array.isArray(history)) {
+            history = [];
+        }
+    } catch (error) {
+        history = [];
+    }
+
+    const record = {
+        title: "HTML & CSS",
+        icon: "🌐",
+        category: "Web Development",
+        page: progress + "%",
+        time: new Date().toLocaleString()
+    };
+
+    const existingIndex = history.findIndex(
+        item => item.title === "HTML & CSS"
+    );
+
+    if (existingIndex !== -1) {
+        history[existingIndex] = record;
+    } else {
+        history.push(record);
+    }
+
+    localStorage.setItem("readingHistory", JSON.stringify(history));
+}
+
+window.addEventListener("scroll", updateProgress);
+
+window.addEventListener("load", function() {
+    updateBookmarkButton();
+
+    const savedProgress = Number(localStorage.getItem(bookKey) || 0);
+
+    if (savedProgress > 0 && savedProgress < 100) {
+        const restore = confirm(
+            "Continue from your previous reading progress?"
+        );
+
+        if (restore) {
+            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+
+            window.scrollTo(0, scrollable * savedProgress / 100);
+        }
+    }
+
+    updateProgress();
+});
+
+</script>
+
+</body>
+</html>
+```

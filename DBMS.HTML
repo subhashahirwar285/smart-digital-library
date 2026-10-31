@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DBMS - Smart Digital Library</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#173a63;--blue:#1565c0;--light:#e3f2fd;--ink:#263238}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f7;color:var(--ink);line-height:1.8}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial,sans-serif}
+.topbar a,.topbar button{color:white;text-decoration:none;border:1px solid #ffffff70;background:transparent;padding:8px 13px;border-radius:5px;cursor:pointer;font-size:14px}
+.topbar a:hover,.topbar button:hover{background:#ffffff20}
+.progress-track{height:5px;background:#d7e3ef;position:sticky;top:0;z-index:10}
+.progress-fill{height:5px;width:0;background:#2196f3}
+.layout{max-width:1250px;margin:25px auto;padding:0 18px;display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+.sidebar{background:white;padding:20px;border-radius:10px;box-shadow:0 3px 14px #173a6310;position:sticky;top:20px;max-height:85vh;overflow:auto;font-family:Arial,sans-serif}
+.sidebar h3{color:var(--navy);margin-bottom:12px}
+.sidebar a{display:block;color:#34495e;text-decoration:none;padding:7px 9px;border-radius:5px;font-size:13px;border-bottom:1px solid #edf1f5}
+.sidebar a:hover{background:var(--light);color:var(--blue)}
+.book{min-width:0}
+.cover{min-height:570px;background:linear-gradient(135deg,#102b4d,#145a9e 58%,#42a5f5);color:white;border-radius:12px;padding:55px 45px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 25px #173a6330}
+.cover:before,.cover:after{content:"";position:absolute;border:1px solid #ffffff35;border-radius:50%;width:380px;height:380px;right:-110px;top:50px}
+.cover:after{width:260px;height:260px;right:-50px;top:110px}
+.cover-top,.cover-main,.cover-bottom{position:relative;z-index:1}
+.cover-label{letter-spacing:4px;font:12px Arial,sans-serif;color:#c9e5ff}
+.cover-symbol{font-size:75px;margin:30px 0 5px}
+.cover h1{font:bold clamp(38px,6vw,65px)/1.08 Arial,sans-serif;max-width:650px;margin:10px 0 18px}
+.cover-subtitle{font:18px Arial,sans-serif;color:#d9ecff;max-width:550px}
+.cover-line{width:75px;height:5px;background:#90caf9;margin:25px 0}
+.cover-bottom{border-top:1px solid #ffffff55;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font:14px Arial,sans-serif}
+.page{background:white;margin-top:22px;padding:42px 48px;border-radius:8px;box-shadow:0 3px 14px #173a6310;scroll-margin-top:20px;min-height:300px}
+.page h2{font:bold 27px Arial,sans-serif;color:var(--navy);border-bottom:2px solid #dceaf7;padding-bottom:12px;margin-bottom:20px}
+.page h3{font:bold 19px Arial,sans-serif;color:var(--blue);margin:24px 0 10px}
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 28px}
+.page li{margin:6px 0}
+.page-number{text-align:right;border-top:1px solid #ddd;margin-top:35px;padding-top:12px;color:#718096;font:12px Arial,sans-serif}
+.info-box{background:#eef6ff;border-left:4px solid var(--blue);padding:14px 17px;margin:18px 0;border-radius:4px}
+.note{background:#fff8e6;border-left:4px solid #e0a326;padding:14px 17px;margin:18px 0}
+.exercise{background:#f4f7fa;padding:16px 20px;border-radius:7px;margin-top:20px}
+.exercise h3{margin-top:0}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;font-family:Arial,sans-serif}
+.action-row button{background:var(--blue);color:white;border:0;border-radius:5px;padding:9px 14px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.bookmark-status{font:13px Arial,sans-serif;color:#287443;margin-top:7px}
+.footer{text-align:center;padding:25px;color:#65758b;font:13px Arial,sans-serif}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:relative;top:0;max-height:300px}.cover{min-height:480px;padding:35px 25px}.page{padding:28px 23px}}
+@media print{body{background:white}.topbar,.progress-track,.sidebar,.action-row,.footer{display:none!important}.layout{display:block;max-width:100%;margin:0;padding:0}.cover,.page{box-shadow:none;border-radius:0;break-after:page;margin:0;min-height:95vh}.page{padding:25mm 22mm}.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+<a href="index.html">← Back to Library</a>
+<strong>📘 Smart Digital Library</strong>
+<div>
+<button id="topBookmarkBtn" onclick="toggleBookmark()">☆ Bookmark</button>
+<a href="qr.html?book=dbms">QR Code</a>
+<button onclick="window.print()">Print</button>
+</div>
+</header>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="layout">
+<aside class="sidebar">
+<h3>📚 Contents</h3>
+<a href="#preface">Preface</a>
+<a href="#chapter1">1. Introduction to DBMS</a>
+<a href="#chapter2">2. File System and DBMS</a>
+<a href="#chapter3">3. Database Architecture</a>
+<a href="#chapter4">4. Data Models</a>
+<a href="#chapter5">5. Relational Model and Keys</a>
+<a href="#chapter6">6. Entity Relationship Model</a>
+<a href="#chapter7">7. Normalization</a>
+<a href="#chapter8">8. SQL Introduction and DDL</a>
+<a href="#chapter9">9. DML, DQL and SQL Queries</a>
+<a href="#chapter10">10. Joins, Subqueries and Views</a>
+<a href="#chapter11">11. Transactions and ACID Properties</a>
+<a href="#chapter12">12. Concurrency Control and Deadlocks</a>
+<a href="#chapter13">13. Indexes and Query Processing</a>
+<a href="#chapter14">14. Database Security, Backup and Recovery</a>
+<a href="#chapter15">15. NoSQL and Distributed Databases</a>
+<a href="#chapter16">16. Database Design Case Study: Library System</a>
+<a href="#glossary">Glossary</a>
+<a href="#references">References</a>
+<div class="bookmark-status" id="bookmarkStatus"></div>
+</aside>
+
+<main class="book">
+
+<section class="cover">
+<div class="cover-top">
+<div class="cover-label">SMART DIGITAL LIBRARY • COMPUTER SCIENCE SERIES</div>
+<div class="cover-symbol">🗄️</div>
+</div>
+<div class="cover-main">
+<div class="cover-label">A COMPLETE STUDENT TEXTBOOK</div>
+<h1>DATABASE<br>MANAGEMENT<br>SYSTEM</h1>
+<div class="cover-line"></div>
+<p class="cover-subtitle">Database Concepts, ER Model, SQL, Normalization, Transactions and Practical Design</p>
+</div>
+<div class="cover-bottom">
+<span>First Edition • 2026</span>
+<span>Smart Digital Library Team</span>
+</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+<p>Database Management System is an essential subject in computer science. Almost every modern application uses a database to store and manage information, from college records and library catalogues to banking and online shopping.</p>
+<p>This textbook introduces database concepts step by step. It covers database architecture, data models, keys, ER diagrams, normalization, SQL, joins, transactions, concurrency, indexes, security and modern NoSQL systems.</p>
+<div class="info-box"><strong>How to use this book:</strong> Read the explanation in each chapter, write the sample SQL statements in a database such as SQLite or MySQL, and test them with your own sample records.</div>
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Understand database and DBMS fundamentals.</li>
+<li>Identify entities, attributes, relationships and keys.</li>
+<li>Design tables and understand normalization.</li>
+<li>Write SQL queries to create, retrieve and modify data.</li>
+<li>Understand transactions, concurrency, security and recovery.</li>
+<li>Plan a database for a practical application such as a library.</li>
+</ul>
+<div class="page-number">Preface • Page 1</div>
+</section>
+
+<section class="page" id="chapter1">
+<h2>Chapter 1: Introduction to DBMS</h2>
+<h3>1.1 Meaning of Database</h3>
+<p>A database is an organised collection of related data. It stores information in a structured way so that users and applications can retrieve, add, change and remove records.</p>
+<h3>1.2 What is DBMS?</h3>
+<p>A Database Management System (DBMS) is software that allows users to define, create, maintain and control access to databases. Examples include MySQL, PostgreSQL, Oracle Database, Microsoft SQL Server and SQLite.</p>
+<h3>1.3 Need for DBMS</h3>
+<p>A DBMS reduces unnecessary duplication, improves consistency, supports multiple users, provides security and helps recover information after failures.</p>
+<h3>1.4 Applications</h3>
+<p>DBMS technology is used in banks, railway reservations, hospitals, colleges, e-commerce, libraries, payroll and inventory systems.</p>
+<h3>1.5 Database System Components</h3>
+<p>A database system includes the data, DBMS software, hardware, application programs, procedures and people such as database administrators, developers and end users.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A college library can store student details, book information, issue records and return dates in a database instead of maintaining separate paper registers.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Define database and DBMS. Explain five advantages and list four applications of DBMS.</p></div>
+<div class="page-number">Chapter 1 • Page 2</div>
+</section>
+
+<section class="page" id="chapter2">
+<h2>Chapter 2: File System and DBMS</h2>
+<h3>2.1 File Processing System</h3>
+<p>In a file processing system, each application maintains its own files. Different departments may store repeated copies of the same information.</p>
+<h3>2.2 Limitations of File System</h3>
+<p>Common problems include data redundancy, inconsistency, difficult data access, isolated data, weak security, concurrent access problems and difficult backup.</p>
+<h3>2.3 DBMS Approach</h3>
+<p>A DBMS provides a centralised and controlled way to store related data. Applications access information through queries and database services.</p>
+<h3>2.4 DBMS vs File System</h3>
+<p>A DBMS generally offers structured querying, constraints, access control, transactions, concurrency control and recovery. File systems may be simpler for small standalone tasks.</p>
+<h3>2.5 When to Use DBMS</h3>
+<p>A DBMS is useful when information is shared, relationships matter, records change frequently or reliable access and security are required.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>If a student's phone number is saved in three independent files, changing only two copies creates inconsistent information. A central student table avoids this kind of repeated update.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Differentiate file system and DBMS. Explain data redundancy and data inconsistency.</p></div>
+<div class="page-number">Chapter 2 • Page 3</div>
+</section>
+
+<section class="page" id="chapter3">
+<h2>Chapter 3: Database Architecture</h2>
+<h3>3.1 Three-Schema Architecture</h3>
+<p>The three-schema architecture separates the user view, the logical structure and the physical storage of a database.</p>
+<h3>3.2 External Level</h3>
+<p>The external level describes the part of the database visible to a particular user or application. Different users can have different views.</p>
+<h3>3.3 Conceptual Level</h3>
+<p>The conceptual level describes the overall logical structure, including entities, relationships and constraints.</p>
+<h3>3.4 Internal Level</h3>
+<p>The internal level describes how data is physically stored, such as files, indexes and storage structures.</p>
+<h3>3.5 Data Independence</h3>
+<p>Data independence means changes at one schema level can be made with limited effects on other levels. Logical data independence concerns conceptual changes; physical data independence concerns storage changes.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A student may see book search and issue details, while a librarian may also see member records and issue-management screens. Both can use the same database through different views.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Explain three-schema architecture with a neat description. What is data independence?</p></div>
+<div class="page-number">Chapter 3 • Page 4</div>
+</section>
+
+<section class="page" id="chapter4">
+<h2>Chapter 4: Data Models</h2>
+<h3>4.1 Meaning of Data Model</h3>
+<p>A data model defines how data, relationships and constraints are represented in a database.</p>
+<h3>4.2 Hierarchical Model</h3>
+<p>The hierarchical model organises records in a tree structure. A child record generally has one parent.</p>
+<h3>4.3 Network Model</h3>
+<p>The network model represents records connected through links and can support more complex relationships.</p>
+<h3>4.4 Relational Model</h3>
+<p>The relational model organises data into tables consisting of rows and columns. Relationships are represented using keys.</p>
+<h3>4.5 Object and Document Models</h3>
+<p>Object models represent data as objects. Document databases store flexible documents, often in JSON-like structures.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>In a relational library database, STUDENT, BOOK and ISSUE can be separate tables connected through student and book identifiers.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>What is a data model? Explain hierarchical, network and relational models.</p></div>
+<div class="page-number">Chapter 4 • Page 5</div>
+</section>
+
+<section class="page" id="chapter5">
+<h2>Chapter 5: Relational Model and Keys</h2>
+<h3>5.1 Basic Terms</h3>
+<p>A relation is a table, a tuple is a row, an attribute is a column and a domain is the set of permitted values for an attribute.</p>
+<h3>5.2 Primary Key</h3>
+<p>A primary key uniquely identifies each row in a table. It must contain unique, non-NULL values.</p>
+<h3>5.3 Candidate and Alternate Keys</h3>
+<p>A candidate key is a minimal set of attributes that uniquely identifies a row. A candidate key not selected as the primary key is an alternate key.</p>
+<h3>5.4 Foreign Key</h3>
+<p>A foreign key is an attribute or group of attributes that refers to a candidate key, commonly the primary key, in another table.</p>
+<h3>5.5 Composite and Unique Keys</h3>
+<p>A composite key uses more than one attribute. A unique constraint prevents duplicate values in the constrained column or column group.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A Student table can use StudentID as its primary key. An Issue table can store StudentID as a foreign key referring to Student.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Define primary key, foreign key, candidate key and composite key with examples.</p></div>
+<div class="page-number">Chapter 5 • Page 6</div>
+</section>
+
+<section class="page" id="chapter6">
+<h2>Chapter 6: Entity Relationship Model</h2>
+<h3>6.1 Entity and Entity Set</h3>
+<p>An entity is a distinguishable real-world object, such as a student or book. An entity set is a collection of similar entities.</p>
+<h3>6.2 Attributes</h3>
+<p>Attributes describe entities. They may be simple, composite, single-valued, multi-valued or derived.</p>
+<h3>6.3 Relationships</h3>
+<p>A relationship represents an association between entities. For example, a student borrows a book.</p>
+<h3>6.4 Cardinality</h3>
+<p>One-to-one, one-to-many and many-to-many describe how many entity instances can participate in a relationship.</p>
+<h3>6.5 ER Diagram Symbols</h3>
+<p>Rectangles commonly represent entities, ovals represent attributes, diamonds represent relationships, and lines connect them.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A library has STUDENT and BOOK entities. Their many-to-many borrowing relationship can be represented using an ISSUE entity containing issue date and return date.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>What is an ER diagram? Explain entity, attribute, relationship and cardinality.</p></div>
+<div class="page-number">Chapter 6 • Page 7</div>
+</section>
+
+<section class="page" id="chapter7">
+<h2>Chapter 7: Normalization</h2>
+<h3>7.1 Meaning and Purpose</h3>
+<p>Normalization organises relational tables to reduce avoidable duplication and prevent insertion, update and deletion anomalies.</p>
+<h3>7.2 Functional Dependency</h3>
+<p>A functional dependency X → Y means that a value of attribute set X determines a value of attribute set Y.</p>
+<h3>7.3 First Normal Form (1NF)</h3>
+<p>A table is in 1NF when each cell contains an atomic value and repeating groups are removed.</p>
+<h3>7.4 Second Normal Form (2NF)</h3>
+<p>A table is in 2NF when it is in 1NF and every non-key attribute depends on the whole candidate key, not only part of a composite key.</p>
+<h3>7.5 Third Normal Form (3NF)</h3>
+<p>A table is in 3NF when it is in 2NF and non-key attributes do not have inappropriate transitive dependencies on a candidate key.</p>
+<h3>7.6 Benefits</h3>
+<p>Normalization improves consistency and makes updates more reliable. Some systems use carefully chosen denormalization for performance.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>Instead of storing several book titles in one cell, create one row per book. Keep student details in STUDENT and borrowing details in ISSUE.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Explain 1NF, 2NF and 3NF. What are insertion, update and deletion anomalies?</p></div>
+<div class="page-number">Chapter 7 • Page 8</div>
+</section>
+
+<section class="page" id="chapter8">
+<h2>Chapter 8: SQL Introduction and DDL</h2>
+<h3>8.1 What is SQL?</h3>
+<p>SQL stands for Structured Query Language. It is used to define, query and manipulate data in relational database systems.</p>
+<h3>8.2 DDL</h3>
+<p>Data Definition Language commands define database structures. Common commands include CREATE, ALTER, DROP and TRUNCATE.</p>
+<h3>8.3 CREATE</h3>
+<p>CREATE TABLE defines a new table and its columns, data types and constraints.</p>
+<h3>8.4 ALTER and DROP</h3>
+<p>ALTER changes a database object structure. DROP removes a database object such as a table.</p>
+<h3>8.5 Constraints</h3>
+<p>Constraints such as PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK help enforce valid data.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>CREATE TABLE Student (StudentID INTEGER PRIMARY KEY, Name VARCHAR(60) NOT NULL, Email VARCHAR(100) UNIQUE);</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>What is SQL? Explain DDL commands and write a CREATE TABLE statement.</p></div>
+<div class="page-number">Chapter 8 • Page 9</div>
+</section>
+
+<section class="page" id="chapter9">
+<h2>Chapter 9: DML, DQL and SQL Queries</h2>
+<h3>9.1 DML</h3>
+<p>Data Manipulation Language commands insert, update and delete table data. Common commands are INSERT, UPDATE and DELETE.</p>
+<h3>9.2 SELECT</h3>
+<p>SELECT retrieves data from one or more tables. WHERE filters rows according to a condition.</p>
+<h3>9.3 Sorting and Distinct Values</h3>
+<p>ORDER BY sorts query results. DISTINCT removes duplicate result rows.</p>
+<h3>9.4 Aggregate Functions</h3>
+<p>COUNT, SUM, AVG, MIN and MAX calculate summary values over rows.</p>
+<h3>9.5 GROUP BY and HAVING</h3>
+<p>GROUP BY forms groups for aggregate calculations. HAVING filters groups after aggregation.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>INSERT INTO Student(StudentID,Name) VALUES (1,'Aman'); SELECT * FROM Student; UPDATE Student SET Name='Aman Kumar' WHERE StudentID=1;</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Explain INSERT, UPDATE, DELETE and SELECT. What is the difference between WHERE and HAVING?</p></div>
+<div class="page-number">Chapter 9 • Page 10</div>
+</section>
+
+<section class="page" id="chapter10">
+<h2>Chapter 10: Joins, Subqueries and Views</h2>
+<h3>10.1 Joins</h3>
+<p>A join combines rows from two or more tables using a related column or join condition.</p>
+<h3>10.2 INNER JOIN</h3>
+<p>INNER JOIN returns rows that satisfy the join condition in both tables.</p>
+<h3>10.3 LEFT and RIGHT JOIN</h3>
+<p>LEFT JOIN preserves all rows from the left table and matching rows from the right. RIGHT JOIN does the corresponding operation from the right side.</p>
+<h3>10.4 Subquery</h3>
+<p>A subquery is a query nested inside another SQL statement. It can be used in conditions, derived tables or expressions.</p>
+<h3>10.5 Views</h3>
+<p>A view is a named query that behaves like a virtual table. Views can simplify complex queries and limit which columns users see.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>SELECT Student.Name, Issue.IssueDate FROM Student INNER JOIN Issue ON Student.StudentID = Issue.StudentID;</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Explain INNER JOIN and LEFT JOIN. What is a subquery? Define a view.</p></div>
+<div class="page-number">Chapter 10 • Page 11</div>
+</section>
+
+<section class="page" id="chapter11">
+<h2>Chapter 11: Transactions and ACID Properties</h2>
+<h3>11.1 Transaction</h3>
+<p>A transaction is a logical unit of database work containing one or more operations.</p>
+<h3>11.2 Atomicity</h3>
+<p>Atomicity means all operations in a transaction succeed together or the transaction is rolled back.</p>
+<h3>11.3 Consistency</h3>
+<p>Consistency means a committed transaction preserves defined database rules and constraints.</p>
+<h3>11.4 Isolation</h3>
+<p>Isolation controls how concurrent transactions interact and helps prevent interference between them.</p>
+<h3>11.5 Durability</h3>
+<p>Durability means committed changes remain saved even after a system failure, subject to the database's guarantees.</p>
+<h3>11.6 COMMIT and ROLLBACK</h3>
+<p>COMMIT makes a transaction's changes permanent. ROLLBACK cancels changes that have not been committed.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>When a bank transfer debits one account and credits another, both operations should be treated as one transaction so that only one side is not committed alone.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Explain ACID properties. Differentiate COMMIT and ROLLBACK.</p></div>
+<div class="page-number">Chapter 11 • Page 12</div>
+</section>
+
+<section class="page" id="chapter12">
+<h2>Chapter 12: Concurrency Control and Deadlocks</h2>
+<h3>12.1 Concurrent Transactions</h3>
+<p>Concurrency occurs when multiple transactions execute during overlapping periods. It improves resource use but requires control.</p>
+<h3>12.2 Lost Update</h3>
+<p>A lost update can occur when one transaction overwrites another transaction's change without properly accounting for it.</p>
+<h3>12.3 Locks</h3>
+<p>Shared locks generally support reading, while exclusive locks are used for writing. Locking helps coordinate access to shared data.</p>
+<h3>12.4 Serializability</h3>
+<p>A schedule is serializable when its effect is equivalent to some serial execution of the transactions.</p>
+<h3>12.5 Deadlock</h3>
+<p>A deadlock occurs when transactions wait indefinitely for resources held by one another. Systems may detect, prevent or recover from deadlocks.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>If two transactions update the same account record at nearly the same time, concurrency control helps ensure that the final balance is correct.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>What is concurrency control? Explain lost update and deadlock.</p></div>
+<div class="page-number">Chapter 12 • Page 13</div>
+</section>
+
+<section class="page" id="chapter13">
+<h2>Chapter 13: Indexes and Query Processing</h2>
+<h3>13.1 Index</h3>
+<p>An index is a data structure that helps a DBMS find rows more efficiently, often by avoiding a full table scan.</p>
+<h3>13.2 Advantages and Costs</h3>
+<p>Indexes can speed up reads but require storage and can add work to INSERT, UPDATE and DELETE operations.</p>
+<h3>13.3 Clustered and Non-Clustered Concepts</h3>
+<p>Some database systems organise table data around a clustered index; non-clustered indexes maintain a separate lookup structure. Exact behaviour varies by DBMS.</p>
+<h3>13.4 Query Processing</h3>
+<p>A DBMS parses SQL, checks it, chooses an execution plan and runs operations to produce results.</p>
+<h3>13.5 Query Optimization</h3>
+<p>The query optimizer compares possible execution strategies using information such as indexes, table sizes and statistics.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>CREATE INDEX idx_student_email ON Student(Email); can help searches that filter by Email, depending on the DBMS and query plan.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>What is an index? Explain its advantages and disadvantages.</p></div>
+<div class="page-number">Chapter 13 • Page 14</div>
+</section>
+
+<section class="page" id="chapter14">
+<h2>Chapter 14: Database Security, Backup and Recovery</h2>
+<h3>14.1 Database Security</h3>
+<p>Database security protects information from unauthorised access, alteration, disclosure or destruction.</p>
+<h3>14.2 Authentication and Authorization</h3>
+<p>Authentication verifies who a user is. Authorization determines what that user is allowed to do.</p>
+<h3>14.3 Roles and Privileges</h3>
+<p>Privileges such as SELECT, INSERT, UPDATE and DELETE can be granted to users or roles according to their responsibilities.</p>
+<h3>14.4 Backup</h3>
+<p>A backup is a copy of database information used to restore data after accidental deletion, corruption or hardware failure.</p>
+<h3>14.5 Recovery</h3>
+<p>Recovery procedures restore a database to a consistent state. Depending on the system, logs, checkpoints and backups may be used.</p>
+<h3>14.6 Good Practices</h3>
+<p>Use least privilege, secure credentials, apply updates, protect backups and regularly test restoration procedures.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A library assistant may need permission to issue and return books, while only an administrator may manage user accounts and database settings.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Differentiate authentication and authorization. Explain backup and recovery.</p></div>
+<div class="page-number">Chapter 14 • Page 15</div>
+</section>
+
+<section class="page" id="chapter15">
+<h2>Chapter 15: NoSQL and Distributed Databases</h2>
+<h3>15.1 NoSQL Meaning</h3>
+<p>NoSQL databases support data models beyond the traditional relational table model and are often used for flexible or large-scale data workloads.</p>
+<h3>15.2 Key-Value Stores</h3>
+<p>A key-value database stores values associated with unique keys. It is useful for simple lookups and caching.</p>
+<h3>15.3 Document Databases</h3>
+<p>Document databases store records as documents, commonly in JSON-like formats, which can support flexible fields.</p>
+<h3>15.4 Column-Family and Graph Databases</h3>
+<p>Column-family systems organise data around column families. Graph databases represent entities as nodes and relationships as edges.</p>
+<h3>15.5 Distributed Databases</h3>
+<p>A distributed database stores or replicates data across multiple computers or locations. Design choices affect availability, consistency and performance.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A relational DBMS may store a fixed student and issue schema, while a document database may store a flexible profile document with optional fields.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>What is NoSQL? Explain key-value, document, graph and column-family databases.</p></div>
+<div class="page-number">Chapter 15 • Page 16</div>
+</section>
+
+<section class="page" id="chapter16">
+<h2>Chapter 16: Database Design Case Study: Library System</h2>
+<h3>16.1 Requirements</h3>
+<p>Identify users and operations: register students, maintain books, search the catalogue, issue and return books, and produce reports.</p>
+<h3>16.2 Main Entities</h3>
+<p>Typical entities include STUDENT, BOOK, CATEGORY, ISSUE and USER. Each entity should have a suitable primary key.</p>
+<h3>16.3 Relationships</h3>
+<p>A category can contain many books. A student can have many issue records. Each issue record refers to one student and one book.</p>
+<h3>16.4 Example Table Design</h3>
+<p>STUDENT(StudentID, Name, Email); BOOK(BookID, Title, CategoryID); CATEGORY(CategoryID, CategoryName); ISSUE(IssueID, StudentID, BookID, IssueDate, ReturnDate).</p>
+<h3>16.5 Testing and Maintenance</h3>
+<p>Test valid and invalid records, duplicate keys, missing values, issue/return workflows, concurrent access and backup restoration.</p>
+<div class="info-box"><strong>Practical Example / Application:</strong><p>A simple design can use STUDENT, BOOK, CATEGORY and ISSUE tables. ISSUE stores foreign keys to STUDENT and BOOK, along with dates and return status.</p></div>
+<div class="exercise"><h3>Important Questions</h3><p>Design a database for a library. Identify entities, primary keys and relationships.</p></div>
+<div class="page-number">Chapter 16 • Page 17</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>Glossary</h2>
+<ul>
+<li><strong>Attribute:</strong> A named property or column of a relation.</li>
+<li><strong>Candidate Key:</strong> A minimal attribute set that uniquely identifies a row.</li>
+<li><strong>DBMS:</strong> Software used to create, manage and control databases.</li>
+<li><strong>DDL:</strong> SQL commands used to define database structures.</li>
+<li><strong>DML:</strong> SQL commands used to insert, update and delete data.</li>
+<li><strong>Entity:</strong> A distinguishable real-world object represented in a database.</li>
+<li><strong>Foreign Key:</strong> A column or column group referring to a key in another table.</li>
+<li><strong>Normalization:</strong> Organising tables to reduce redundancy and anomalies.</li>
+<li><strong>Primary Key:</strong> A key selected to uniquely identify each row.</li>
+<li><strong>Query:</strong> A request to retrieve or manipulate database information.</li>
+<li><strong>Relation:</strong> A table in the relational model.</li>
+<li><strong>SQL:</strong> Structured Query Language.</li>
+<li><strong>Transaction:</strong> A logical unit of database operations.</li>
+<li><strong>Tuple:</strong> A row in a relational table.</li>
+<li><strong>View:</strong> A named query presented like a virtual table.</li>
+</ul>
+<div class="page-number">Glossary • Page 18</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+<p>The following resources can help students study database systems in greater detail:</p>
+<ol>
+<li>Abraham Silberschatz, Henry F. Korth and S. Sudarshan, <em>Database System Concepts</em>.</li>
+<li>Ramez Elmasri and Shamkant B. Navathe, <em>Fundamentals of Database Systems</em>.</li>
+<li>Official SQLite documentation.</li>
+<li>Official MySQL documentation.</li>
+<li>PostgreSQL documentation.</li>
+<li>University DBMS course notes and laboratory exercises.</li>
+</ol>
+<h3>Suggested Study Method</h3>
+<ul>
+<li>Draw an ER diagram before creating tables.</li>
+<li>Practise SQL using a small sample database.</li>
+<li>Check primary key and foreign key constraints.</li>
+<li>Test queries with normal and invalid inputs.</li>
+<li>Review transaction and backup concepts regularly.</li>
+</ul>
+<div class="info-box"><strong>End of Book</strong><br>Database Management System — Smart Digital Library Team, First Edition 2026.</div>
+<div class="page-number">References • Page 19</div>
+</section>
+
+<!-- UPDATED: Bottom bookmark button now has its own ID -->
+<div class="action-row">
+<button onclick="window.print()">Print / Save as PDF</button>
+<button id="bottomBookmarkBtn" onclick="toggleBookmark()">☆ Save Bookmark</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">© 2026 Smart Digital Library | Database Management System</footer>
+
+<script>
+const bookmarkKey = "dbmsBookmark";
+const historyKey = "readingHistory";
+
+/* UPDATED: Both bookmark buttons now use the same function */
+function toggleBookmark() {
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    localStorage.setItem(bookmarkKey, String(!saved));
+
+    updateBookmark();
+}
+
+/* UPDATED: Synchronises the top button, bottom button and status */
+function updateBookmark() {
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    const topButton = document.getElementById("topBookmarkBtn");
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    const status = document.getElementById("bookmarkStatus");
+
+    if (topButton) {
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if (bottomButton) {
+        bottomButton.textContent = saved
+            ? "★ Remove Bookmark"
+            : "☆ Save Bookmark";
+
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if (status) {
+        status.textContent = saved
+            ? "★ This book is bookmarked"
+            : "☆ This book is not bookmarked";
+    }
+}
+
+function updateProgress() {
+    const scrollTop = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? (scrollTop / total) * 100 : 0;
+
+    document.getElementById("progressFill").style.width = progress + "%";
+}
+
+function saveReadingHistory() {
+    const sections = document.querySelectorAll(".cover,.page");
+    let currentPage = 1;
+
+    sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+
+        if (rect.top < window.innerHeight * 0.65) {
+            currentPage = index + 1;
+        }
+    });
+
+    let history = [];
+
+    try {
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+
+        if (!Array.isArray(history)) {
+            history = [];
+        }
+    } catch (error) {
+        history = [];
+    }
+
+    const existing = history.findIndex(item => item.title === "DBMS");
+
+    const record = {
+        title: "DBMS",
+        icon: "🗄️",
+        category: "Database",
+        page: currentPage,
+        time: new Date().toLocaleString()
+    };
+
+    if (existing >= 0) {
+        history[existing] = record;
+    } else {
+        history.push(record);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(history));
+}
+
+window.addEventListener("scroll", () => {
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("load", () => {
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+</script>
+
+</body>
+</html>

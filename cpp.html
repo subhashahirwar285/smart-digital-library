@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ Programming - Smart Digital Library</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#173a63;--blue:#1565c0;--light:#e3f2fd;--ink:#263238}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f7;color:var(--ink);line-height:1.8}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial,sans-serif}
+.topbar a,.topbar button{color:white;text-decoration:none;border:1px solid #ffffff70;background:transparent;padding:8px 13px;border-radius:5px;cursor:pointer;font-size:14px}
+.topbar a:hover,.topbar button:hover{background:#ffffff20}
+.progress-track{height:5px;background:#d7e3ef;position:sticky;top:0;z-index:10}
+.progress-fill{height:5px;width:0;background:#2196f3}
+.layout{max-width:1250px;margin:25px auto;padding:0 18px;display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+.sidebar{background:white;padding:20px;border-radius:10px;box-shadow:0 3px 14px #173a6310;position:sticky;top:20px;max-height:85vh;overflow:auto;font-family:Arial,sans-serif}
+.sidebar h3{color:var(--navy);margin-bottom:12px}
+.sidebar a{display:block;color:#34495e;text-decoration:none;padding:7px 9px;border-radius:5px;font-size:13px;border-bottom:1px solid #edf1f5}
+.sidebar a:hover{background:var(--light);color:var(--blue)}
+.book{min-width:0}
+.cover{min-height:570px;background:linear-gradient(135deg,#102b4d,#145a9e 58%,#42a5f5);color:white;border-radius:12px;padding:55px 45px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 25px #173a6330}
+.cover:before,.cover:after{content:"";position:absolute;border:1px solid #ffffff35;border-radius:50%;width:380px;height:380px;right:-110px;top:50px}
+.cover:after{width:260px;height:260px;right:-50px;top:110px}
+.cover-top,.cover-main,.cover-bottom{position:relative;z-index:1}
+.cover-label{letter-spacing:4px;font:12px Arial,sans-serif;color:#c9e5ff}
+.cover-symbol{font-size:75px;margin:30px 0 5px}
+.cover h1{font:bold clamp(38px,6vw,65px)/1.08 Arial,sans-serif;max-width:650px;margin:10px 0 18px}
+.cover-subtitle{font:18px Arial,sans-serif;color:#d9ecff;max-width:550px}
+.cover-line{width:75px;height:5px;background:#90caf9;margin:25px 0}
+.cover-bottom{border-top:1px solid #ffffff55;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font:14px Arial,sans-serif}
+.page{background:white;margin-top:22px;padding:42px 48px;border-radius:8px;box-shadow:0 3px 14px #173a6310;scroll-margin-top:20px;min-height:300px}
+.page h2{font:bold 27px Arial,sans-serif;color:var(--navy);border-bottom:2px solid #dceaf7;padding-bottom:12px;margin-bottom:20px}
+.page h3{font:bold 19px Arial,sans-serif;color:var(--blue);margin:24px 0 10px}
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 28px}
+.page li{margin:6px 0}
+.page-number{text-align:right;border-top:1px solid #ddd;margin-top:35px;padding-top:12px;color:#718096;font:12px Arial,sans-serif}
+.info-box{background:#eef6ff;border-left:4px solid var(--blue);padding:14px 17px;margin:18px 0;border-radius:4px}
+.note{background:#fff8e6;border-left:4px solid #e0a326;padding:14px 17px;margin:18px 0}
+pre{background:#172536;color:#e5f2ff;padding:17px;border-radius:7px;overflow-x:auto;margin:15px 0;font:14px/1.65 Consolas,monospace}
+code{font-family:Consolas,monospace}
+.exercise{background:#f4f7fa;padding:16px 20px;border-radius:7px;margin-top:20px}
+.exercise h3{margin-top:0}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;font-family:Arial,sans-serif}
+.action-row button{background:var(--blue);color:white;border:0;border-radius:5px;padding:9px 14px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.bookmark-status{font:13px Arial,sans-serif;color:#287443;margin-top:7px}
+.footer{text-align:center;padding:25px;color:#65758b;font:13px Arial,sans-serif}
+
+@media(max-width:850px){
+.layout{grid-template-columns:1fr}
+.sidebar{position:relative;top:0;max-height:300px}
+.cover{min-height:480px;padding:35px 25px}
+.page{padding:28px 23px}
+}
+
+@media print{
+body{background:white}
+.topbar,.progress-track,.sidebar,.action-row,.footer{display:none!important}
+.layout{display:block;max-width:100%;margin:0;padding:0}
+.cover,.page{box-shadow:none;border-radius:0;break-after:page;margin:0;min-height:95vh}
+.page{padding:25mm 22mm}
+.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<a href="index.html">← Back to Library</a>
+<strong>📘 Smart Digital Library</strong>
+<div>
+<button id="topBookmarkBtn" type="button" onclick="toggleBookmark()">☆ Bookmark</button>
+<a href="qr.html?book=cpp-programming">QR Code</a>
+<button onclick="window.print()">Print</button>
+</div>
+</header>
+
+<div class="progress-track">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<div class="layout">
+
+<aside class="sidebar">
+<h3>📚 Contents</h3>
+<a href="#preface">Preface</a>
+<a href="#chapter1">1. Introduction to C++</a>
+<a href="#chapter2">2. Structure of C++ Program</a>
+<a href="#chapter3">3. Variables and Data Types</a>
+<a href="#chapter4">4. Operators and Expressions</a>
+<a href="#chapter5">5. Input and Output</a>
+<a href="#chapter6">6. Decision Making</a>
+<a href="#chapter7">7. Loops</a>
+<a href="#chapter8">8. Arrays and Strings</a>
+<a href="#chapter9">9. Functions and Overloading</a>
+<a href="#chapter10">10. Classes and Objects</a>
+<a href="#chapter11">11. Constructors and Destructors</a>
+<a href="#chapter12">12. Inheritance</a>
+<a href="#chapter13">13. Polymorphism</a>
+<a href="#chapter14">14. Encapsulation and Abstraction</a>
+<a href="#chapter15">15. Pointers and File Handling</a>
+<a href="#chapter16">16. Practical Projects</a>
+<a href="#glossary">Glossary</a>
+<a href="#references">References</a>
+<div class="bookmark-status" id="bookmarkStatus"></div>
+</aside>
+
+<main class="book">
+
+<section class="cover">
+<div class="cover-top">
+<div class="cover-label">SMART DIGITAL LIBRARY • COMPUTER SCIENCE SERIES</div>
+<div class="cover-symbol">💻</div>
+</div>
+
+<div class="cover-main">
+<div class="cover-label">A COMPLETE STUDENT TEXTBOOK</div>
+<h1>C++<br>PROGRAMMING</h1>
+<div class="cover-line"></div>
+<p class="cover-subtitle">Object-Oriented Programming, Classes, Inheritance, Polymorphism and Practical Applications</p>
+</div>
+
+<div class="cover-bottom">
+<span>First Edition • 2026</span>
+<span>Smart Digital Library Team</span>
+</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+
+<p>C++ is a powerful general-purpose programming language used to develop software applications, operating systems, games, browsers and performance-intensive programs. It supports procedural programming as well as object-oriented programming.</p>
+
+<p>This textbook introduces C++ programming from fundamental concepts to advanced object-oriented features. Students will learn program structure, variables, data types, operators, conditional statements, loops, arrays, strings and functions.</p>
+
+<p>The book also explains classes, objects, constructors, destructors, inheritance, polymorphism, encapsulation, abstraction, pointers and file handling.</p>
+
+<div class="info-box">
+<strong>How to use this book:</strong> Study each chapter, type the example programs in a C++ compiler, execute them and modify the code to understand how the language works.
+</div>
+
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Understand the basic concepts and history of C++.</li>
+<li>Write and execute C++ programs.</li>
+<li>Understand variables, data types and operators.</li>
+<li>Develop programs using functions, arrays and strings.</li>
+<li>Understand object-oriented programming concepts.</li>
+<li>Implement inheritance and polymorphism.</li>
+<li>Work with pointers and file handling.</li>
+<li>Develop practical applications using C++.</li>
+</ul>
+
+<div class="page-number">Preface • Page 1</div>
+</section>
+
+<section class="page" id="chapter1">
+<h2>Chapter 1: Introduction to C++ Programming</h2>
+
+<h3>1.1 What is C++?</h3>
+<p>C++ is a general-purpose, compiled programming language developed by Bjarne Stroustrup at Bell Laboratories. It was originally designed as an extension of the C programming language and supports both procedural and object-oriented programming.</p>
+
+<h3>1.2 History of C++</h3>
+<p>C++ development began in 1979 under the name C with Classes. The language was later renamed C++ in 1983. It introduced classes and other object-oriented features while retaining many capabilities of C.</p>
+
+<h3>1.3 Features of C++</h3>
+<ul>
+<li><strong>Object-Oriented:</strong> Supports classes and objects.</li>
+<li><strong>Multi-Paradigm:</strong> Supports procedural, object-oriented and generic programming.</li>
+<li><strong>Fast Execution:</strong> Compiled programs can provide high performance.</li>
+<li><strong>Reusability:</strong> Supports code reuse through classes and inheritance.</li>
+<li><strong>Function Overloading:</strong> Allows functions with the same name and different parameters.</li>
+<li><strong>Templates:</strong> Support generic programming.</li>
+<li><strong>Standard Library:</strong> Provides containers, algorithms and utilities.</li>
+</ul>
+
+<h3>1.4 Applications of C++</h3>
+<p>C++ is used in game development, desktop applications, operating systems, browsers, embedded systems, graphics software, simulations and financial applications.</p>
+
+<h3>1.5 Difference Between C and C++</h3>
+<ul>
+<li>C mainly follows procedural programming, while C++ supports procedural and object-oriented programming.</li>
+<li>C uses structures, while C++ supports classes with access control and member functions.</li>
+<li>C++ supports function overloading; standard C does not.</li>
+<li>C++ provides features such as inheritance and polymorphism.</li>
+<li>C++ includes a standard library with containers such as vector and map.</li>
+</ul>
+
+<h3>1.6 Object-Oriented Programming</h3>
+<p>Object-oriented programming (OOP) is a programming approach that organizes software around objects. An object combines data and functions that operate on that data.</p>
+
+<div class="info-box">
+<strong>Important:</strong> The four commonly taught pillars of OOP are encapsulation, abstraction, inheritance and polymorphism.
+</div>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is C++?</li>
+<li>Who developed C++?</li>
+<li>Write five features of C++.</li>
+<li>Explain the applications of C++.</li>
+<li>What is object-oriented programming?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 1 • Page 2</div>
+</section>
+
+<section class="page" id="chapter2">
+<h2>Chapter 2: Structure of a C++ Program</h2>
+
+<h3>2.1 Basic Structure</h3>
+<p>A C++ program generally contains header inclusions, declarations, function definitions and executable statements. The main() function is the entry point of a typical hosted C++ application.</p>
+
+<h3>2.2 First C++ Program</h3>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+    cout &lt;&lt; "Hello, World!";
+    return 0;
+}</pre>
+
+<h3>2.3 Explanation</h3>
+<ul>
+<li><code>#include &lt;iostream&gt;</code> provides input and output stream facilities.</li>
+<li><code>using namespace std;</code> makes names from the standard namespace available without writing std:: each time.</li>
+<li><code>int main()</code> defines the main function.</li>
+<li><code>cout</code> displays output.</li>
+<li><code>&lt;&lt;</code> is the stream insertion operator.</li>
+<li><code>return 0;</code> indicates successful program completion.</li>
+</ul>
+
+<h3>2.4 Comments in C++</h3>
+<p>Comments are explanatory notes in source code. They are ignored by the compiler.</p>
+
+<pre>// Single-line comment
+
+/*
+Multi-line
+comment
+*/</pre>
+
+<h3>2.5 Compilation and Execution</h3>
+<p>Save the source file with a .cpp extension. Using the GCC C++ compiler, compile it with:</p>
+
+<pre>g++ hello.cpp -o hello</pre>
+
+<p>On Windows, run:</p>
+
+<pre>hello.exe</pre>
+
+<h3>2.6 Namespace</h3>
+<p>A namespace groups related identifiers and helps prevent naming conflicts. The standard C++ library uses the std namespace.</p>
+
+<pre>std::cout &lt;&lt; "Welcome to C++";</pre>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>Explain the structure of a C++ program.</li>
+<li>What is the purpose of iostream?</li>
+<li>What is the main() function?</li>
+<li>Explain cout and the insertion operator.</li>
+<li>What is a namespace?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 2 • Page 3</div>
+</section>
+
+<section class="page" id="chapter3">
+<h2>Chapter 3: Variables, Constants and Data Types</h2>
+
+<h3>3.1 Variables</h3>
+<p>A variable is a named storage location used to hold a value. Each variable has a data type that determines the kind of information it can store.</p>
+
+<pre>int age = 20;
+float price = 45.50f;
+char grade = 'A';
+string name = "Rahul";</pre>
+
+<h3>3.2 Rules for Naming Variables</h3>
+<ul>
+<li>A variable name can contain letters, digits and underscores.</li>
+<li>It cannot begin with a digit.</li>
+<li>Spaces are not allowed.</li>
+<li>Reserved keywords cannot be used.</li>
+<li>C++ identifiers are case-sensitive.</li>
+</ul>
+
+<h3>3.3 Basic Data Types</h3>
+<ul>
+<li><strong>int:</strong> Stores integer values.</li>
+<li><strong>float:</strong> Stores floating-point values.</li>
+<li><strong>double:</strong> Stores floating-point values with greater or equal precision than float.</li>
+<li><strong>char:</strong> Stores character values.</li>
+<li><strong>bool:</strong> Stores true or false.</li>
+<li><strong>void:</strong> Represents the absence of a value.</li>
+</ul>
+
+<h3>3.4 Constants</h3>
+<p>A constant represents a value that cannot be modified through its identifier after initialization.</p>
+
+<pre>const double PI = 3.14159;</pre>
+
+<h3>3.5 Type Conversion</h3>
+<p>Type conversion changes a value from one data type to another. It can happen automatically or through explicit casting.</p>
+
+<pre>int number = 10;
+
+double result = static_cast&lt;double&gt;(number) / 3;
+
+cout &lt;&lt; result;</pre>
+
+<h3>3.6 Auto Keyword</h3>
+<p>The auto keyword allows the compiler to determine a variable's type from its initializer.</p>
+
+<pre>auto number = 100;
+auto price = 45.50;</pre>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>Define a variable.</li>
+<li>Explain basic data types in C++.</li>
+<li>What is a constant?</li>
+<li>Explain type conversion.</li>
+<li>What is the auto keyword?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 3 • Page 4</div>
+</section>
+
+<section class="page" id="chapter4">
+<h2>Chapter 4: Operators and Expressions</h2>
+
+<h3>4.1 Introduction</h3>
+<p>Operators are symbols that perform operations on variables and values. An expression combines operators and operands to produce a result.</p>
+
+<h3>4.2 Arithmetic Operators</h3>
+<p>Arithmetic operators perform mathematical operations.</p>
+
+<pre>int a = 10, b = 3;
+
+cout &lt;&lt; a + b &lt;&lt; endl;
+cout &lt;&lt; a - b &lt;&lt; endl;
+cout &lt;&lt; a * b &lt;&lt; endl;
+cout &lt;&lt; a / b &lt;&lt; endl;
+cout &lt;&lt; a % b &lt;&lt; endl;</pre>
+
+<h3>4.3 Relational Operators</h3>
+<p>Relational operators compare two values and produce a Boolean result.</p>
+<ul>
+<li><code>==</code> Equal to</li>
+<li><code>!=</code> Not equal to</li>
+<li><code>&gt;</code> Greater than</li>
+<li><code>&lt;</code> Less than</li>
+<li><code>&gt;=</code> Greater than or equal to</li>
+<li><code>&lt;=</code> Less than or equal to</li>
+</ul>
+
+<h3>4.4 Logical Operators</h3>
+<ul>
+<li><code>&amp;&amp;</code> Logical AND</li>
+<li><code>||</code> Logical OR</li>
+<li><code>!</code> Logical NOT</li>
+</ul>
+
+<h3>4.5 Assignment Operators</h3>
+<p>Assignment operators store or update values. Examples include =, +=, -=, *= and /=.</p>
+
+<h3>4.6 Increment and Decrement</h3>
+<p>The increment operator increases a value by one, while the decrement operator decreases it by one.</p>
+
+<pre>int x = 5;
+
+x++;
+cout &lt;&lt; x &lt;&lt; endl;
+
+x--;
+cout &lt;&lt; x;</pre>
+
+<h3>4.7 Conditional Operator</h3>
+<p>The conditional operator selects one of two expressions depending on a condition.</p>
+
+<pre>int a = 10, b = 20;
+
+int maximum = (a &gt; b) ? a : b;
+
+cout &lt;&lt; maximum;</pre>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What are operators?</li>
+<li>Explain arithmetic operators.</li>
+<li>Differentiate relational and logical operators.</li>
+<li>What is the increment operator?</li>
+<li>Explain the conditional operator.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 4 • Page 5</div>
+</section>
+
+<section class="page" id="chapter5">
+<h2>Chapter 5: Input and Output</h2>
+
+<h3>5.1 Introduction</h3>
+<p>Input and output operations allow a program to communicate with users. C++ provides stream-based input and output facilities through the iostream header.</p>
+
+<h3>5.2 cout Statement</h3>
+<p>The cout object is used to display output on the standard output stream.</p>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+    cout &lt;&lt; "Welcome to C++";
+    return 0;
+}</pre>
+
+<h3>5.3 cin Statement</h3>
+<p>The cin object reads formatted input from the keyboard. The extraction operator &gt;&gt; is used to receive values.</p>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+    int age;
+
+    cout &lt;&lt; "Enter your age: ";
+    cin &gt;&gt; age;
+
+    cout &lt;&lt; "Your age is " &lt;&lt; age;
+
+    return 0;
+}</pre>
+
+<h3>5.4 getline() Function</h3>
+<p>The getline() function reads a complete line of text, including spaces, until a newline character is encountered.</p>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main()
+{
+    string name;
+
+    cout &lt;&lt; "Enter your full name: ";
+    getline(cin, name);
+
+    cout &lt;&lt; "Hello " &lt;&lt; name;
+
+    return 0;
+}</pre>
+
+<h3>5.5 Manipulators</h3>
+<p>Manipulators help control input and output formatting.</p>
+<ul>
+<li><code>endl</code> — inserts a new line and flushes the output stream.</li>
+<li><code>setw()</code> — sets the minimum field width.</li>
+<li><code>setprecision()</code> — controls floating-point precision.</li>
+<li><code>fixed</code> — uses fixed-point floating-point formatting.</li>
+</ul>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+using namespace std;
+
+int main()
+{
+    double price = 45.6789;
+
+    cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; price;
+
+    return 0;
+}</pre>
+
+<div class="note">
+<strong>Important:</strong> cin with &gt;&gt; normally reads one word for a string. Use getline() when the complete line is required.
+</div>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is cout?</li>
+<li>Explain cin with an example.</li>
+<li>What is getline()?</li>
+<li>What are manipulators?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 5 • Page 6</div>
+</section>
+
+<section class="page" id="chapter6">
+<h2>Chapter 6: Decision Making Statements</h2>
+
+<h3>6.1 Introduction</h3>
+<p>Decision-making statements allow a program to select different actions according to conditions. They help implement logical decisions in applications.</p>
+
+<h3>6.2 if Statement</h3>
+
+<pre>int age = 20;
+
+if (age &gt;= 18)
+{
+    cout &lt;&lt; "Adult";
+}</pre>
+
+<h3>6.3 if-else Statement</h3>
+
+<pre>int number = 7;
+
+if (number % 2 == 0)
+{
+    cout &lt;&lt; "Even Number";
+}
+else
+{
+    cout &lt;&lt; "Odd Number";
+}</pre>
+
+<h3>6.4 else-if Ladder</h3>
+<p>An else-if ladder checks multiple conditions in sequence.</p>
+
+<pre>int marks = 75;
+
+if (marks &gt;= 90)
+    cout &lt;&lt; "Grade A";
+else if (marks &gt;= 70)
+    cout &lt;&lt; "Grade B";
+else if (marks &gt;= 50)
+    cout &lt;&lt; "Grade C";
+else
+    cout &lt;&lt; "Needs Improvement";</pre>
+
+<h3>6.5 Nested if</h3>
+<p>A nested if is an if statement placed inside another if statement. It is useful when a decision depends on multiple conditions.</p>
+
+<h3>6.6 switch Statement</h3>
+<p>The switch statement selects a block according to the value of an integral or enumeration expression.</p>
+
+<pre>int choice = 2;
+
+switch(choice)
+{
+    case 1:
+        cout &lt;&lt; "Addition";
+        break;
+
+    case 2:
+        cout &lt;&lt; "Subtraction";
+        break;
+
+    default:
+        cout &lt;&lt; "Invalid Choice";
+}</pre>
+
+<h3>6.7 Importance of Decision Making</h3>
+<p>Decision statements are used in login systems, calculators, banking applications, grading systems and menu-driven programs.</p>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is decision making?</li>
+<li>Explain if and if-else.</li>
+<li>What is an else-if ladder?</li>
+<li>Explain switch statement.</li>
+<li>What is the use of break?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 6 • Page 7</div>
+</section>
+
+<section class="page" id="chapter7">
+<h2>Chapter 7: Looping Statements</h2>
+
+<h3>7.1 Introduction to Loops</h3>
+<p>A loop is a programming structure that repeats a block of statements while a specified condition is satisfied. Loops reduce code repetition.</p>
+
+<h3>7.2 for Loop</h3>
+<p>A for loop is commonly used when the number of repetitions is known.</p>
+
+<pre>for(int i = 1; i &lt;= 5; i++)
+{
+    cout &lt;&lt; i &lt;&lt; endl;
+}</pre>
+
+<h3>7.3 while Loop</h3>
+<p>A while loop checks the condition before executing its body.</p>
+
+<pre>int i = 1;
+
+while(i &lt;= 5)
+{
+    cout &lt;&lt; i &lt;&lt; endl;
+    i++;
+}</pre>
+
+<h3>7.4 do-while Loop</h3>
+<p>A do-while loop executes its body at least once because the condition is checked after the body.</p>
+
+<pre>int i = 1;
+
+do
+{
+    cout &lt;&lt; i &lt;&lt; endl;
+    i++;
+}
+while(i &lt;= 5);</pre>
+
+<h3>7.5 break Statement</h3>
+<p>The break statement terminates the nearest enclosing loop or switch statement.</p>
+
+<h3>7.6 continue Statement</h3>
+<p>The continue statement skips the remaining statements of the current iteration and proceeds to the next iteration.</p>
+
+<h3>7.7 Nested Loops</h3>
+<p>A nested loop is a loop inside another loop. It is useful for patterns, tables and matrix operations.</p>
+
+<pre>for(int i = 1; i &lt;= 3; i++)
+{
+    for(int j = 1; j &lt;= 3; j++)
+    {
+        cout &lt;&lt; "* ";
+    }
+
+    cout &lt;&lt; endl;
+}</pre>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>Define a loop.</li>
+<li>Explain for loop.</li>
+<li>Differentiate while and do-while.</li>
+<li>What is break?</li>
+<li>What is a nested loop?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 7 • Page 8</div>
+</section>
+
+<section class="page" id="chapter8">
+<h2>Chapter 8: Arrays and Strings</h2>
+
+<h3>8.1 Introduction to Arrays</h3>
+<p>An array is a collection of elements of the same data type stored in consecutive memory locations. Array indexing starts from zero.</p>
+
+<h3>8.2 Array Declaration</h3>
+
+<pre>int marks[5] = {70, 80, 65, 90, 75};</pre>
+
+<h3>8.3 Accessing Array Elements</h3>
+
+<pre>int numbers[5] = {10, 20, 30, 40, 50};
+
+for(int i = 0; i &lt; 5; i++)
+{
+    cout &lt;&lt; numbers[i] &lt;&lt; endl;
+}</pre>
+
+<h3>8.4 Two-Dimensional Arrays</h3>
+<p>A two-dimensional array stores values in rows and columns. It is useful for matrices and tables.</p>
+
+<pre>int matrix[2][3] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+for(int i = 0; i &lt; 2; i++)
+{
+    for(int j = 0; j &lt; 3; j++)
+    {
+        cout &lt;&lt; matrix[i][j] &lt;&lt; " ";
+    }
+
+    cout &lt;&lt; endl;
+}</pre>
+
+<h3>8.5 Strings in C++</h3>
+<p>C++ provides the string class in the standard library. It is easier to use than manually managing character arrays for many common string operations.</p>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main()
+{
+    string name = "Smart Library";
+
+    cout &lt;&lt; name;
+    cout &lt;&lt; endl &lt;&lt; name.length();
+
+    return 0;
+}</pre>
+
+<h3>8.6 Common String Functions</h3>
+<ul>
+<li><code>length()</code> — returns the number of characters.</li>
+<li><code>size()</code> — returns the string size.</li>
+<li><code>append()</code> — adds text to the end.</li>
+<li><code>substr()</code> — extracts part of a string.</li>
+<li><code>find()</code> — searches for text.</li>
+<li><code>empty()</code> — checks whether the string is empty.</li>
+</ul>
+
+<h3>8.7 Vector Introduction</h3>
+<p>The vector container provides a dynamic sequence that can grow or shrink during program execution.</p>
+
+<pre>#include &lt;vector&gt;
+
+vector&lt;int&gt; numbers = {10, 20, 30};
+
+numbers.push_back(40);</pre>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>Define an array.</li>
+<li>What is array indexing?</li>
+<li>Explain a two-dimensional array.</li>
+<li>What is the string class?</li>
+<li>What is a vector?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 8 • Page 9</div>
+</section>
+
+<section class="page" id="chapter9">
+<h2>Chapter 9: Functions and Function Overloading</h2>
+
+<h3>9.1 Meaning of Function</h3>
+<p>A function is a named block of code that performs a particular task. Functions make programs modular, reusable and easier to maintain.</p>
+
+<h3>9.2 Function Declaration</h3>
+<p>A function declaration informs the compiler about the function name, return type and parameters.</p>
+
+<pre>int add(int a, int b);</pre>
+
+<h3>9.3 Function Definition</h3>
+
+<pre>int add(int a, int b)
+{
+    return a + b;
+}</pre>
+
+<h3>9.4 Function Calling</h3>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main()
+{
+    int result = add(10, 20);
+
+    cout &lt;&lt; "Sum = " &lt;&lt; result;
+
+    return 0;
+}</pre>
+
+<h3>9.5 Types of Functions</h3>
+<ul>
+<li>Function without arguments and without return value.</li>
+<li>Function with arguments and without return value.</li>
+<li>Function without arguments and with return value.</li>
+<li>Function with arguments and with return value.</li>
+</ul>
+
+<h3>9.6 Function Overloading</h3>
+<p>Function overloading allows multiple functions to have the same name with different parameter lists. The compiler selects the appropriate function based on the arguments.</p>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+double add(double a, double b)
+{
+    return a + b;
+}
+
+int main()
+{
+    cout &lt;&lt; add(10, 20) &lt;&lt; endl;
+    cout &lt;&lt; add(5.5, 2.5);
+
+    return 0;
+}</pre>
+
+<h3>9.7 Recursion</h3>
+<p>Recursion occurs when a function calls itself. A base condition is necessary to stop recursive calls.</p>
+
+<pre>int factorial(int n)
+{
+    if(n &lt;= 1)
+        return 1;
+
+    return n * factorial(n - 1);
+}</pre>
+
+<h3>9.8 Default Arguments</h3>
+<p>Default arguments provide values that are used when the caller does not supply corresponding arguments.</p>
+
+<pre>void greet(string name = "Student")
+{
+    cout &lt;&lt; "Hello " &lt;&lt; name;
+}</pre>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is a function?</li>
+<li>Explain function declaration.</li>
+<li>What is function overloading?</li>
+<li>What is recursion?</li>
+<li>Explain default arguments.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 9 • Page 10</div>
+</section>
+
+<section class="page" id="chapter10">
+<h2>Chapter 10: Classes and Objects</h2>
+
+<h3>10.1 Introduction</h3>
+<p>Classes and objects are fundamental concepts of object-oriented programming. A class defines the structure and behavior of objects. An object is an instance of a class.</p>
+
+<h3>10.2 Class Definition</h3>
+<p>A class can contain data members and member functions. It is declared using the class keyword.</p>
+
+<pre>class Student
+{
+public:
+    int roll;
+    string name;
+
+    void display()
+    {
+        cout &lt;&lt; roll &lt;&lt; endl;
+        cout &lt;&lt; name;
+    }
+};</pre>
+
+<h3>10.3 Creating Objects</h3>
+<p>Objects are created using the class name. Each object has its own non-static data members.</p>
+
+<pre>Student s1;
+
+s1.roll = 101;
+s1.name = "Amit";
+
+s1.display();</pre>
+
+<h3>10.4 Access Specifiers</h3>
+<ul>
+<li><strong>Public:</strong> Members can be accessed through the class interface from outside the class.</li>
+<li><strong>Private:</strong> Members are accessible to class member functions and specified friends.</li>
+<li><strong>Protected:</strong> Members are accessible within the class, specified friends and derived classes.</li>
+</ul>
+
+<h3>10.5 Complete Class Example</h3>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Student
+{
+private:
+    int roll;
+
+public:
+    string name;
+
+    void setRoll(int r)
+    {
+        roll = r;
+    }
+
+    void display()
+    {
+        cout &lt;&lt; "Roll: " &lt;&lt; roll &lt;&lt; endl;
+        cout &lt;&lt; "Name: " &lt;&lt; name;
+    }
+};
+
+int main()
+{
+    Student s1;
+
+    s1.setRoll(101);
+    s1.name = "Rahul";
+
+    s1.display();
+
+    return 0;
+}</pre>
+
+<h3>10.6 Benefits of Classes</h3>
+<ul>
+<li>Organize related data and functions.</li>
+<li>Support data protection.</li>
+<li>Make software easier to maintain.</li>
+<li>Support object-oriented design.</li>
+<li>Help create reusable software components.</li>
+</ul>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is a class?</li>
+<li>Define an object.</li>
+<li>Differentiate class and object.</li>
+<li>Explain access specifiers.</li>
+<li>What is a data member?</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 10 • Page 11</div>
+</section>
+
+<section class="page" id="chapter11">
+<h2>Chapter 11: Constructors and Destructors</h2>
+
+<h3>11.1 Constructor</h3>
+<p>A constructor is a special member function that is automatically called when an object is created. Its name is the same as the class name and it has no return type.</p>
+
+<h3>11.2 Default Constructor</h3>
+<p>A default constructor is a constructor that can be called without supplying arguments.</p>
+
+<pre>class Student
+{
+public:
+    Student()
+    {
+        cout &lt;&lt; "Object Created";
+    }
+};</pre>
+
+<h3>11.3 Parameterized Constructor</h3>
+<p>A parameterized constructor accepts arguments to initialize an object with specific values.</p>
+
+<pre>class Student
+{
+public:
+    int roll;
+
+    Student(int r)
+    {
+        roll = r;
+    }
+};</pre>
+
+<h3>11.4 Copy Constructor</h3>
+<p>A copy constructor initializes a new object using another object of the same class.</p>
+
+<pre>class Student
+{
+public:
+    int roll;
+
+    Student(int r)
+    {
+        roll = r;
+    }
+
+    Student(const Student &amp;s)
+    {
+        roll = s.roll;
+    }
+};</pre>
+
+<h3>11.5 Constructor Overloading</h3>
+<p>A class can have multiple constructors with different parameter lists. This allows objects to be initialized in different ways.</p>
+
+<h3>11.6 Destructor</h3>
+<p>A destructor is a special member function that is called when an object is destroyed. It has the same name as the class, preceded by a tilde symbol, and has no return type or parameters.</p>
+
+<pre>class Demo
+{
+public:
+    Demo()
+    {
+        cout &lt;&lt; "Constructor Called" &lt;&lt; endl;
+    }
+
+    ~Demo()
+    {
+        cout &lt;&lt; "Destructor Called";
+    }
+};</pre>
+
+<h3>11.7 Constructor vs Destructor</h3>
+<ul>
+<li>A constructor initializes an object.</li>
+<li>A destructor performs cleanup when an object is destroyed.</li>
+<li>A class can have overloaded constructors.</li>
+<li>A class has only one destructor, which cannot be overloaded.</li>
+</ul>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is a constructor?</li>
+<li>Explain default constructor.</li>
+<li>What is a parameterized constructor?</li>
+<li>What is a copy constructor?</li>
+<li>Define destructor.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 11 • Page 12</div>
+</section>
+
+<section class="page" id="chapter12">
+<h2>Chapter 12: Inheritance</h2>
+
+<h3>12.1 Introduction</h3>
+<p>Inheritance is an object-oriented programming feature in which a new class is created using an existing class. The existing class is called the base class, and the new class is called the derived class.</p>
+
+<h3>12.2 Basic Syntax</h3>
+
+<pre>class Base
+{
+public:
+    void display()
+    {
+        cout &lt;&lt; "Base Class";
+    }
+};
+
+class Derived : public Base
+{
+};</pre>
+
+<h3>12.3 Single Inheritance</h3>
+<p>Single inheritance occurs when one derived class inherits from one base class.</p>
+
+<pre>class Animal
+{
+public:
+    void eat()
+    {
+        cout &lt;&lt; "Eating";
+    }
+};
+
+class Dog : public Animal
+{
+public:
+    void bark()
+    {
+        cout &lt;&lt; "Barking";
+    }
+};</pre>
+
+<h3>12.4 Multilevel Inheritance</h3>
+<p>Multilevel inheritance occurs when a class is derived from another derived class, creating a chain of inheritance.</p>
+
+<pre>class A
+{
+public:
+    void showA()
+    {
+        cout &lt;&lt; "Class A";
+    }
+};
+
+class B : public A
+{
+};
+
+class C : public B
+{
+};</pre>
+
+<h3>12.5 Multiple Inheritance</h3>
+<p>Multiple inheritance occurs when one derived class inherits from more than one base class.</p>
+
+<pre>class Father
+{
+public:
+    void father()
+    {
+        cout &lt;&lt; "Father";
+    }
+};
+
+class Mother
+{
+public:
+    void mother()
+    {
+        cout &lt;&lt; "Mother";
+    }
+};
+
+class Child : public Father, public Mother
+{
+};</pre>
+
+<h3>12.6 Hierarchical Inheritance</h3>
+<p>Hierarchical inheritance occurs when multiple derived classes inherit from the same base class.</p>
+
+<h3>12.7 Hybrid Inheritance</h3>
+<p>Hybrid inheritance combines two or more inheritance patterns. Some designs involving multiple inheritance may require virtual base classes to avoid duplicate base subobjects.</p>
+
+<h3>12.8 Benefits of Inheritance</h3>
+<ul>
+<li>Promotes code reuse.</li>
+<li>Reduces repeated code.</li>
+<li>Supports class hierarchies.</li>
+<li>Helps implement polymorphism.</li>
+<li>Improves software organization.</li>
+</ul>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>Define inheritance.</li>
+<li>What is a base class?</li>
+<li>Explain single inheritance.</li>
+<li>What is multiple inheritance?</li>
+<li>List different types of inheritance.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 12 • Page 13</div>
+</section>
+
+<section class="page" id="chapter13">
+<h2>Chapter 13: Polymorphism</h2>
+
+<h3>13.1 Introduction</h3>
+<p>Polymorphism means one interface with multiple forms of behavior. It allows the same function name or interface to behave differently depending on the context.</p>
+
+<h3>13.2 Types of Polymorphism</h3>
+<ul>
+<li><strong>Compile-time Polymorphism:</strong> Resolved during compilation, such as function overloading and operator overloading.</li>
+<li><strong>Runtime Polymorphism:</strong> Achieved through virtual functions and dynamic dispatch.</li>
+</ul>
+
+<h3>13.3 Function Overloading</h3>
+<p>Function overloading allows multiple functions with the same name but different parameter lists.</p>
+
+<pre>int area(int side)
+{
+    return side * side;
+}
+
+int area(int length, int width)
+{
+    return length * width;
+}</pre>
+
+<h3>13.4 Operator Overloading</h3>
+<p>Operator overloading allows operators to be given a suitable meaning for user-defined types.</p>
+
+<pre>class Number
+{
+public:
+    int value;
+
+    Number(int v)
+    {
+        value = v;
+    }
+
+    Number operator+(const Number &amp;n)
+    {
+        return Number(value + n.value);
+    }
+};</pre>
+
+<h3>13.5 Virtual Functions</h3>
+<p>A virtual function supports runtime polymorphism. When called through a base-class pointer or reference, the appropriate overridden function can be selected according to the actual object type.</p>
+
+<pre>class Animal
+{
+public:
+    virtual void sound()
+    {
+        cout &lt;&lt; "Animal Sound";
+    }
+
+    virtual ~Animal() = default;
+};
+
+class Dog : public Animal
+{
+public:
+    void sound() override
+    {
+        cout &lt;&lt; "Dog Barks";
+    }
+};
+
+int main()
+{
+    Dog d;
+    Animal *ptr = &amp;d;
+
+    ptr-&gt;sound();
+
+    return 0;
+}</pre>
+
+<h3>13.6 Function Overriding</h3>
+<p>Function overriding occurs when a derived class provides its own implementation of a suitable virtual function declared in the base class.</p>
+
+<h3>13.7 Benefits of Polymorphism</h3>
+<ul>
+<li>Provides flexible program design.</li>
+<li>Supports reusable interfaces.</li>
+<li>Improves extensibility.</li>
+<li>Reduces dependency on specific object types.</li>
+</ul>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is polymorphism?</li>
+<li>Explain compile-time polymorphism.</li>
+<li>What is runtime polymorphism?</li>
+<li>Define virtual function.</li>
+<li>Differentiate overloading and overriding.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 13 • Page 14</div>
+</section>
+
+<section class="page" id="chapter14">
+<h2>Chapter 14: Encapsulation and Abstraction</h2>
+
+<h3>14.1 Encapsulation</h3>
+<p>Encapsulation is the process of combining data and related functions into a single unit, such as a class. Access specifiers help control how the internal data is accessed.</p>
+
+<h3>14.2 Example of Encapsulation</h3>
+
+<pre>class BankAccount
+{
+private:
+    double balance = 0;
+
+public:
+    void deposit(double amount)
+    {
+        if(amount &gt; 0)
+            balance += amount;
+    }
+
+    double getBalance()
+    {
+        return balance;
+    }
+};</pre>
+
+<h3>14.3 Benefits of Encapsulation</h3>
+<ul>
+<li>Protects internal data.</li>
+<li>Controls access to class members.</li>
+<li>Improves code organization.</li>
+<li>Makes maintenance easier.</li>
+</ul>
+
+<h3>14.4 Abstraction</h3>
+<p>Abstraction means showing essential features while hiding unnecessary implementation details. It helps users interact with a simple interface without needing to understand the internal working.</p>
+
+<h3>14.5 Abstract Classes</h3>
+<p>An abstract class contains at least one pure virtual function. It cannot be directly instantiated, but it can be used as a base class.</p>
+
+<pre>class Shape
+{
+public:
+    virtual void draw() = 0;
+
+    virtual ~Shape() = default;
+};
+
+class Circle : public Shape
+{
+public:
+    void draw() override
+    {
+        cout &lt;&lt; "Drawing Circle";
+    }
+};</pre>
+
+<h3>14.6 Encapsulation vs Abstraction</h3>
+<ul>
+<li>Encapsulation focuses on grouping data and functions and controlling access.</li>
+<li>Abstraction focuses on exposing essential functionality while hiding implementation details.</li>
+<li>Both concepts help develop organized and maintainable software.</li>
+</ul>
+
+<h3>14.7 Real-Life Examples</h3>
+<p>A banking application can hide internal account calculations while showing simple deposit and balance operations. A car interface exposes steering and braking controls without requiring the driver to understand every internal mechanism.</p>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>Define encapsulation.</li>
+<li>What is abstraction?</li>
+<li>Explain private and public members.</li>
+<li>What is an abstract class?</li>
+<li>Differentiate encapsulation and abstraction.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 14 • Page 15</div>
+</section>
+
+<section class="page" id="chapter15">
+<h2>Chapter 15: Pointers and File Handling</h2>
+
+<h3>15.1 Pointers</h3>
+<p>A pointer is a variable that stores the memory address of another object. Pointers are useful for working with dynamically allocated memory and passing objects efficiently.</p>
+
+<h3>15.2 Pointer Example</h3>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+    int number = 100;
+    int *ptr = &amp;number;
+
+    cout &lt;&lt; "Value: " &lt;&lt; *ptr &lt;&lt; endl;
+    cout &lt;&lt; "Address: " &lt;&lt; ptr;
+
+    return 0;
+}</pre>
+
+<h3>15.3 Smart Pointers</h3>
+<p>C++ provides smart pointers in the memory header. They help manage dynamically allocated objects through automatic resource management.</p>
+<ul>
+<li><code>unique_ptr</code> — represents exclusive ownership.</li>
+<li><code>shared_ptr</code> — allows shared ownership.</li>
+<li><code>weak_ptr</code> — provides a non-owning reference to an object managed by shared_ptr.</li>
+</ul>
+
+<h3>15.4 Introduction to File Handling</h3>
+<p>File handling allows programs to store information in files and retrieve it later. C++ provides file stream classes through the fstream header.</p>
+
+<h3>15.5 File Stream Classes</h3>
+<ul>
+<li><strong>ifstream:</strong> Used for reading from files.</li>
+<li><strong>ofstream:</strong> Used for writing to files.</li>
+<li><strong>fstream:</strong> Supports reading and writing.</li>
+</ul>
+
+<h3>15.6 Writing to a File</h3>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+using namespace std;
+
+int main()
+{
+    ofstream file("student.txt");
+
+    if(file.is_open())
+    {
+        file &lt;&lt; "Smart Digital Library";
+        file.close();
+    }
+
+    return 0;
+}</pre>
+
+<h3>15.7 Reading from a File</h3>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main()
+{
+    ifstream file("student.txt");
+    string line;
+
+    if(file.is_open())
+    {
+        while(getline(file, line))
+        {
+            cout &lt;&lt; line &lt;&lt; endl;
+        }
+
+        file.close();
+    }
+
+    return 0;
+}</pre>
+
+<h3>15.8 File Opening Modes</h3>
+<ul>
+<li><code>ios::in</code> — opens for reading.</li>
+<li><code>ios::out</code> — opens for writing.</li>
+<li><code>ios::app</code> — appends data.</li>
+<li><code>ios::binary</code> — opens in binary mode.</li>
+<li><code>ios::trunc</code> — truncates existing contents.</li>
+</ul>
+
+<div class="note">
+<strong>Important:</strong> Check whether a file opened successfully before performing read or write operations.
+</div>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<ol>
+<li>What is a pointer?</li>
+<li>Explain smart pointers.</li>
+<li>What is file handling?</li>
+<li>Differentiate ifstream and ofstream.</li>
+<li>Explain file opening modes.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 15 • Page 16</div>
+</section>
+
+<section class="page" id="chapter16">
+<h2>Chapter 16: Practical C++ Programming Projects</h2>
+
+<h3>16.1 Importance of Practical Projects</h3>
+<p>Practical projects help students apply programming concepts to real-world problems. They improve problem-solving ability, coding skills, debugging and software development experience.</p>
+
+<h3>16.2 Project 1: Simple Calculator</h3>
+<p>This calculator accepts two numbers and an operator, then performs the selected arithmetic operation.</p>
+
+<pre>#include &lt;iostream&gt;
+using namespace std;
+
+int main()
+{
+    double a, b;
+    char op;
+
+    cout &lt;&lt; "Enter first number: ";
+    cin &gt;&gt; a;
+
+    cout &lt;&lt; "Enter operator (+,-,*,/): ";
+    cin &gt;&gt; op;
+
+    cout &lt;&lt; "Enter second number: ";
+    cin &gt;&gt; b;
+
+    switch(op)
+    {
+        case '+':
+            cout &lt;&lt; "Result = " &lt;&lt; a + b;
+            break;
+
+        case '-':
+            cout &lt;&lt; "Result = " &lt;&lt; a - b;
+            break;
+
+        case '*':
+            cout &lt;&lt; "Result = " &lt;&lt; a * b;
+            break;
+
+        case '/':
+            if(b != 0)
+                cout &lt;&lt; "Result = " &lt;&lt; a / b;
+            else
+                cout &lt;&lt; "Division by zero is not allowed";
+            break;
+
+        default:
+            cout &lt;&lt; "Invalid Operator";
+    }
+
+    return 0;
+}</pre>
+
+<h3>16.3 Project 2: Student Management System</h3>
+<p>A student management system stores student information such as roll number, name and marks. Classes and objects can organize the records.</p>
+
+<pre>#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Student
+{
+public:
+    int roll;
+    string name;
+    float marks;
+
+    void input()
+    {
+        cout &lt;&lt; "Enter Roll Number: ";
+        cin &gt;&gt; roll;
+
+        cout &lt;&lt; "Enter Name: ";
+        cin &gt;&gt; name;
+
+        cout &lt;&lt; "Enter Marks: ";
+        cin &gt;&gt; marks;
+    }
+
+    void display()
+    {
+        cout &lt;&lt; "\nRoll: " &lt;&lt; roll;
+        cout &lt;&lt; "\nName: " &lt;&lt; name;
+        cout &lt;&lt; "\nMarks: " &lt;&lt; marks;
+    }
+};
+
+int main()
+{
+    Student s;
+
+    s.input();
+    s.display();
+
+    return 0;
+}</pre>
+
+<h3>16.4 Project 3: Library Management System</h3>
+<p>A library management system can maintain book information such as book ID, title, author and availability. Classes can represent books and library operations.</p>
+
+<h3>16.5 Project 4: Bank Account System</h3>
+<p>A bank account application can use encapsulation to protect account information and provide controlled operations such as deposit, withdrawal and balance inquiry.</p>
+
+<h3>16.6 Project Development Steps</h3>
+<ol>
+<li>Understand the problem.</li>
+<li>Identify the required features.</li>
+<li>Design classes and data structures.</li>
+<li>Write the program in smaller functions.</li>
+<li>Compile and execute the program.</li>
+<li>Test normal and invalid inputs.</li>
+<li>Correct errors and improve the code.</li>
+<li>Prepare project documentation.</li>
+</ol>
+
+<h3>16.7 Good Programming Practices</h3>
+<ul>
+<li>Use meaningful variable and function names.</li>
+<li>Follow proper indentation.</li>
+<li>Use classes to organize related data.</li>
+<li>Validate user input.</li>
+<li>Handle file operations carefully.</li>
+<li>Use appropriate access specifiers.</li>
+<li>Test programs before submission.</li>
+</ul>
+
+<div class="exercise">
+<h3>Project Questions</h3>
+<ol>
+<li>Why are practical projects important?</li>
+<li>Explain a calculator project.</li>
+<li>What is a student management system?</li>
+<li>How can classes be used in library management?</li>
+<li>Write five good programming practices.</li>
+</ol>
+</div>
+
+<div class="page-number">Chapter 16 • Page 17</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>Glossary</h2>
+
+<ul>
+<li><strong>Class:</strong> A blueprint used to create objects.</li>
+<li><strong>Object:</strong> An instance of a class.</li>
+<li><strong>Constructor:</strong> A special function used to initialize objects.</li>
+<li><strong>Destructor:</strong> A special function called when an object is destroyed.</li>
+<li><strong>Inheritance:</strong> A mechanism for deriving a class from another class.</li>
+<li><strong>Polymorphism:</strong> The ability to provide different behaviors through a common interface.</li>
+<li><strong>Encapsulation:</strong> Combining data and functions into a single unit.</li>
+<li><strong>Abstraction:</strong> Hiding implementation details while exposing essential features.</li>
+<li><strong>Pointer:</strong> A variable that stores a memory address.</li>
+<li><strong>Function:</strong> A named block of reusable code.</li>
+<li><strong>Overloading:</strong> Using the same function or operator name with different parameter types or meanings.</li>
+<li><strong>Overriding:</strong> Providing a derived-class implementation of a virtual base-class function.</li>
+<li><strong>Array:</strong> A collection of elements of the same type.</li>
+<li><strong>String:</strong> A sequence of characters.</li>
+<li><strong>Namespace:</strong> A named scope used to organize identifiers.</li>
+<li><strong>Vector:</strong> A dynamic sequence container in the C++ standard library.</li>
+<li><strong>Compiler:</strong> A program that translates source code.</li>
+<li><strong>File Handling:</strong> Reading and writing data using files.</li>
+<li><strong>Template:</strong> A feature used to write generic code.</li>
+<li><strong>Smart Pointer:</strong> An object that helps manage dynamically allocated resources.</li>
+</ul>
+
+<div class="page-number">Glossary • Page 18</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+
+<p>The following resources help students understand C++ programming in greater detail.</p>
+
+<ol>
+<li>Bjarne Stroustrup, <em>The C++ Programming Language</em>.</li>
+<li>Stanley B. Lippman, Josée Lajoie and Barbara E. Moo, <em>C++ Primer</em>.</li>
+<li>ISO C++ Standard Documentation.</li>
+<li>cppreference — C++ Language Reference.</li>
+<li>LearnCpp — C++ Programming Tutorials.</li>
+<li>GNU Compiler Collection Documentation.</li>
+<li>University programming laboratory materials.</li>
+</ol>
+
+<h3>Suggested Study Method</h3>
+<ul>
+<li>Study one chapter at a time.</li>
+<li>Practice every sample program.</li>
+<li>Understand OOP concepts with real examples.</li>
+<li>Develop small applications.</li>
+<li>Practice debugging and testing.</li>
+<li>Revise practice questions after each chapter.</li>
+</ul>
+
+<div class="info-box">
+<strong>End of Book</strong><br>
+C++ Programming — Smart Digital Library Team, First Edition 2026.
+</div>
+
+<div class="page-number">References • Page 19</div>
+</section>
+
+<div class="action-row">
+<button onclick="window.print()">Print / Save as PDF</button>
+<button id="bottomBookmarkBtn" type="button" onclick="toggleBookmark()">☆ Save Bookmark</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">
+© 2026 Smart Digital Library | C++ Programming Textbook
+</footer>
+
+<script>
+const bookmarkKey = "cppProgrammingBookmark";
+const historyKey = "readingHistory";
+
+function toggleBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+    localStorage.setItem(bookmarkKey, String(!saved));
+    updateBookmark();
+}
+
+function updateBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    const status = document.getElementById("bookmarkStatus");
+    if (status) {
+        status.textContent = saved
+            ? "✓ This book is bookmarked"
+            : "This book is not bookmarked";
+    }
+
+    const topButton = document.getElementById("topBookmarkBtn");
+    if (topButton) {
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    if (bottomButton) {
+        bottomButton.textContent = saved ? "★ Remove Bookmark" : "☆ Save Bookmark";
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+}
+
+function updateProgress(){
+    const scrollTop = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? (scrollTop / total) * 100 : 0;
+    document.getElementById("progressFill").style.width = progress + "%";
+}
+
+function saveReadingHistory(){
+    const sections = document.querySelectorAll(".cover, .page");
+    let currentPage = 1;
+
+    sections.forEach((section,index)=>{
+        const rect = section.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.65){
+            currentPage = index + 1;
+        }
+    });
+
+    let history = [];
+
+    try{
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        if(!Array.isArray(history)) history = [];
+    }catch(error){
+        history = [];
+    }
+
+    const existing = history.findIndex(item => item.title === "C++ Programming");
+
+    const record = {
+        title: "C++ Programming",
+        icon: "💻",
+        category: "Programming",
+        page: currentPage,
+        time: new Date().toLocaleString()
+    };
+
+    if(existing >= 0){
+        history[existing] = record;
+    }else{
+        history.push(record);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(history));
+}
+
+window.addEventListener("scroll",()=>{
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("load",()=>{
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("storage", (event) => {
+    if (event.key === bookmarkKey || event.key === null) {
+        updateBookmark();
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Programming | Smart Digital Library</title>
+<style>
+:root{
+    --navy:#173a63;
+    --blue:#1565c0;
+    --light:#e3f2fd;
+    --ink:#263238;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f8;color:var(--ink);line-height:1.8}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial}
+.topbar .brand{font-weight:bold;font-size:18px}
+.topbar a,.topbar button{color:white;text-decoration:none;background:#24558b;border:0;padding:9px 14px;border-radius:5px;cursor:pointer;font-size:14px;margin:2px}
+.topbar a:hover,.topbar button:hover{background:#3479bd}
+.progress-wrap{height:6px;background:#d5dce5;position:sticky;top:0;z-index:20}
+.progress{height:6px;background:#1976d2;width:0}
+.layout{max-width:1250px;margin:25px auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;padding:0 15px}
+.sidebar{background:white;padding:20px;height:max-content;position:sticky;top:25px;border-radius:8px;box-shadow:0 3px 12px #00000012;font-family:Arial;max-height:88vh;overflow-y:auto}
+.sidebar h3{color:var(--navy);margin-bottom:12px}
+.sidebar a{display:block;text-decoration:none;color:#444;padding:7px 5px;border-bottom:1px solid #eee;font-size:13px}
+.sidebar a:hover{color:var(--blue);background:#f1f7ff}
+.sidebar .status{background:var(--light);padding:10px;margin-top:15px;border-radius:5px;font-size:13px}
+.book{min-width:0}
+.page{background:white;padding:55px 65px;margin-bottom:22px;min-height:700px;box-shadow:0 3px 14px #00000012;border-radius:3px;position:relative;scroll-margin-top:20px}
+.cover{background:linear-gradient(145deg,#071c3c,#123e78 60%,#0877b9);color:white;text-align:center;min-height:760px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;padding:45px 35px}
+.cover-brand{font:bold 19px Arial;letter-spacing:2px;color:white}
+.cover-icon{font-size:100px;margin:35px 0 5px}
+.cover h1{font:bold 65px Arial;line-height:1.1;color:white}
+.cover h1 span{color:#ffd43b}
+.cover h2{font:bold 24px Arial;letter-spacing:5px;margin-top:15px;color:white}
+.cover-sub{font:17px Arial;margin-top:20px;color:#dceaff;text-align:center}
+.cover-line{width:100px;height:5px;background:#ffd43b;margin:25px auto;border-radius:5px}
+.cover-features{display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;font:14px Arial;margin:35px 0}
+.cover-features div{padding:12px;border:1px solid #ffffff55;border-radius:8px;min-width:110px}
+.cover-author{font:17px Arial;border-top:1px solid #ffffff55;padding-top:20px;color:white}
+h1,h2,h3,h4{color:var(--navy)}
+.page h2{font-size:29px;border-bottom:2px solid var(--blue);padding-bottom:12px;margin-bottom:25px}
+.page h3{font-size:21px;margin:25px 0 10px}
+.page h4{font-size:17px;margin:18px 0 8px}
+p{margin:12px 0;text-align:justify}
+ul,ol{padding-left:25px;margin:12px 0}
+li{margin:7px 0}
+pre{background:#101d30;color:#d8e8ff;padding:18px;border-radius:7px;overflow-x:auto;margin:15px 0;font:14px/1.7 Consolas,monospace;white-space:pre}
+code{font-family:Consolas,monospace}
+.note{background:#eaf4ff;border-left:4px solid var(--blue);padding:15px;margin:18px 0}
+.exercise{background:#f3f6fa;padding:16px;border-radius:6px;margin-top:20px;border-left:4px solid #607d8b}
+.info{background:#eef7ee;border-left:4px solid #39834a;padding:15px;margin:18px 0}
+.page-number{position:absolute;bottom:20px;right:35px;color:#777;font-size:13px}
+.meta{text-align:center;margin:35px 0}
+.meta p{text-align:center}
+.toc a{color:#24558b;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+.action-row button{background:var(--blue);color:white;border:0;padding:11px 16px;border-radius:5px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.footer{text-align:center;padding:20px;color:#667;font:13px Arial}
+@media(max-width:850px){
+    .layout{grid-template-columns:1fr}
+    .sidebar{position:static;max-height:none}
+    .page{padding:35px 23px;min-height:550px}
+    .cover{min-height:650px;padding:35px 18px}
+    .cover h1{font-size:43px}
+    .cover-icon{font-size:75px}
+    .topbar{justify-content:center;text-align:center}
+}
+@media print{
+    body{background:white}
+    .topbar,.sidebar,.progress-wrap,.footer,.no-print,.action-row{display:none!important}
+    .layout{display:block;margin:0;padding:0}
+    .page{box-shadow:none;border-radius:0;margin:0;min-height:0;page-break-after:always;padding:35px 45px}
+    .cover{min-height:95vh;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+    .page-number{position:absolute}
+}
+</style>
+</head>
+<body>
+<header class="topbar no-print">
+
+    <a href="index.html">← Back to Library</a>
+
+    <div class="brand">📚 Smart Digital Library</div>
+
+    <div>
+        <button onclick="toggleBookmark()" id="bookmarkButton">☆ Bookmark</button>
+        <a href="qr.html?book=python">▦ QR Code</a>
+        <button onclick="window.print()">Print Book</button>
+    </div>
+
+</header>
+
+<div class="progress-wrap no-print">
+    <div class="progress" id="progress"></div>
+</div>
+
+<div class="layout">
+<aside class="sidebar no-print">
+    <h3>📖 Book Contents</h3>
+    <a href="#cover">Cover Page</a>
+    <a href="#publication">Publication Details</a>
+    <a href="#preface">Preface</a>
+    <a href="#outcomes">Learning Outcomes</a>
+    <a href="#toc">Table of Contents</a>
+    <a href="#chapter1">1. Introduction to Python</a>
+    <a href="#chapter2">2. Python Environment</a>
+    <a href="#chapter3">3. Variables and Data Types</a>
+    <a href="#chapter4">4. Operators and Expressions</a>
+    <a href="#chapter5">5. Conditional Statements</a>
+    <a href="#chapter6">6. Loops and Iterations</a>
+    <a href="#chapter7">7. Functions and Modules</a>
+    <a href="#chapter8">8. Python Collections</a>
+    <a href="#chapter9">9. Strings</a>
+    <a href="#chapter10">10. File Handling</a>
+    <a href="#chapter11">11. Object-Oriented Programming</a>
+    <a href="#chapter12">12. Exception Handling</a>
+    <a href="#chapter13">13. Modules and Libraries</a>
+    <a href="#chapter14">14. Database Connectivity</a>
+    <a href="#chapter15">15. Python Projects</a>
+    <a href="#glossary">Glossary</a>
+    <a href="#references">References</a>
+    <div class="status">
+        <strong>Reading Progress</strong>
+        <p id="progressText">0% completed</p>
+        <strong id="bookmarkStatus">☆ Not Bookmarked</strong>
+    </div>
+</aside>
+
+<main class="book">
+
+<section class="page cover" id="cover">
+    <div class="cover-brand">📚 SMART DIGITAL LIBRARY</div>
+    <div>
+        <div class="cover-icon">🐍</div>
+        <h1><span>Python</span><br>Programming</h1>
+        <h2>COMPLETE TEXTBOOK</h2>
+        <div class="cover-line"></div>
+        <p class="cover-sub">A Practical Guide for Beginners and Beyond</p>
+        <div class="cover-features">
+            <div>💻<br>Learn Coding</div>
+            <div>📘<br>Easy Concepts</div>
+            <div>⚙️<br>Practical Programs</div>
+            <div>🚀<br>Build Projects</div>
+        </div>
+    </div>
+    <div class="cover-author">Prepared by<br><strong>Smart Digital Library Team</strong><br><br>First Edition | 2026</div>
+</section>
+
+<section class="page" id="publication">
+    <h2>Publication Details</h2>
+    <div class="meta">
+        <h3>PYTHON PROGRAMMING</h3>
+        <p><strong>A Complete Textbook for Students</strong></p>
+        <p>First Edition - 2026</p>
+        <p>Published by Smart Digital Library</p>
+    </div>
+    <h3>About This Book</h3>
+    <p>This textbook provides a structured introduction to Python programming. It covers programming fundamentals, data structures, functions, object-oriented programming, file handling, database connectivity and practical projects.</p>
+    <h3>Target Readers</h3>
+    <p>BCA students, computer science learners, beginners and anyone interested in learning Python programming.</p>
+    <h3>Learning Approach</h3>
+    <p>Each chapter contains explanations, syntax, examples, practical applications and exercises. Learners should execute and modify the programs to develop their programming skills.</p>
+    <div class="note">Learning tip: Practice every program on a computer. Reading code is useful, but executing it helps you understand how it works.</div>
+    <div class="page-number">1</div>
+</section>
+
+<section class="page" id="preface">
+    <h2>Preface</h2>
+    <p>Python is a popular high-level programming language used in education, software development, data science, automation and artificial intelligence. Its readable syntax makes it a suitable language for beginners.</p>
+    <p>This book has been designed to introduce Python in a step-by-step manner. It begins with the fundamentals of programming and gradually explains advanced topics such as collections, functions, object-oriented programming, exceptions and database connectivity.</p>
+    <p>Every chapter includes practical examples and exercises. The examples are designed to help students understand how programming concepts are applied to solve real problems.</p>
+    <p>Python has a large ecosystem of libraries and tools. After learning the fundamentals, students can explore areas such as web development, machine learning, data analysis and automation.</p>
+    <p>Students are encouraged to practise regularly, understand program output and develop their own projects.</p>
+    <p><strong>Smart Digital Library Team</strong><br>First Edition, 2026</p>
+    <div class="page-number">2</div>
+</section>
+
+<section class="page" id="outcomes">
+    <h2>Learning Outcomes</h2>
+    <p>After completing this textbook, students should be able to:</p>
+    <ol>
+        <li>Explain Python and its major features.</li>
+        <li>Install Python and execute programs.</li>
+        <li>Use variables, data types and operators.</li>
+        <li>Apply conditional statements and loops.</li>
+        <li>Create reusable functions and modules.</li>
+        <li>Work with lists, tuples, sets and dictionaries.</li>
+        <li>Perform string operations and file handling.</li>
+        <li>Understand classes, objects and inheritance.</li>
+        <li>Handle runtime errors using exceptions.</li>
+        <li>Use standard libraries and connect Python with databases.</li>
+        <li>Develop small applications using Python.</li>
+    </ol>
+    <div class="info"><strong>Practical learning:</strong> The best way to learn programming is to write code, run it, observe the output and improve it.</div>
+    <div class="page-number">3</div>
+</section>
+
+<section class="page toc" id="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+        <li><a href="#chapter1">Introduction to Python</a></li>
+        <li><a href="#chapter2">Python Environment and First Program</a></li>
+        <li><a href="#chapter3">Variables and Data Types</a></li>
+        <li><a href="#chapter4">Operators and Expressions</a></li>
+        <li><a href="#chapter5">Conditional Statements</a></li>
+        <li><a href="#chapter6">Loops and Iterations</a></li>
+        <li><a href="#chapter7">Functions and Modules</a></li>
+        <li><a href="#chapter8">Lists, Tuples, Sets and Dictionaries</a></li>
+        <li><a href="#chapter9">Strings and String Operations</a></li>
+        <li><a href="#chapter10">File Handling</a></li>
+        <li><a href="#chapter11">Object-Oriented Programming</a></li>
+        <li><a href="#chapter12">Exception Handling</a></li>
+        <li><a href="#chapter13">Modules and Libraries</a></li>
+        <li><a href="#chapter14">Database Connectivity</a></li>
+        <li><a href="#chapter15">Python Applications and Projects</a></li>
+        <li><a href="#glossary">Glossary</a></li>
+        <li><a href="#references">References</a></li>
+    </ol>
+    <div class="note">Recommended order: Study each chapter sequentially and execute its examples before moving to the next topic.</div>
+    <div class="page-number">4</div>
+</section>
+
+<section class="page" id="chapter1">
+    <h2>Chapter 1: Introduction to Python</h2>
+    <h3>1.1 What is Python?</h3>
+    <p>Python is a high-level, general-purpose programming language. It was created by Guido van Rossum and first released in 1991. Python focuses on readable syntax and allows programmers to write clear instructions for computers.</p>
+    <p>Python supports procedural, object-oriented and functional programming styles. It is used by beginners, researchers and professional software developers.</p>
+    <h3>1.2 Features of Python</h3>
+    <ul>
+        <li><strong>Easy to Learn:</strong> Its syntax is readable and beginner-friendly.</li>
+        <li><strong>Interpreted:</strong> Python programs are executed by a Python implementation.</li>
+        <li><strong>Portable:</strong> Python is available for different operating systems.</li>
+        <li><strong>Open Source:</strong> It is freely available to use and distribute.</li>
+        <li><strong>Large Library:</strong> It provides modules for many programming tasks.</li>
+        <li><strong>Object-Oriented:</strong> It supports classes and objects.</li>
+        <li><strong>Dynamic Typing:</strong> Variable types are determined at runtime.</li>
+    </ul>
+    <h3>1.3 Applications of Python</h3>
+    <p>Python is used in web development, automation, data science, artificial intelligence, machine learning, scientific research, testing and desktop software.</p>
+    <h3>1.4 Python Programming Paradigms</h3>
+    <p>A programming paradigm is a style of organizing and writing programs.</p>
+    <ul>
+        <li><strong>Procedural:</strong> Programs are organized as sequences of instructions and functions.</li>
+        <li><strong>Object-Oriented:</strong> Programs are organized using classes and objects.</li>
+        <li><strong>Functional:</strong> Programs use functions and expressions to process data.</li>
+    </ul>
+    <h3>1.5 Advantages and Limitations</h3>
+    <p>Python offers rapid development, readable code and a large ecosystem. However, some Python programs may execute more slowly than equivalent programs written in compiled languages, and memory use can be higher for certain workloads.</p>
+    <div class="exercise"><strong>Practice Questions</strong><ol><li>What is Python?</li><li>Who created Python?</li><li>Write any five features of Python.</li><li>Explain four applications of Python.</li><li>Differentiate procedural and object-oriented programming.</li></ol></div>
+    <div class="page-number">5</div>
+</section>
+
+<section class="page" id="chapter2">
+    <h2>Chapter 2: Python Environment and First Program</h2>
+    <h3>2.1 Installing Python</h3>
+    <p>Python can be installed on Windows, Linux and macOS. Download the installer from the official Python website. On Windows, enable the option to add Python to PATH during installation.</p>
+    <h3>2.2 Checking Installation</h3>
+    <p>Open a terminal or command prompt and enter:</p>
+    <pre>python --version</pre>
+    <p>The command displays the installed Python version when Python is correctly configured.</p>
+    <h3>2.3 Python Interpreter</h3>
+    <p>The Python interpreter executes Python instructions. It can run a saved Python file or accept commands interactively.</p>
+    <h3>2.4 First Python Program</h3>
+    <pre>print("Hello, World!")</pre>
+    <p>The print() function displays information on the screen. Text values are placed inside quotation marks.</p>
+    <h3>2.5 Comments</h3>
+    <p>Comments explain code and are ignored during normal execution.</p>
+    <pre># This is a single-line comment
+print("Welcome to Python")</pre>
+    <h3>2.6 Taking User Input</h3>
+    <p>The input() function accepts information entered by a user. It returns the entered value as a string.</p>
+    <pre>name = input("Enter your name: ")
+print("Welcome", name)</pre>
+    <h3>2.7 Displaying Output</h3>
+    <pre>name = "Aman"
+age = 20
+print("Name:", name)
+print("Age:", age)</pre>
+    <div class="note">Remember: input() returns text. Convert it using int() or float() when numeric calculations are required.</div>
+    <div class="exercise"><strong>Practice Questions</strong><ol><li>What is an interpreter?</li><li>How do you check the Python version?</li><li>Write a program to display your name.</li><li>What is the purpose of comments?</li><li>Write a program that accepts two values from the user.</li></ol></div>
+    <div class="page-number">6</div>
+</section>
+
+<section class="page" id="chapter3">
+    <h2>Chapter 3: Variables and Data Types</h2>
+    <h3>3.1 Variables</h3>
+    <p>A variable is a name that refers to a value in a program. Python creates a variable when a value is assigned to it.</p>
+    <pre>name = "Rahul"
+age = 20
+marks = 85.5
+
+print(name)
+print(age)
+print(marks)</pre> <h3>3.2 Rules for Naming Variables</h3> <ul> <li>A variable name must begin with a letter or underscore.</li> <li>It cannot begin with a number.</li> <li>Spaces are not allowed.</li> <li>Variable names are case-sensitive.</li> <li>Python keywords cannot be used as variable names.</li> </ul> <h3>3.3 Basic Data Types</h3> <ul> <li><strong>int:</strong> Whole numbers such as 10 and 25.</li> <li><strong>float:</strong> Decimal numbers such as 12.5.</li> <li><strong>str:</strong> Text such as "Python".</li> <li><strong>bool:</strong> Boolean values True and False.</li> <li><strong>list:</strong> An ordered, mutable collection.</li> <li><strong>tuple:</strong> An ordered, immutable collection.</li> <li><strong>dict:</strong> A collection of key-value pairs.</li> <li><strong>set:</strong> A collection of unique elements.</li> </ul> <h3>3.4 Checking Data Types</h3> <pre>name = "Aman"
+age = 21
+price = 99.50
+active = True
+
+print(type(name))
+print(type(age))
+print(type(price))
+print(type(active))</pre> <h3>3.5 Type Conversion</h3> <p>Type conversion changes a value from one data type to another when the conversion is valid.</p> <pre>age = "20"
+age = int(age)
+print(age + 5)</pre> <h3>3.6 Multiple Assignment</h3> <pre>x, y, z = 10, 20, 30
+print(x, y, z)</pre> <div class="exercise"><strong>Practice Questions</strong><ol><li>Define a variable.</li><li>Explain int, float and string.</li><li>What is type conversion?</li><li>Write the rules for naming variables.</li><li>Create variables for name, age and marks.</li></ol></div> <div class="page-number">7</div>
+
+</section>
+
+<section class="page" id="chapter4">
+    <h2>Chapter 4: Operators and Expressions</h2>
+    <h3>4.1 Introduction</h3>
+    <p>Operators are symbols or keywords that perform operations on values and variables. An expression combines values, variables and operators to produce a result.</p>
+    <h3>4.2 Arithmetic Operators</h3>
+    <p>Python provides addition (+), subtraction (-), multiplication (*), division (/), floor division (//), modulus (%) and exponentiation (**).</p>
+    <pre>a = 10
+b = 3
+
+print(a + b)
+print(a - b)
+print(a * b)
+print(a / b)
+print(a // b)
+print(a % b)
+print(a ** b)</pre> <h3>4.3 Comparison Operators</h3> <p>Comparison operators compare two values and return True or False. Examples include ==, !=, >, <, >= and <=.</p> <pre>x = 10
+y = 20
+
+print(x == y)
+print(x < y)
+print(x != y)</pre> <h3>4.4 Logical Operators</h3> <p>The logical operators are and, or and not. They combine or reverse Boolean conditions.</p> <pre>age = 20
+
+print(age >= 18 and age <= 60)
+print(age < 18 or age > 60)
+print(not age < 18)</pre> <h3>4.5 Assignment Operators</h3> <p>Assignment operators store or update values. Examples include =, +=, -=, *= and /=.</p> <pre>number = 10
+number += 5
+print(number)</pre> <h3>4.6 Membership Operators</h3> <p>The in and not in operators check whether a value is present in a sequence or collection.</p> <pre>languages = ["Python", "Java", "C"]
+
+print("Python" in languages)
+print("PHP" not in languages)</pre> <h3>4.7 Operator Precedence</h3> <p>Operator precedence determines the order in which parts of an expression are evaluated. Parentheses can be used to make the intended order clear.</p> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is an operator?</li><li>Explain arithmetic operators.</li><li>Differentiate == and =.</li><li>What are logical operators?</li><li>Write a program to calculate the area of a rectangle.</li></ol></div> <div class="page-number">8</div>
+
+</section>
+
+<section class="page" id="chapter5">
+    <h2>Chapter 5: Conditional Statements</h2>
+    <h3>5.1 Introduction</h3>
+    <p>Conditional statements allow a program to make decisions. Python uses if, elif and else to execute different blocks depending on conditions.</p>
+    <h3>5.2 The if Statement</h3>
+    <pre>age = 20
+
+if age >= 18:
+print("Eligible by age condition")</pre> <h3>5.3 The if-else Statement</h3> <pre>number = 7
+
+if number % 2 == 0:
+print("Even number")
+else:
+print("Odd number")</pre> <h3>5.4 The if-elif-else Statement</h3> <pre>marks = 75
+
+if marks >= 80:
+print("Grade A")
+elif marks >= 60:
+print("Grade B")
+elif marks >= 40:
+print("Grade C")
+else:
+print("Needs Improvement")</pre> <h3>5.5 Nested if Statement</h3> <p>A nested if statement is an if statement placed inside another conditional block.</p> <pre>number = 15
+
+if number > 0:
+if number % 5 == 0:
+print("Positive and divisible by 5")
+else:
+print("Positive but not divisible by 5")
+else:
+print("Not positive")</pre> <h3>5.6 Practical Example: Largest of Two Numbers</h3> <pre>a = int(input("Enter first number: "))
+b = int(input("Enter second number: "))
+
+if a > b:
+print("First number is larger")
+elif b > a:
+print("Second number is larger")
+else:
+print("Both numbers are equal")</pre> <div class="note">Python uses indentation to define blocks. Keep indentation consistent, normally using four spaces.</div> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is a conditional statement?</li><li>Differentiate if and if-else.</li><li>Explain elif with an example.</li><li>Write a program to check positive or negative number.</li><li>Write a program to find the largest of three numbers.</li></ol></div> <div class="page-number">9</div>
+
+</section>
+
+<section class="page" id="chapter6">
+    <h2>Chapter 6: Loops and Iterations</h2>
+    <h3>6.1 Introduction to Loops</h3>
+    <p>A loop repeats a block of code. Loops reduce repeated instructions and are useful for processing collections and performing calculations.</p>
+    <h3>6.2 The for Loop</h3>
+    <p>A for loop repeats a block for each item in a sequence or iterable.</p>
+    <pre>for number in range(1, 6):
+    print(number)</pre>
+    <h3>6.3 The range() Function</h3>
+    <p>The range() function generates a sequence of integers. It is commonly used with for loops.</p>
+    <pre>for number in range(2, 11, 2):
+    print(number)</pre>
+    <h3>6.4 The while Loop</h3>
+    <p>A while loop repeats while its condition remains True. The condition should eventually become False to avoid an unintended infinite loop.</p>
+    <pre>count = 1
+
+while count <= 5:
+print(count)
+count += 1</pre> <h3>6.5 break Statement</h3> <p>The break statement terminates the nearest enclosing loop.</p> <pre>for number in range(1, 6):
+if number == 3:
+break
+print(number)</pre> <h3>6.6 continue Statement</h3> <p>The continue statement skips the remaining statements in the current iteration and proceeds to the next iteration.</p> <pre>for number in range(1, 6):
+if number == 3:
+continue
+print(number)</pre> <h3>6.7 Nested Loops</h3> <p>A nested loop is a loop placed inside another loop. It is useful for patterns, tables and two-dimensional data.</p> <pre>for row in range(1, 4):
+for column in range(1, 4):
+print("*", end=" ")
+print()</pre> <h3>6.8 Sum of Numbers</h3> <pre>total = 0
+
+for number in range(1, 6):
+total += number
+
+print("Sum:", total)</pre> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is a loop?</li><li>Differentiate for and while loops.</li><li>Explain break and continue.</li><li>What is a nested loop?</li><li>Write a program to print a multiplication table.</li></ol></div> <div class="page-number">10</div>
+
+</section>
+
+<section class="page" id="chapter7">
+    <h2>Chapter 7: Functions and Modules</h2>
+    <h3>7.1 What is a Function?</h3>
+    <p>A function is a reusable block of code designed to perform a particular task. Functions improve organization, reduce repetition and make programs easier to maintain.</p>
+    <h3>7.2 Defining a Function</h3>
+    <p>Python uses the def keyword to define a function.</p>
+    <pre>def greet():
+    print("Welcome to Python")
+
+greet()</pre> <h3>7.3 Parameters and Arguments</h3> <p>Parameters are names written in a function definition. Arguments are the actual values passed when the function is called.</p> <pre>def add(a, b):
+print(a + b)
+
+add(10, 20)</pre> <h3>7.4 Return Statement</h3> <p>The return statement sends a result back to the caller.</p> <pre>def square(number):
+return number * number
+
+result = square(5)
+print(result)</pre> <h3>7.5 Default Arguments</h3> <pre>def greet(name="Student"):
+print("Hello", name)
+
+greet()
+greet("Aman")</pre> <h3>7.6 Keyword Arguments</h3> <pre>def student(name, course):
+print(name, course)
+
+student(course="BCA", name="Aman")</pre> <h3>7.7 Variable Scope</h3> <p>A local variable is created inside a function and is normally accessible within that function. A global variable is defined outside functions and can be accessed from broader program scope.</p> <pre>college = "Oriental University"
+
+def show():
+course = "BCA"
+print(college)
+print(course)
+
+show()</pre> <h3>7.8 Lambda Functions</h3> <p>A lambda expression creates a small anonymous function.</p> <pre>square = lambda x: x * x
+print(square(5))</pre> <h3>7.9 Modules</h3> <p>A module is a Python file containing reusable code such as functions and variables. It can be imported into another program.</p> <pre>import math
+
+print(math.sqrt(25))
+print(math.pi)</pre> <div class="exercise"><strong>Practice Questions</strong><ol><li>Define a function.</li><li>What are parameters and arguments?</li><li>Explain the return statement.</li><li>What is a lambda function?</li><li>Write a function to find the square of a number.</li></ol></div> <div class="page-number">11</div>
+
+</section>
+
+<section class="page" id="chapter8">
+    <h2>Chapter 8: Lists, Tuples, Sets and Dictionaries</h2>
+    <h3>8.1 Lists</h3>
+    <p>A list is an ordered and mutable collection. It can contain values of different data types and allows duplicate elements.</p>
+    <pre>fruits = ["Apple", "Mango", "Banana"]
+
+print(fruits[0])
+fruits.append("Orange")
+print(fruits)</pre> <p>Common list methods include append(), insert(), remove(), pop(), sort() and reverse().</p> <h3>8.2 List Slicing</h3> <pre>numbers = [10, 20, 30, 40, 50]
+
+print(numbers[1:4])
+print(numbers[:3])
+print(numbers[-2:])</pre> <h3>8.3 List Comprehension</h3> <p>List comprehension provides a compact way to create a list from an iterable.</p> <pre>squares = [number * number for number in range(1, 6)]
+print(squares)</pre> <h3>8.4 Tuples</h3> <p>A tuple is an ordered collection that cannot be modified after creation.</p> <pre>colors = ("Red", "Green", "Blue")
+
+print(colors[1])
+print(len(colors))</pre> <h3>8.5 Sets</h3> <p>A set is an unordered collection of unique elements. Duplicate values are removed automatically.</p> <pre>numbers = {1, 2, 2, 3, 4}
+
+print(numbers)
+numbers.add(5)
+numbers.discard(2)
+print(numbers)</pre> <h3>8.6 Set Operations</h3> <pre>a = {1, 2, 3}
+b = {3, 4, 5}
+
+print(a.union(b))
+print(a.intersection(b))
+print(a.difference(b))</pre> <h3>8.7 Dictionaries</h3> <p>A dictionary stores data as key-value pairs. Keys are unique and are used to access their associated values.</p> <pre>student = {
+"name": "Aman",
+"age": 20,
+"course": "BCA"
+}
+
+print(student["name"])
+student["age"] = 21
+print(student)</pre> <h3>8.8 Iterating Through a Dictionary</h3> <pre>student = {"name": "Aman", "age": 20}
+
+for key, value in student.items():
+print(key, value)</pre> <h3>8.9 Comparison of Collections</h3> <ul> <li>Lists are ordered and mutable.</li> <li>Tuples are ordered and immutable.</li> <li>Sets store unique elements.</li> <li>Dictionaries store key-value pairs.</li> </ul> <div class="exercise"><strong>Practice Questions</strong><ol><li>Define a list.</li><li>Differentiate list and tuple.</li><li>What is a set?</li><li>Explain dictionary with an example.</li><li>Write a program to find the largest value in a list.</li></ol></div> <div class="page-number">12</div>
+
+</section>
+
+<section class="page" id="chapter9">
+    <h2>Chapter 9: Strings and String Operations</h2>
+    <h3>9.1 What is a String?</h3>
+    <p>A string is a sequence of characters enclosed in single, double or triple quotation marks. Strings are immutable in Python.</p>
+    <pre>message = "Hello Python"
+
+print(message)
+print(len(message))
+print(message.upper())
+print(message.lower())</pre> <h3>9.2 String Indexing</h3> <p>Indexing accesses an individual character. Python uses zero-based indexing, meaning the first character has index 0. Negative indexing accesses characters from the end.</p> <pre>word = "Programming"
+
+print(word[0])
+print(word[3])
+print(word[-1])</pre> <h3>9.3 String Slicing</h3> <p>Slicing extracts a portion of a string using a start index, stop index and optional step.</p> <pre>word = "Programming"
+
+print(word[0:4])
+print(word[4:8])
+print(word[::-1])</pre> <h3>9.4 Common String Methods</h3> <pre>text = "  Learn Python  "
+
+print(text.strip())
+print(text.replace("Python", "Java"))
+print(text.find("Python"))
+print(text.count("n"))
+print(text.startswith("  Learn"))</pre> <h3>9.5 Splitting and Joining</h3> <pre>sentence = "Python is easy"
+words = sentence.split()
+
+print(words)
+
+result = "-".join(words)
+print(result)</pre> <h3>9.6 String Formatting</h3> <p>Formatted strings make it easier to combine text and values.</p> <pre>name = "Aman"
+age = 20
+
+print(f"My name is {name} and I am {age} years old.")</pre> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is a string?</li><li>Explain string indexing.</li><li>What is slicing?</li><li>Write any five string methods.</li><li>Write a program to reverse a string.</li></ol></div> <div class="page-number">13</div>
+
+</section>
+
+<section class="page" id="chapter10">
+    <h2>Chapter 10: File Handling</h2>
+    <h3>10.1 Introduction</h3>
+    <p>File handling allows a program to create, read, write and manage files. It is useful for storing information permanently so it can be used later.</p>
+    <h3>10.2 Opening a File</h3>
+    <p>The open() function is used to access a file. It accepts a file path and a mode.</p>
+    <pre>file = open("notes.txt", "r")
+content = file.read()
+print(content)
+file.close()</pre>
+    <h3>10.3 File Modes</h3>
+    <ul>
+        <li><strong>r:</strong> Read an existing file.</li>
+        <li><strong>w:</strong> Write to a file, replacing existing content.</li>
+        <li><strong>a:</strong> Append content to a file.</li>
+        <li><strong>x:</strong> Create a new file and fail if it already exists.</li>
+        <li><strong>b:</strong> Binary mode modifier.</li>
+    </ul>
+    <h3>10.4 Writing to a File</h3>
+    <pre>with open("notes.txt", "w") as file:
+    file.write("Learning Python Programming")</pre>
+    <h3>10.5 Reading a File</h3>
+    <pre>with open("notes.txt", "r") as file:
+    content = file.read()
+    print(content)</pre>
+    <h3>10.6 Appending Data</h3>
+    <pre>with open("notes.txt", "a") as file:
+    file.write("\nPython is useful")</pre>
+    <h3>10.7 Reading Line by Line</h3>
+    <pre>with open("notes.txt", "r") as file:
+    for line in file:
+        print(line.strip())</pre>
+    <h3>10.8 The with Statement</h3>
+    <p>The with statement manages the file context and ensures that the file is properly closed when the block finishes, including when an exception occurs.</p>
+    <div class="note">Always use appropriate file paths and modes. Writing with mode "w" replaces the existing file content.</div>
+    <div class="exercise"><strong>Practice Questions</strong><ol><li>What is file handling?</li><li>Explain different file modes.</li><li>Differentiate write and append modes.</li><li>Why is the with statement useful?</li><li>Write a program to create and read a text file.</li></ol></div>
+    <div class="page-number">14</div>
+</section>
+
+<section class="page" id="chapter11">
+    <h2>Chapter 11: Object-Oriented Programming</h2>
+    <h3>11.1 Introduction to OOP</h3>
+    <p>Object-Oriented Programming is a programming approach based on classes and objects. It helps organize programs around data and the operations performed on that data.</p>
+    <h3>11.2 Classes and Objects</h3>
+    <p>A class is a blueprint for creating objects. An object is an instance of a class.</p>
+    <pre>class Student:
+    def display(self):
+        print("Welcome Student")
+
+student1 = Student()
+student1.display()</pre> <h3>11.3 Constructor</h3> <p>The **init**() method is commonly used to initialize an object's attributes when it is created.</p> <pre>class Student:
+def **init**(self, name, course):
+self.name = name
+self.course = course
+
+```
+def display(self):
+    print(self.name, self.course)
+```
+
+student = Student("Aman", "BCA")
+student.display()</pre> <h3>11.4 Instance Attributes and Methods</h3> <p>Instance attributes store information belonging to an object. Instance methods operate on an object and conventionally receive self as their first parameter.</p> <h3>11.5 Inheritance</h3> <p>Inheritance allows a class to derive attributes and methods from another class. It supports code reuse and class relationships.</p> <pre>class Animal:
+def speak(self):
+print("Animal sound")
+
+class Dog(Animal):
+def bark(self):
+print("Dog barks")
+
+dog = Dog()
+dog.speak()
+dog.bark()</pre> <h3>11.6 Encapsulation</h3> <p>Encapsulation groups data and related methods within a class. Python uses naming conventions and name mangling to support controlled access patterns.</p> <pre>class Account:
+def **init**(self, balance):
+self.__balance = balance
+
+```
+def show_balance(self):
+    print(self.__balance)
+```
+
+account = Account(5000)
+account.show_balance()</pre> <h3>11.7 Polymorphism</h3> <p>Polymorphism allows different objects to respond to the same operation in their own ways.</p> <pre>class Dog:
+def sound(self):
+print("Bark")
+
+class Cat:
+def sound(self):
+print("Meow")
+
+for animal in [Dog(), Cat()]:
+animal.sound()</pre> <h3>11.8 Benefits of OOP</h3> <ul> <li>Organizes code into reusable components.</li> <li>Supports inheritance and code reuse.</li> <li>Helps represent real-world entities.</li> <li>Improves maintainability of large programs.</li> </ul> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is OOP?</li><li>Define class and object.</li><li>Explain constructor.</li><li>What is inheritance?</li><li>Explain encapsulation and polymorphism.</li></ol></div> <div class="page-number">15</div>
+
+</section>
+
+<section class="page" id="chapter12">
+    <h2>Chapter 12: Exception Handling</h2>
+    <h3>12.1 What is an Exception?</h3>
+    <p>An exception is an event that occurs during program execution and interrupts the normal flow. If an exception is not handled, the program may terminate unexpectedly.</p>
+    <h3>12.2 Common Exceptions</h3>
+    <ul>
+        <li><strong>ValueError:</strong> An operation receives a value of an inappropriate form.</li>
+        <li><strong>TypeError:</strong> An operation is applied to an unsuitable type.</li>
+        <li><strong>ZeroDivisionError:</strong> Division or modulo by zero is attempted.</li>
+        <li><strong>IndexError:</strong> A sequence index is outside the valid range.</li>
+        <li><strong>KeyError:</strong> A dictionary key is not found.</li>
+        <li><strong>FileNotFoundError:</strong> A requested file cannot be found.</li>
+    </ul>
+    <h3>12.3 try and except</h3>
+    <p>The try block contains code that may raise an exception. The except block handles a matching exception.</p>
+    <pre>try:
+    number = int(input("Enter a number: "))
+    print(100 / number)
+except ValueError:
+    print("Please enter a valid number")
+except ZeroDivisionError:
+    print("Cannot divide by zero")</pre>
+    <h3>12.4 else and finally</h3>
+    <p>The else block executes when the try block completes without an exception. The finally block executes whether an exception occurs or not.</p>
+    <pre>try:
+    result = 10 / 2
+except ZeroDivisionError:
+    print("Division error")
+else:
+    print(result)
+finally:
+    print("Program completed")</pre>
+    <h3>12.5 Raising Exceptions</h3>
+    <p>The raise statement allows a program to explicitly raise an exception when a condition is invalid.</p>
+    <pre>age = -5
+
+if age < 0:
+raise ValueError("Age cannot be negative")</pre> <h3>12.6 Custom Exceptions</h3> <p>A programmer can create a custom exception by defining a class derived from Exception.</p> <pre>class InvalidAgeError(Exception):
+pass
+
+age = -1
+
+if age < 0:
+raise InvalidAgeError("Age cannot be negative")</pre> <div class="exercise"><strong>Practice Questions</strong><ol><li>Define exception handling.</li><li>Explain try and except.</li><li>What is the purpose of finally?</li><li>What is a custom exception?</li><li>Write a program to handle division by zero.</li></ol></div> <div class="page-number">16</div>
+
+</section>
+
+<section class="page" id="chapter13">
+    <h2>Chapter 13: Modules and Libraries</h2>
+    <h3>13.1 What is a Module?</h3>
+    <p>A module is a Python file that contains reusable definitions such as functions, classes and variables. Modules help organize code into separate files.</p>
+    <h3>13.2 Importing a Module</h3>
+    <pre>import math
+
+print(math.sqrt(25))
+print(math.pi)</pre> <h3>13.3 Importing Specific Members</h3> <pre>from math import sqrt
+
+print(sqrt(49))</pre> <h3>13.4 The random Module</h3> <p>The random module provides functions for generating pseudo-random values and selecting items.</p> <pre>import random
+
+number = random.randint(1, 10)
+print(number)
+
+colors = ["Red", "Green", "Blue"]
+print(random.choice(colors))</pre> <h3>13.5 The datetime Module</h3> <pre>from datetime import datetime
+
+current_time = datetime.now()
+print(current_time)</pre> <h3>13.6 Standard Library</h3> <p>Python includes a standard library containing modules for mathematics, dates, file formats, operating-system interaction, networking and many other tasks.</p> <h3>13.7 External Packages</h3> <p>External packages can be installed using Python's package installer, pip. For example:</p> <pre>python -m pip install requests</pre> <h3>13.8 Using an External Package</h3> <pre>import requests
+
+response = requests.get("https://example.com")
+print(response.status_code)</pre> <div class="note">Install external packages only when required. Some packages need additional configuration or a compatible Python version.</div> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is a module?</li><li>Explain the import statement.</li><li>What is the Python standard library?</li><li>What is pip?</li><li>Write a program using the math module.</li></ol></div> <div class="page-number">17</div>
+
+</section>
+
+<section class="page" id="chapter14">
+    <h2>Chapter 14: Database Connectivity</h2>
+    <h3>14.1 Introduction</h3>
+    <p>A database stores organized information. Python applications can connect to databases to insert, retrieve, update and delete records.</p>
+    <h3>14.2 SQLite Database</h3>
+    <p>SQLite is a lightweight relational database. Python includes the sqlite3 module, which can be used to create and work with SQLite databases without installing a separate database server.</p>
+    <h3>14.3 Connecting to a Database</h3>
+    <pre>import sqlite3
+
+connection = sqlite3.connect("college.db")
+print("Database connected")
+
+connection.close()</pre> <h3>14.4 Creating a Table</h3> <pre>import sqlite3
+
+connection = sqlite3.connect("college.db")
+cursor = connection.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS students (
+id INTEGER PRIMARY KEY,
+name TEXT,
+course TEXT
+)
+""")
+
+connection.commit()
+connection.close()</pre> <h3>14.5 Inserting Records</h3> <pre>import sqlite3
+
+connection = sqlite3.connect("college.db")
+cursor = connection.cursor()
+
+cursor.execute(
+"INSERT INTO students (name, course) VALUES (?, ?)",
+("Aman", "BCA")
+)
+
+connection.commit()
+connection.close()</pre> <h3>14.6 Retrieving Records</h3> <pre>import sqlite3
+
+connection = sqlite3.connect("college.db")
+cursor = connection.cursor()
+
+cursor.execute("SELECT * FROM students")
+records = cursor.fetchall()
+
+for record in records:
+print(record)
+
+connection.close()</pre> <h3>14.7 Updating and Deleting Records</h3> <pre>cursor.execute(
+"UPDATE students SET course = ? WHERE id = ?",
+("MCA", 1)
+)
+
+cursor.execute(
+"DELETE FROM students WHERE id = ?",
+(2,)
+)</pre> <p>After data changes, call commit() to save the transaction. Use parameterized queries with placeholders instead of building SQL statements by joining untrusted input.</p> <div class="note">Database applications should handle errors, close connections properly and validate user input. Parameterized queries help protect against SQL injection.</div> <div class="exercise"><strong>Practice Questions</strong><ol><li>What is a database?</li><li>What is SQLite?</li><li>Explain the sqlite3 module.</li><li>What is the purpose of commit()?</li><li>Write a program to create a student table.</li></ol></div> <div class="page-number">18</div>
+
+</section>
+
+<section class="page" id="chapter15">
+    <h2>Chapter 15: Python Applications and Projects</h2>
+    <h3>15.1 Python in Real Life</h3>
+    <p>Python is used in many areas of technology. Its flexibility and extensive ecosystem make it useful for building applications and automating tasks.</p>
+    <ul>
+        <li><strong>Web Development:</strong> Creating websites and web services.</li>
+        <li><strong>Data Science:</strong> Analysing and visualizing information.</li>
+        <li><strong>Artificial Intelligence:</strong> Building intelligent systems.</li>
+        <li><strong>Automation:</strong> Performing repetitive computer tasks.</li>
+        <li><strong>Scientific Computing:</strong> Supporting mathematical and research work.</li>
+        <li><strong>Education:</strong> Teaching programming and computational thinking.</li>
+    </ul>
+    <h3>15.2 Mini Project: Simple Calculator</h3>
+    <p>This program accepts two numbers and performs a selected arithmetic operation.</p>
+    <pre>num1 = float(input("Enter first number: "))
+num2 = float(input("Enter second number: "))
+
+print("1. Addition")
+print("2. Subtraction")
+print("3. Multiplication")
+print("4. Division")
+
+choice = input("Choose operation: ")
+
+if choice == "1":
+print(num1 + num2)
+elif choice == "2":
+print(num1 - num2)
+elif choice == "3":
+print(num1 * num2)
+elif choice == "4":
+if num2 != 0:
+print(num1 / num2)
+else:
+print("Cannot divide by zero")
+else:
+print("Invalid choice")</pre> <h3>15.3 Mini Project: Student Record</h3> <pre>students = []
+
+name = input("Enter student name: ")
+course = input("Enter course: ")
+marks = float(input("Enter marks: "))
+
+student = {
+"name": name,
+"course": course,
+"marks": marks
+}
+
+students.append(student)
+
+for record in students:
+print(record)</pre> <h3>15.4 Mini Project: Number Guessing Game</h3> <pre>import random
+
+secret = random.randint(1, 10)
+
+while True:
+guess = int(input("Guess a number from 1 to 10: "))
+
+```
+if guess == secret:
+    print("You guessed correctly!")
+    break
+elif guess < secret:
+    print("Try a higher number")
+else:
+    print("Try a lower number")</pre>
+<h3>15.5 Other Project Ideas</h3>
+<ol>
+    <li>Library Book Management System.</li>
+    <li>Student Record Management System.</li>
+    <li>Quiz Application.</li>
+    <li>Personal Expense Tracker.</li>
+    <li>To-Do List Application.</li>
+    <li>Contact Management System.</li>
+</ol>
+<h3>15.6 Project Development Steps</h3>
+<ol>
+    <li>Identify the problem to solve.</li>
+    <li>Decide the required features.</li>
+    <li>Design the program structure.</li>
+    <li>Write and test the code.</li>
+    <li>Store data where required.</li>
+    <li>Fix errors and improve the application.</li>
+    <li>Prepare project documentation.</li>
+</ol>
+<h3>15.7 Further Learning Roadmap</h3>
+<p>After completing Python fundamentals, learners can explore web frameworks, databases, data analysis, automation, APIs and machine learning. Building projects helps connect theoretical knowledge with practical problem-solving.</p>
+<div class="exercise"><strong>Final Practice</strong><ol><li>Create a calculator using functions.</li><li>Store student details in a dictionary.</li><li>Create a program that reads and writes a file.</li><li>Build a simple quiz application.</li><li>Connect a Python program to an SQLite database.</li></ol></div>
+<div class="page-number">19</div>
+```
+
+</section>
+
+<section class="page" id="glossary">
+    <h2>Glossary</h2>
+    <ul>
+        <li><strong>Algorithm:</strong> A sequence of steps to solve a problem.</li>
+        <li><strong>Argument:</strong> A value passed to a function.</li>
+        <li><strong>Boolean:</strong> A data type with True and False values.</li>
+        <li><strong>Class:</strong> A blueprint used to create objects.</li>
+        <li><strong>Database:</strong> An organized collection of information.</li>
+        <li><strong>Data Type:</strong> A classification of data values.</li>
+        <li><strong>Dictionary:</strong> A collection of key-value pairs.</li>
+        <li><strong>Exception:</strong> An event that interrupts normal program execution.</li>
+        <li><strong>File Handling:</strong> Reading and writing files using a program.</li>
+        <li><strong>Function:</strong> A reusable block of code.</li>
+        <li><strong>IDE:</strong> Integrated Development Environment.</li>
+        <li><strong>Immutable:</strong> An object that cannot be changed after creation.</li>
+        <li><strong>Interpreter:</strong> Software that executes program instructions.</li>
+        <li><strong>Iteration:</strong> Repeating a set of instructions.</li>
+        <li><strong>List:</strong> An ordered, mutable collection.</li>
+        <li><strong>Loop:</strong> A programming structure used for repetition.</li>
+        <li><strong>Module:</strong> A Python file containing reusable code.</li>
+        <li><strong>Object:</strong> An instance of a class.</li>
+        <li><strong>Operator:</strong> A symbol or keyword that performs an operation.</li>
+        <li><strong>Parameter:</strong> A name in a function definition.</li>
+        <li><strong>Set:</strong> A collection of unique elements.</li>
+        <li><strong>String:</strong> A sequence of characters.</li>
+        <li><strong>Tuple:</strong> An ordered, immutable collection.</li>
+        <li><strong>Variable:</strong> A name referring to a value.</li>
+    </ul>
+    <div class="page-number">20</div>
+</section>
+
+<section class="page" id="references">
+    <h2>References and Further Reading</h2>
+    <p>The following resources provide official documentation and additional learning material for Python programming.</p>
+    <ol>
+        <li>Python Software Foundation - Python Documentation.</li>
+        <li>Python Tutorial - Official Python Documentation.</li>
+        <li>Python Language Reference.</li>
+        <li>Python Standard Library Reference.</li>
+        <li>Python sqlite3 Module Documentation.</li>
+        <li>Computer Programming Fundamentals - General Study Material.</li>
+    </ol>
+    <h3>Official Learning Resources</h3>
+    <p>Python documentation: <strong>docs.python.org/3/</strong></p>
+    <p>Python downloads: <strong>python.org/downloads/</strong></p>
+    <h3>Conclusion</h3>
+    <p>Python provides a practical foundation for learning programming. By understanding variables, operators, control statements, functions, collections, classes, exceptions and database connectivity, learners can begin developing useful applications.</p>
+    <p>Regular practice, problem-solving and project development are important steps towards becoming a confident programmer.</p>
+    <div class="meta">
+        <h3>SMART DIGITAL LIBRARY</h3>
+        <p>Read • Learn • Grow</p>
+        <p><strong>End of Book</strong></p>
+    </div>
+    <div class="action-row no-print">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button onclick="toggleBookmark()">☆ Save Bookmark</button>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+    </div>
+    <div class="page-number">21</div>
+</section>
+
+</main>
+</div>
+
+<div class="footer">Smart Digital Library | Python Programming Textbook | 2026</div>
+
+<script>
+const BOOK_TITLE = "Python Programming";
+const BOOK_KEY = "pythonBookmark";
+const HISTORY_KEY = "readingHistory";
+
+const progressBar = document.getElementById("progress");
+const progressText = document.getElementById("progressText");
+const bookmarkButton = document.getElementById("bookmarkButton");
+const bookmarkStatus = document.getElementById("bookmarkStatus");
+
+function updateBookmark(){
+    const saved = localStorage.getItem(BOOK_KEY) === "true";
+    bookmarkButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+    bookmarkStatus.textContent = saved ? "★ Bookmarked" : "☆ Not Bookmarked";
+}
+
+function toggleBookmark(){
+    const saved = localStorage.getItem(BOOK_KEY) === "true";
+    localStorage.setItem(BOOK_KEY, String(!saved));
+    updateBookmark();
+    alert(!saved ? "Python book bookmarked!" : "Bookmark removed!");
+}
+
+function updateProgress(){
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const value = total > 0 ? Math.min(100, Math.max(0, (window.scrollY / total) * 100)) : 0;
+    const rounded = Math.round(value);
+
+    progressBar.style.width = rounded + "%";
+    progressText.textContent = rounded + "% completed";
+    localStorage.setItem("pythonProgress", String(rounded));
+    saveReadingHistory(rounded);
+}
+
+function saveReadingHistory(progress){
+    let history = [];
+
+    try{
+        history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        if(!Array.isArray(history)) history = [];
+    }catch(error){
+        history = [];
+    }
+
+    const existingIndex = history.findIndex(item =>
+        item.book === BOOK_TITLE || item.title === BOOK_TITLE
+    );
+
+    const record = {
+        book: BOOK_TITLE,
+        title: BOOK_TITLE,
+        icon: "🐍",
+        category: "Programming",
+        page: progress,
+        progress: progress,
+        time: new Date().toLocaleString(),
+        date: new Date().toLocaleString()
+    };
+
+    if(existingIndex >= 0){
+        history[existingIndex] = {...history[existingIndex], ...record};
+    }else{
+        history.push(record);
+    }
+
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+window.addEventListener("scroll", updateProgress);
+
+window.addEventListener("load", function(){
+    const savedProgress = Number(localStorage.getItem("pythonProgress") || 0);
+    progressBar.style.width = savedProgress + "%";
+    progressText.textContent = savedProgress + "% completed";
+    updateBookmark();
+    saveReadingHistory(savedProgress);
+});
+</script>
+
+</body>
+</html>

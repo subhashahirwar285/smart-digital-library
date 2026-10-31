@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | Smart Digital Library</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eaf3ff, #f7faff);
+            color: #243247;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1769d2, #5298ff);
+            color: white;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h2 {
+            font-size: 23px;
+        }
+
+        .back-btn {
+            background: white;
+            color: #1769d2;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(35, 90, 160, 0.10);
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e6edf7;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #e0edff;
+            color: #1769d2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .profile-top h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .profile-top p {
+            color: #718096;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: #e3f8eb;
+            color: #21834b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .section-title {
+            margin: 28px 0 18px;
+            font-size: 20px;
+            color: #1769d2;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .detail-box {
+            background: #f6f9ff;
+            border: 1px solid #e8effa;
+            padding: 17px;
+            border-radius: 12px;
+        }
+
+        .detail-box label {
+            color: #718096;
+            display: block;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .detail-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #243247;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        button {
+            border: none;
+            border-radius: 9px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            background: #1769d2;
+            color: white;
+        }
+
+        .save-btn {
+            background: #18864b;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e9eef6;
+            color: #34445a;
+        }
+
+        .books-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 24px;
+            box-shadow: 0 8px 30px rgba(35, 90, 160, 0.08);
+        }
+
+        .books-card p {
+            color: #718096;
+            line-height: 1.7;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #718096;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
+            .profile-top {
+                align-items: flex-start;
+            }
+
+            .avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
+
+            .profile-top h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>📚 Smart Digital Library</h2>
+    <a href="dasbord.html" class="back-btn">← Dashboard</a>
+</header>
+
+<div class="container">
+
+    <div class="profile-card">
+
+        <div class="profile-top">
+            <div class="avatar" id="avatar">S</div>
+
+            <div>
+                <h1 id="displayName">Student Name</h1>
+                <p>Student Profile</p>
+                <span class="badge">● Library Member</span>
+            </div>
+        </div>
+
+        <h2 class="section-title">👤 Personal Information</h2>
+
+        <div class="details-grid">
+
+            <div class="detail-box">
+                <label>Full Name</label>
+                <input id="name" value="Student Name" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>Student ID / Enrollment Number</label>
+                <input id="studentId" value="Enter Student ID" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>Email Address</label>
+                <input id="email" type="email" value="student@example.com" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>Mobile Number</label>
+                <input id="mobile" type="tel" value="" placeholder="Enter mobile number" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>Course</label>
+                <input id="course" value="BCA" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>Semester</label>
+                <input id="semester" value="Enter Semester" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>College Name</label>
+                <input id="college" value="Enter College Name" disabled>
+            </div>
+
+            <div class="detail-box">
+                <label>Admission Year</label>
+                <input id="year" value="Enter Admission Year" disabled>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button class="edit-btn" id="editBtn" onclick="editProfile()">
+                ✏️ Edit Profile
+            </button>
+
+            <button class="save-btn" id="saveBtn" onclick="saveProfile()" hidden>
+                💾 Save Changes
+            </button>
+
+            <button class="cancel-btn" id="cancelBtn" onclick="cancelEdit()" hidden>
+                Cancel
+            </button>
+        </div>
+
+    </div>
+
+    <div class="books-card">
+        <h2 class="section-title" style="margin-top: 0;">
+            📚 My Library
+        </h2>
+
+        <p>
+            Your issued books and reading history can be displayed here.
+            Connect this section to your library database to show actual book records.
+        </p>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Smart Digital Library | Student Portal
+</footer>
+
+<script>
+    const fields = [
+        "name", "studentId", "email", "mobile",
+        "course", "semester", "college", "year"
+    ];
+
+    let originalData = {};
+
+    function loadProfile() {
+        const saved = localStorage.getItem("studentProfile");
+
+        if (saved) {
+            const data = JSON.parse(saved);
+
+            fields.forEach(id => {
+                if (data[id] !== undefined) {
+                    document.getElementById(id).value = data[id];
+                }
+            });
+        }
+
+        updateHeader();
+    }
+
+    function updateHeader() {
+        const name = document.getElementById("name").value.trim();
+
+        document.getElementById("displayName").textContent =
+            name || "Student Name";
+
+        document.getElementById("avatar").textContent =
+            name ? name.charAt(0).toUpperCase() : "S";
+    }
+
+    function editProfile() {
+        originalData = {};
+
+        fields.forEach(id => {
+            const input = document.getElementById(id);
+            originalData[id] = input.value;
+            input.disabled = false;
+        });
+
+        document.getElementById("editBtn").hidden = true;
+        document.getElementById("saveBtn").hidden = false;
+        document.getElementById("cancelBtn").hidden = false;
+    }
+
+    function saveProfile() {
+        const email = document.getElementById("email").value.trim();
+
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        const data = {};
+
+        fields.forEach(id => {
+            data[id] = document.getElementById(id).value.trim();
+            document.getElementById(id).disabled = true;
+        });
+
+        localStorage.setItem("studentProfile", JSON.stringify(data));
+
+        updateHeader();
+        finishEditing();
+
+        alert("Profile saved successfully!");
+    }
+
+    function cancelEdit() {
+        fields.forEach(id => {
+            document.getElementById(id).value = originalData[id];
+            document.getElementById(id).disabled = true;
+        });
+
+        updateHeader();
+        finishEditing();
+    }
+
+    function finishEditing() {
+        document.getElementById("editBtn").hidden = false;
+        document.getElementById("saveBtn").hidden = true;
+        document.getElementById("cancelBtn").hidden = true;
+    }
+
+    loadProfile();
+</script>
+
+</body>
+</html>

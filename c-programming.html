@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Programming - Smart Digital Library</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#173a63;--blue:#1565c0;--light:#e3f2fd;--ink:#263238}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f7;color:var(--ink);line-height:1.8}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial,sans-serif}
+.topbar a,.topbar button{color:white;text-decoration:none;border:1px solid #ffffff70;background:transparent;padding:8px 13px;border-radius:5px;cursor:pointer;font-size:14px}
+.topbar a:hover,.topbar button:hover{background:#ffffff20}
+.progress-track{height:5px;background:#d7e3ef;position:sticky;top:0;z-index:10}
+.progress-fill{height:5px;width:0;background:#2196f3}
+.layout{max-width:1250px;margin:25px auto;padding:0 18px;display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+.sidebar{background:white;padding:20px;border-radius:10px;box-shadow:0 3px 14px #173a6310;position:sticky;top:20px;max-height:85vh;overflow:auto;font-family:Arial,sans-serif}
+.sidebar h3{color:var(--navy);margin-bottom:12px}
+.sidebar a{display:block;color:#34495e;text-decoration:none;padding:7px 9px;border-radius:5px;font-size:13px;border-bottom:1px solid #edf1f5}
+.sidebar a:hover{background:var(--light);color:var(--blue)}
+.book{min-width:0}
+.cover{min-height:570px;background:linear-gradient(135deg,#102b4d,#145a9e 58%,#42a5f5);color:white;border-radius:12px;padding:55px 45px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 25px #173a6330}
+.cover:before,.cover:after{content:"";position:absolute;border:1px solid #ffffff35;border-radius:50%;width:380px;height:380px;right:-110px;top:50px}
+.cover:after{width:260px;height:260px;right:-50px;top:110px}
+.cover-top,.cover-main,.cover-bottom{position:relative;z-index:1}
+.cover-label{letter-spacing:4px;font:12px Arial,sans-serif;color:#c9e5ff}
+.cover-symbol{font-size:75px;margin:30px 0 5px}
+.cover h1{font:bold clamp(38px,6vw,65px)/1.08 Arial,sans-serif;max-width:650px;margin:10px 0 18px}
+.cover-subtitle{font:18px Arial,sans-serif;color:#d9ecff;max-width:550px}
+.cover-line{width:75px;height:5px;background:#90caf9;margin:25px 0}
+.cover-bottom{border-top:1px solid #ffffff55;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font:14px Arial,sans-serif}
+.page{background:white;margin-top:22px;padding:42px 48px;border-radius:8px;box-shadow:0 3px 14px #173a6310;scroll-margin-top:20px;min-height:300px}
+.page h2{font:bold 27px Arial,sans-serif;color:var(--navy);border-bottom:2px solid #dceaf7;padding-bottom:12px;margin-bottom:20px}
+.page h3{font:bold 19px Arial,sans-serif;color:var(--blue);margin:24px 0 10px}
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 28px}
+.page li{margin:6px 0}
+.page-number{text-align:right;border-top:1px solid #ddd;margin-top:35px;padding-top:12px;color:#718096;font:12px Arial,sans-serif}
+.info-box{background:#eef6ff;border-left:4px solid var(--blue);padding:14px 17px;margin:18px 0;border-radius:4px}
+.note{background:#fff8e6;border-left:4px solid #e0a326;padding:14px 17px;margin:18px 0}
+pre{background:#172536;color:#e5f2ff;padding:17px;border-radius:7px;overflow-x:auto;margin:15px 0;font:14px/1.65 Consolas,monospace}
+code{font-family:Consolas,monospace}
+.exercise{background:#f4f7fa;padding:16px 20px;border-radius:7px;margin-top:20px}
+.exercise h3{margin-top:0}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;font-family:Arial,sans-serif}
+.action-row button{background:var(--blue);color:white;border:0;border-radius:5px;padding:9px 14px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.bookmark-status{font:13px Arial,sans-serif;color:#287443;margin-top:7px}
+.footer{text-align:center;padding:25px;color:#65758b;font:13px Arial,sans-serif}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:relative;top:0;max-height:300px}.cover{min-height:480px;padding:35px 25px}.page{padding:28px 23px}}
+@media print{
+body{background:white}.topbar,.progress-track,.sidebar,.action-row,.footer{display:none!important}
+.layout{display:block;max-width:100%;margin:0;padding:0}.cover,.page{box-shadow:none;border-radius:0;break-after:page;margin:0;min-height:95vh}
+.page{padding:25mm 22mm}.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+<a href="index.html">← Back to Library</a>
+<strong>📘 Smart Digital Library</strong>
+<div>
+<button id="topBookmarkBtn" onclick="toggleBookmark()">☆ Bookmark</button>
+<a href="qr.html?book=c-programming">QR Code</a>
+<button onclick="window.print()">Print</button>
+</div>
+</header>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="layout">
+<aside class="sidebar">
+<h3>📚 Contents</h3>
+<a href="#preface">Preface</a>
+<a href="#chapter1">1. Introduction to C</a>
+<a href="#chapter2">2. Structure of C Program</a>
+<a href="#chapter3">3. Variables and Data Types</a>
+<a href="#chapter4">4. Operators and Expressions</a>
+<a href="#chapter5">5. Input and Output</a>
+<a href="#chapter6">6. Decision Making</a>
+<a href="#chapter7">7. Loops</a>
+<a href="#chapter8">8. Arrays</a>
+<a href="#chapter9">9. Strings</a>
+<a href="#chapter10">10. Functions</a>
+<a href="#chapter11">11. Pointers</a>
+<a href="#chapter12">12. Structures and Unions</a>
+<a href="#chapter13">13. Dynamic Memory Allocation</a>
+<a href="#chapter14">14. File Handling</a>
+<a href="#chapter15">15. Preprocessor and Header Files</a>
+<a href="#chapter16">16. Practical Projects</a>
+<a href="#glossary">Glossary</a>
+<a href="#references">References</a>
+<div class="bookmark-status" id="bookmarkStatus"></div>
+</aside>
+
+<main class="book">
+
+<section class="cover">
+<div class="cover-top">
+<div class="cover-label">SMART DIGITAL LIBRARY • COMPUTER SCIENCE SERIES</div>
+<div class="cover-symbol">💻</div>
+</div>
+<div class="cover-main">
+<div class="cover-label">A COMPLETE STUDENT TEXTBOOK</div>
+<h1>C<br>PROGRAMMING</h1>
+<div class="cover-line"></div>
+<p class="cover-subtitle">Fundamentals, Logic Building, Data Structures, Pointers and Practical Programs</p>
+</div>
+<div class="cover-bottom">
+<span>First Edition • 2026</span>
+<span>Smart Digital Library Team</span>
+</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+<p>C is a general-purpose programming language that has played an important role in the development of modern software. It is widely studied because it teaches fundamental programming concepts, structured problem solving and the relationship between software and computer memory.</p>
+<p>This textbook introduces C programming from the basics to intermediate concepts. Students will learn how to write programs, use variables, work with operators, control program flow, manage arrays and strings, create functions and understand pointers.</p>
+<p>The book also covers structures, dynamic memory allocation, file handling and practical project development. Each chapter includes explanations, sample programs and practice questions.</p>
+<div class="info-box"><strong>How to use this book:</strong> Read each topic, type the sample programs in a C compiler, run them and experiment by changing the input values.</div>
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Understand the fundamentals and structure of C programs.</li>
+<li>Use variables, data types, operators and control statements.</li>
+<li>Develop programs using arrays, strings and functions.</li>
+<li>Understand pointers and memory management.</li>
+<li>Work with structures and files.</li>
+<li>Develop small programming projects using C.</li>
+</ul>
+<div class="page-number">Preface • Page 1</div>
+</section>
+
+<section class="page" id="chapter1">
+<h2>Chapter 1: Introduction to C Programming</h2>
+<h3>1.1 What is C?</h3>
+<p>C is a general-purpose, procedural programming language developed by Dennis Ritchie at Bell Laboratories in the early 1970s. It became popular because it provides efficient execution, structured programming features and low-level memory access through pointers.</p>
+<h3>1.2 History of C</h3>
+<p>C developed from earlier languages such as BCPL and B. It was created to support the development of the UNIX operating system. The language later became widely used in system software, embedded systems, compilers and application development.</p>
+<h3>1.3 Features of C</h3>
+<ul>
+<li><strong>Simple structure:</strong> Provides a relatively small set of core language features.</li>
+<li><strong>Portable:</strong> Programs can often be adapted to different platforms with limited changes.</li>
+<li><strong>Procedural:</strong> Programs can be organized into functions.</li>
+<li><strong>Efficient:</strong> Compiled C programs can execute with high performance.</li>
+<li><strong>Pointer support:</strong> Allows direct manipulation of memory addresses.</li>
+<li><strong>Rich operators:</strong> Provides arithmetic, logical, relational and bitwise operators.</li>
+</ul>
+<h3>1.4 Applications of C</h3>
+<p>C is used in operating systems, embedded devices, device drivers, compilers, networking software, database engines and performance-sensitive applications.</p>
+<h3>1.5 Compiler and Interpreter</h3>
+<p>A compiler translates source code into another form, commonly machine code or object code, before execution. An interpreter executes program instructions through an interpretation process. C is generally used as a compiled language.</p>
+<div class="info-box"><strong>Example:</strong> A C compiler such as GCC can translate a source file named <code>hello.c</code> into an executable program.</div>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is C programming?</li><li>Who developed the C language?</li><li>Write five features of C.</li><li>Mention four applications of C.</li><li>What is a compiler?</li></ol></div>
+<div class="page-number">Chapter 1 • Page 2</div>
+</section>
+
+<section class="page" id="chapter2">
+<h2>Chapter 2: Structure of a C Program</h2>
+<h3>2.1 Basic Program Structure</h3>
+<p>A C program usually contains preprocessor directives, function definitions and statements. The <code>main()</code> function is the standard entry point of a hosted C program.</p>
+<h3>2.2 First C Program</h3>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("Hello, World!");
+    return 0;
+}</pre>
+<h3>2.3 Explanation</h3>
+<ul>
+<li><code>#include &lt;stdio.h&gt;</code> makes standard input/output declarations available.</li>
+<li><code>int main(void)</code> defines the main function.</li>
+<li><code>{ }</code> mark the beginning and end of a block.</li>
+<li><code>printf()</code> displays formatted output.</li>
+<li><code>return 0;</code> indicates successful completion.</li>
+</ul>
+<h3>2.4 Comments</h3>
+<p>Comments explain program logic and are ignored by the compiler. C supports single-line and multi-line comments.</p>
+<pre>// This is a single-line comment
+
+/*
+This is a
+multi-line comment
+*/</pre>
+<h3>2.5 Compilation and Execution</h3>
+<p>Save the program with a <code>.c</code> extension. With GCC installed, open a terminal in the file's directory and use:</p>
+<pre>gcc hello.c -o hello
+./hello</pre>
+<p>On Windows, the executable can commonly be run with:</p>
+<pre>gcc hello.c -o hello.exe
+hello.exe</pre>
+<div class="note"><strong>Important:</strong> The exact execution command depends on the operating system and compiler setup.</div>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Explain the structure of a C program.</li><li>What is the purpose of stdio.h?</li><li>What is the role of main()?</li><li>Differentiate single-line and multi-line comments.</li></ol></div>
+<div class="page-number">Chapter 2 • Page 3</div>
+</section>
+
+<section class="page" id="chapter3">
+<h2>Chapter 3: Variables, Constants and Data Types</h2>
+<h3>3.1 Variables</h3>
+<p>A variable is a named object used to store a value during program execution. Every variable has a type that determines the kind of value it can store.</p>
+<pre>int age = 20;
+float price = 45.50f;
+char grade = 'A';</pre>
+<h3>3.2 Rules for Naming Variables</h3>
+<ul>
+<li>A name may contain letters, digits and underscores.</li>
+<li>A name cannot begin with a digit.</li>
+<li>Spaces are not allowed.</li>
+<li>C keywords cannot be used as variable names.</li>
+<li>Names are case-sensitive.</li>
+</ul>
+<h3>3.3 Basic Data Types</h3>
+<ul>
+<li><strong>int:</strong> Stores integer values.</li>
+<li><strong>char:</strong> Stores a character value.</li>
+<li><strong>float:</strong> Stores floating-point values.</li>
+<li><strong>double:</strong> Provides a floating-point type with at least as much precision as float.</li>
+<li><strong>void:</strong> Represents the absence of a value or type in specific contexts.</li>
+</ul>
+<h3>3.4 Type Modifiers</h3>
+<p>Modifiers such as <code>short</code>, <code>long</code>, <code>signed</code> and <code>unsigned</code> can modify certain integer types. Exact sizes depend on the compiler and platform.</p>
+<h3>3.5 Constants</h3>
+<p>A constant is a value that should not be modified during its intended use. The <code>const</code> keyword can make an object read-only through a particular identifier.</p>
+<pre>const float PI = 3.14159f;</pre>
+<h3>3.6 Type Conversion</h3>
+<p>Type conversion changes a value from one type to another. Some conversions happen automatically, while explicit casts allow programmers to request a conversion.</p>
+<pre>int number = 10;
+float result = (float)number / 3;</pre>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Define a variable.</li><li>Explain four basic data types.</li><li>Write five rules for naming variables.</li><li>What is type conversion?</li></ol></div>
+<div class="page-number">Chapter 3 • Page 4</div>
+</section>
+
+<section class="page" id="chapter4">
+<h2>Chapter 4: Operators and Expressions</h2>
+<h3>4.1 Meaning of Operators</h3>
+<p>Operators are symbols that perform operations on values or variables. An expression combines operands and operators to produce a result.</p>
+<h3>4.2 Arithmetic Operators</h3>
+<p>The main arithmetic operators are addition (+), subtraction (-), multiplication (*), division (/) and remainder (%).</p>
+<pre>int a = 10, b = 3;
+
+printf("%d", a + b);
+printf("%d", a - b);
+printf("%d", a * b);
+printf("%d", a / b);
+printf("%d", a % b);</pre>
+<h3>4.3 Relational Operators</h3>
+<p>Relational operators compare values and produce an integer result of 1 for true or 0 for false in C. They include <code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code> and <code>&lt;=</code>.</p>
+<h3>4.4 Logical Operators</h3>
+<ul><li><code>&amp;&amp;</code> — logical AND.</li><li><code>||</code> — logical OR.</li><li><code>!</code> — logical NOT.</li></ul>
+<h3>4.5 Assignment and Increment Operators</h3>
+<p>The assignment operator <code>=</code> stores a value. Compound assignments include <code>+=</code>, <code>-=</code> and <code>*=</code>. Increment and decrement operators are <code>++</code> and <code>--</code>.</p>
+<h3>4.6 Conditional Operator</h3>
+<p>The conditional operator <code>?:</code> selects one of two expressions depending on a condition.</p>
+<pre>int a = 10, b = 20;
+int maximum = (a > b) ? a : b;</pre>
+<h3>4.7 Operator Precedence</h3>
+<p>When an expression contains multiple operators, precedence rules determine the order of evaluation. Parentheses can make the intended order clear.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is an operator?</li><li>Explain arithmetic operators.</li><li>Differentiate relational and logical operators.</li><li>What is the conditional operator?</li></ol></div>
+<div class="page-number">Chapter 4 • Page 5</div>
+</section>
+
+<section class="page" id="chapter5">
+<h2>Chapter 5: Input and Output Functions</h2>
+<h3>5.1 Standard Input and Output</h3>
+<p>C provides standard input and output functions through the <code>stdio.h</code> header. These functions allow programs to communicate with users through text input and output.</p>
+<h3>5.2 printf() Function</h3>
+<p>The <code>printf()</code> function displays formatted output on the standard output stream.</p>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int age = 20;
+    printf("My age is %d", age);
+    return 0;
+}</pre>
+<h3>5.3 scanf() Function</h3>
+<p>The <code>scanf()</code> function reads formatted input. For most ordinary variables, the address operator <code>&amp;</code> is used to pass the variable's address.</p>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int number;
+
+    printf("Enter a number: ");
+    if (scanf("%d", &amp;number) == 1)
+    {
+        printf("You entered %d", number);
+    }
+
+    return 0;
+}</pre>
+<h3>5.4 Format Specifiers</h3>
+<ul>
+<li><code>%d</code> — int</li>
+<li><code>%c</code> — character</li>
+<li><code>%f</code> — floating-point output</li>
+<li><code>%lf</code> — double input with scanf</li>
+<li><code>%s</code> — character string</li>
+</ul>
+<h3>5.5 Escape Sequences</h3>
+<p>Escape sequences represent special characters. Common examples are <code>\n</code> for a new line, <code>\t</code> for a tab and <code>\\</code> for a backslash.</p>
+<div class="note"><strong>Safety tip:</strong> Always check the return value of input functions. Avoid using unbounded string input because it can overflow a character array.</div>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is printf()?</li><li>Explain scanf() with an example.</li><li>What are format specifiers?</li><li>Write four escape sequences.</li></ol></div>
+<div class="page-number">Chapter 5 • Page 6</div>
+</section>
+
+<section class="page" id="chapter6">
+<h2>Chapter 6: Decision Making Statements</h2>
+<h3>6.1 Introduction</h3>
+<p>Decision-making statements allow a program to select different actions depending on whether a condition is true or false. They are essential for building logic into a program.</p>
+<h3>6.2 if Statement</h3>
+<pre>int age = 20;
+
+if (age >= 18)
+{
+    printf("Eligible by age condition");
+}</pre>
+<h3>6.3 if-else Statement</h3>
+<pre>int number = 7;
+
+if (number % 2 == 0)
+{
+    printf("Even number");
+}
+else
+{
+    printf("Odd number");
+}</pre>
+<h3>6.4 else-if Ladder</h3>
+<p>An else-if ladder checks multiple conditions in sequence. The first true condition determines which block is executed.</p>
+<pre>int marks = 75;
+
+if (marks >= 90)
+    printf("Grade A");
+else if (marks >= 70)
+    printf("Grade B");
+else if (marks >= 50)
+    printf("Grade C");
+else
+    printf("Needs improvement");</pre>
+<h3>6.5 Nested if</h3>
+<p>A nested if is an if statement placed inside another if or else block. It is useful when a decision depends on more than one level of conditions.</p>
+<h3>6.6 switch Statement</h3>
+<p>The switch statement selects a branch based on an integer-like controlling expression, including integer and enumeration values.</p>
+<pre>int choice = 2;
+
+switch (choice)
+{
+    case 1:
+        printf("Add");
+        break;
+    case 2:
+        printf("Subtract");
+        break;
+    default:
+        printf("Invalid choice");
+}</pre>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is a decision-making statement?</li><li>Differentiate if and if-else.</li><li>Explain else-if ladder.</li><li>What is the purpose of break in switch?</li></ol></div>
+<div class="page-number">Chapter 6 • Page 7</div>
+</section>
+
+<section class="page" id="chapter7">
+<h2>Chapter 7: Looping Statements</h2>
+<h3>7.1 Meaning of Loops</h3>
+<p>A loop repeats a block of code while a specified condition is satisfied. Loops reduce repeated statements and make programs more organized.</p>
+<h3>7.2 for Loop</h3>
+<p>A for loop is useful when the initialization, condition and update steps can be written together.</p>
+<pre>for (int i = 1; i <= 5; i++)
+{
+    printf("%d\n", i);
+}</pre>
+<h3>7.3 while Loop</h3>
+<p>A while loop checks its condition before each iteration. If the condition is initially false, the loop body does not execute.</p>
+<pre>int i = 1;
+
+while (i <= 5)
+{
+    printf("%d\n", i);
+    i++;
+}</pre>
+<h3>7.4 do-while Loop</h3>
+<p>A do-while loop checks its condition after executing the loop body. Therefore, the body executes at least once.</p>
+<pre>int i = 1;
+
+do
+{
+    printf("%d\n", i);
+    i++;
+}
+while (i <= 5);</pre>
+<h3>7.5 break Statement</h3>
+<p>The break statement terminates the nearest enclosing loop or switch statement.</p>
+<h3>7.6 continue Statement</h3>
+<p>The continue statement skips the remaining statements in the current loop iteration and moves to the next iteration when appropriate.</p>
+<h3>7.7 Nested Loops</h3>
+<p>A nested loop is a loop inside another loop. It is often used for tables, patterns and two-dimensional arrays.</p>
+<pre>for (int i = 1; i <= 3; i++)
+{
+    for (int j = 1; j <= 3; j++)
+    {
+        printf("* ");
+    }
+    printf("\n");
+}</pre>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Define a loop.</li><li>Differentiate for and while loops.</li><li>Why does do-while execute at least once?</li><li>Differentiate break and continue.</li></ol></div>
+<div class="page-number">Chapter 7 • Page 8</div>
+</section>
+
+<section class="page" id="chapter8">
+<h2>Chapter 8: Arrays</h2>
+<h3>8.1 Meaning of Array</h3>
+<p>An array is a collection of elements of the same type stored in consecutive memory locations. It allows a program to work with multiple related values using one variable name.</p>
+<h3>8.2 Declaration and Initialization</h3>
+<pre>int marks[5] = {70, 80, 65, 90, 75};</pre>
+<p>Array indexing begins at zero. In the example, the first element is <code>marks[0]</code> and the last is <code>marks[4]</code>.</p>
+<h3>8.3 Accessing Array Elements</h3>
+<pre>int numbers[5] = {10, 20, 30, 40, 50};
+
+for (int i = 0; i < 5; i++)
+{
+    printf("%d\n", numbers[i]);
+}</pre>
+<h3>8.4 One-Dimensional Array</h3>
+<p>A one-dimensional array stores a sequence of values. It is useful for marks, prices, scores and other lists of similar data.</p>
+<h3>8.5 Two-Dimensional Array</h3>
+<p>A two-dimensional array is organized into rows and columns. It can represent a matrix or table.</p>
+<pre>int matrix[2][3] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+for (int i = 0; i < 2; i++)
+{
+    for (int j = 0; j < 3; j++)
+    {
+        printf("%d ", matrix[i][j]);
+    }
+    printf("\n");
+}</pre>
+<h3>8.6 Common Array Operations</h3>
+<p>Common operations include traversal, searching, updating and sorting. When accessing an array, always ensure the index is within its valid range.</p>
+<div class="note"><strong>Important:</strong> Accessing an element outside an array's bounds causes undefined behavior in C.</div>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Define an array.</li><li>What is array indexing?</li><li>Differentiate one-dimensional and two-dimensional arrays.</li><li>Write a program to calculate the sum of five numbers stored in an array.</li></ol></div>
+<div class="page-number">Chapter 8 • Page 9</div>
+</section>
+
+<section class="page" id="chapter9">
+<h2>Chapter 9: Strings in C</h2>
+<h3>9.1 Meaning of String</h3>
+<p>C does not have a separate built-in string data type. A string is commonly represented as an array of characters terminated by a null character, written as <code>'\0'</code>.</p>
+<h3>9.2 String Declaration</h3>
+<pre>char name[20] = "Rahul";</pre>
+<p>The array has enough space for the characters and the terminating null character.</p>
+<h3>9.3 Reading and Displaying Strings</h3>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char name[50];
+
+    printf("Enter your name: ");
+
+    if (fgets(name, sizeof name, stdin) != NULL)
+    {
+        printf("Hello %s", name);
+    }
+
+    return 0;
+}</pre>
+<h3>9.4 String Library Functions</h3>
+<p>The <code>string.h</code> header provides commonly used functions for working with null-terminated strings.</p>
+<ul>
+<li><code>strlen()</code> calculates string length, excluding the terminating null character.</li>
+<li><code>strcpy()</code> copies a string into another character array.</li>
+<li><code>strcat()</code> appends one string to another.</li>
+<li><code>strcmp()</code> compares two strings.</li>
+</ul>
+<h3>9.5 Example of String Length</h3>
+<pre>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    char text[] = "Programming";
+    printf("Length = %zu", strlen(text));
+    return 0;
+}</pre>
+<h3>9.6 Common String Errors</h3>
+<p>Common errors include forgetting space for the null terminator, accessing characters outside the array and copying a string into a destination that is too small. Always check the available buffer size.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is a string in C?</li><li>What is the null character?</li><li>Explain strlen() and strcmp().</li><li>Why is buffer size important?</li></ol></div>
+<div class="page-number">Chapter 9 • Page 10</div>
+</section>
+
+<section class="page" id="chapter10">
+<h2>Chapter 10: Functions</h2>
+<h3>10.1 Meaning of Function</h3>
+<p>A function is a named block of code that performs a particular task. Functions help divide a large program into smaller, reusable and easier-to-test units.</p>
+<h3>10.2 Function Declaration</h3>
+<p>A function declaration, also called a prototype, tells the compiler about the function's name, return type and parameters.</p>
+<pre>int add(int a, int b);</pre>
+<h3>10.3 Function Definition and Call</h3>
+<pre>#include &lt;stdio.h&gt;
+
+int add(int a, int b)
+{
+    return a + b;
+}
+
+int main(void)
+{
+    int result = add(10, 20);
+    printf("Sum = %d", result);
+    return 0;
+}</pre>
+<h3>10.4 Types of Functions</h3>
+<ul>
+<li>Functions with no arguments and no return value.</li>
+<li>Functions with arguments and no return value.</li>
+<li>Functions with no arguments and a return value.</li>
+<li>Functions with arguments and a return value.</li>
+</ul>
+<h3>10.5 Call by Value</h3>
+<p>In C, function arguments are passed by value. The function receives its own parameter value, so modifying that parameter does not directly change the caller's original variable.</p>
+<h3>10.6 Recursion</h3>
+<p>Recursion occurs when a function calls itself. A recursive function needs a base condition to stop further calls.</p>
+<pre>int factorial(int n)
+{
+    if (n <= 1)
+        return 1;
+
+    return n * factorial(n - 1);
+}</pre>
+<h3>10.7 Benefits of Functions</h3>
+<p>Functions improve code reuse, readability, testing and maintenance. A well-designed function should generally perform one clearly defined task.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Define a function.</li><li>What is a function prototype?</li><li>Explain call by value.</li><li>What is recursion?</li></ol></div>
+<div class="page-number">Chapter 10 • Page 11</div>
+</section>
+
+<section class="page" id="chapter11">
+<h2>Chapter 11: Pointers</h2>
+<h3>11.1 Meaning of Pointer</h3>
+<p>A pointer is a variable that stores the memory address of another object or function. Pointers are an important feature of C because they support efficient data access, dynamic memory allocation and flexible data structures.</p>
+<h3>11.2 Pointer Declaration</h3>
+<pre>int number = 10;
+int *ptr = &amp;number;</pre>
+<p>The address-of operator <code>&amp;</code> obtains an object's address. The dereference operator <code>*</code> accesses the value through a valid pointer.</p>
+<h3>11.3 Accessing a Value</h3>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int number = 10;
+    int *ptr = &amp;number;
+
+    printf("Value = %d\n", *ptr);
+    printf("Address = %p\n", (void *)ptr);
+
+    return 0;
+}</pre>
+<h3>11.4 NULL Pointer</h3>
+<p>A null pointer does not point to a valid object or function. It is useful for representing the absence of a valid address. A pointer should be checked before dereferencing when it may be null.</p>
+<h3>11.5 Pointer Arithmetic</h3>
+<p>Pointer arithmetic allows movement between elements of an array. Adding one to a pointer advances it by the size of the pointed-to type. Such operations must remain within the relevant array object or one position past its end.</p>
+<h3>11.6 Pointers and Arrays</h3>
+<p>In many expressions, an array name is converted to a pointer to its first element. This relationship makes pointers useful for processing arrays and passing array data to functions.</p>
+<h3>11.7 Pointer to Pointer</h3>
+<p>A pointer to pointer stores the address of another pointer. It is declared using two asterisks, for example <code>int **ptr;</code>.</p>
+<div class="note"><strong>Important:</strong> Never dereference an uninitialized, invalid or freed pointer. Doing so can cause undefined behavior.</div>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is a pointer?</li><li>Explain address-of and dereference operators.</li><li>What is a NULL pointer?</li><li>Explain pointer arithmetic.</li></ol></div>
+<div class="page-number">Chapter 11 • Page 12</div>
+</section>
+
+<section class="page" id="chapter12">
+<h2>Chapter 12: Structures and Unions</h2>
+<h3>12.1 Structure</h3>
+<p>A structure is a user-defined data type that groups related variables, possibly of different types, under one name. Each member has its own storage within the structure object.</p>
+<h3>12.2 Structure Declaration</h3>
+<pre>struct Student
+{
+    int roll;
+    char name[30];
+    float marks;
+};</pre>
+<h3>12.3 Structure Variable</h3>
+<pre>struct Student s1 = {1, "Amit", 85.5f};
+
+printf("%d", s1.roll);
+printf("%s", s1.name);
+printf("%.2f", s1.marks);</pre>
+<h3>12.4 Accessing Members</h3>
+<p>The dot operator accesses a member through a structure variable. The arrow operator accesses a member through a pointer to a structure.</p>
+<pre>struct Student *ptr = &amp;s1;
+printf("%s", ptr->name);</pre>
+<h3>12.5 Array of Structures</h3>
+<p>An array of structures stores multiple records of the same structure type. It is useful for student lists, employee records and product information.</p>
+<h3>12.6 Union</h3>
+<p>A union is a user-defined type in which its members share the same memory area. Its size is sufficient to hold its largest member, subject to alignment requirements. Typically, only one member's stored value is used at a time.</p>
+<pre>union Data
+{
+    int number;
+    float price;
+    char letter;
+};</pre>
+<h3>12.7 Structure vs Union</h3>
+<p>In a structure, members have separate storage. In a union, members share storage. A structure is useful for keeping several values together, while a union can be useful when different alternatives share the same memory space.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Define a structure.</li><li>What is a union?</li><li>Differentiate structure and union.</li><li>Explain dot and arrow operators.</li></ol></div>
+<div class="page-number">Chapter 12 • Page 13</div>
+</section>
+
+<section class="page" id="chapter13">
+<h2>Chapter 13: Dynamic Memory Allocation</h2>
+<h3>13.1 Meaning</h3>
+<p>Dynamic memory allocation allows a program to request memory while it is running. This is useful when the required amount of memory is not known in advance.</p>
+<h3>13.2 Memory Management Functions</h3>
+<p>The <code>stdlib.h</code> header provides functions such as <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and <code>free()</code>.</p>
+<ul>
+<li><strong>malloc():</strong> Allocates a block of memory of the requested size. The contents are uninitialized.</li>
+<li><strong>calloc():</strong> Allocates space for multiple elements and initializes the allocated bytes to zero.</li>
+<li><strong>realloc():</strong> Changes the size of a previously allocated block.</li>
+<li><strong>free():</strong> Releases dynamically allocated memory.</li>
+</ul>
+<h3>13.3 malloc() Example</h3>
+<pre>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    int *numbers = malloc(5 * sizeof *numbers);
+
+    if (numbers == NULL)
+        return 1;
+
+    for (int i = 0; i < 5; i++)
+        numbers[i] = (i + 1) * 10;
+
+    for (int i = 0; i < 5; i++)
+        printf("%d ", numbers[i]);
+
+    free(numbers);
+    return 0;
+}</pre>
+<h3>13.4 Memory Management Rules</h3>
+<ul>
+<li>Check whether allocation functions returned NULL.</li>
+<li>Allocate enough memory for the required elements.</li>
+<li>Do not use memory after it has been freed.</li>
+<li>Release memory when it is no longer needed.</li>
+<li>Do not free the same allocated block more than once.</li>
+</ul>
+<h3>13.5 Memory Leaks</h3>
+<p>A memory leak occurs when allocated memory is no longer reachable or needed but has not been released. Careful ownership and cleanup practices help prevent memory leaks.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is dynamic memory allocation?</li><li>Explain malloc() and calloc().</li><li>What is the purpose of free()?</li><li>Define memory leak.</li></ol></div>
+<div class="page-number">Chapter 13 • Page 14</div>
+</section>
+
+<section class="page" id="chapter14">
+<h2>Chapter 14: File Handling in C</h2>
+<h3>14.1 Introduction</h3>
+<p>File handling allows a C program to store information in files and retrieve it later. It is useful when data must remain available after a program finishes.</p>
+<h3>14.2 FILE Pointer</h3>
+<p>C uses the <code>FILE</code> type, declared in <code>stdio.h</code>, to represent a stream associated with a file.</p>
+<h3>14.3 Opening a File</h3>
+<p>The <code>fopen()</code> function opens a file and returns a file pointer. If opening fails, it returns NULL.</p>
+<pre>FILE *fp = fopen("data.txt", "w");
+
+if (fp == NULL)
+{
+    printf("Unable to open file");
+}</pre>
+<h3>14.4 File Modes</h3>
+<ul>
+<li><code>r</code> — open an existing file for reading.</li>
+<li><code>w</code> — open for writing; create or truncate the file.</li>
+<li><code>a</code> — open for appending; create if necessary.</li>
+<li><code>r+</code> — open an existing file for reading and writing.</li>
+<li><code>w+</code> — open for reading and writing, creating or truncating the file.</li>
+<li><code>a+</code> — open for reading and appending.</li>
+</ul>
+<h3>14.5 Writing to a File</h3>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    FILE *fp = fopen("data.txt", "w");
+
+    if (fp == NULL)
+        return 1;
+
+    fprintf(fp, "Welcome to C programming");
+    fclose(fp);
+
+    return 0;
+}</pre>
+<h3>14.6 Reading from a File</h3>
+<pre>char line[100];
+FILE *fp = fopen("data.txt", "r");
+
+if (fp != NULL)
+{
+    while (fgets(line, sizeof line, fp) != NULL)
+    {
+        printf("%s", line);
+    }
+
+    fclose(fp);
+}</pre>
+<h3>14.7 Closing a File</h3>
+<p>The <code>fclose()</code> function closes an open file stream and helps ensure that buffered output is properly handled. Always check file-opening results before using a file pointer.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is file handling?</li><li>Explain FILE pointer.</li><li>Differentiate r, w and a modes.</li><li>What is the purpose of fclose()?</li></ol></div>
+<div class="page-number">Chapter 14 • Page 15</div>
+</section>
+
+<section class="page" id="chapter15">
+<h2>Chapter 15: Preprocessor and Header Files</h2>
+<h3>15.1 Preprocessor</h3>
+<p>The C preprocessor performs operations on source code before the main compilation stage. Preprocessor directives begin with the hash symbol <code>#</code>.</p>
+<h3>15.2 #include Directive</h3>
+<p>The include directive makes declarations from a header file available to the program.</p>
+<pre>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;</pre>
+<h3>15.3 #define Directive</h3>
+<p>The define directive creates a macro. A macro can represent a constant-like replacement or a function-like expression.</p>
+<pre>#define MAX_SIZE 100
+
+int numbers[MAX_SIZE];</pre>
+<h3>15.4 Conditional Compilation</h3>
+<p>Directives such as <code>#if</code>, <code>#ifdef</code>, <code>#ifndef</code>, <code>#else</code> and <code>#endif</code> control which parts of source code are included in a compilation.</p>
+<pre>#define DEBUG
+
+#ifdef DEBUG
+printf("Debug mode enabled");
+#endif</pre>
+<h3>15.5 Header Files</h3>
+<p>Header files commonly contain function declarations, macros, type definitions and other shared declarations. Standard headers include <code>stdio.h</code>, <code>stdlib.h</code>, <code>string.h</code> and <code>math.h</code>.</p>
+<h3>15.6 Benefits</h3>
+<p>Preprocessor directives help organize reusable declarations, configure builds and share definitions between source files. Macros should be written carefully because they perform textual substitution rather than ordinary function calls.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>What is a preprocessor?</li><li>Explain #include and #define.</li><li>What is conditional compilation?</li><li>Name four standard C header files.</li></ol></div>
+<div class="page-number">Chapter 15 • Page 16</div>
+</section>
+
+<section class="page" id="chapter16">
+<h2>Chapter 16: Practical C Programming Projects</h2>
+<h3>16.1 Why Build Projects?</h3>
+<p>Practical projects help students apply programming concepts to real problems. They improve logical thinking, debugging skills and the ability to organize a program into functions and data structures.</p>
+<h3>16.2 Project 1: Simple Calculator</h3>
+<p>This project accepts two numbers and an operator, then performs the selected arithmetic operation.</p>
+<pre>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double a, b;
+    char op;
+
+    printf("Enter expression (example: 10 + 5): ");
+
+    if (scanf("%lf %c %lf", &amp;a, &amp;op, &amp;b) != 3)
+        return 1;
+
+    switch (op)
+    {
+        case '+':
+            printf("Result = %.2f", a + b);
+            break;
+        case '-':
+            printf("Result = %.2f", a - b);
+            break;
+        case '*':
+            printf("Result = %.2f", a * b);
+            break;
+        case '/':
+            if (b != 0)
+                printf("Result = %.2f", a / b);
+            else
+                printf("Division by zero is not allowed");
+            break;
+        default:
+            printf("Invalid operator");
+    }
+
+    return 0;
+}</pre>
+<h3>16.3 Project 2: Student Record System</h3>
+<p>A student record system can store a student's roll number, name and marks using a structure. An array of structures can hold multiple records. Functions can be created to add, display and search for students.</p>
+<h3>16.4 Project 3: Contact Management System</h3>
+<p>A contact management program can store names and phone numbers. It can provide options to add contacts, display saved contacts and search by name. File handling can be used to preserve records between program runs.</p>
+<h3>16.5 Project Development Steps</h3>
+<ol>
+<li>Understand the problem and define the requirements.</li>
+<li>Design the program flow and data structures.</li>
+<li>Divide the work into smaller functions.</li>
+<li>Write and compile the source code.</li>
+<li>Test normal, boundary and invalid inputs.</li>
+<li>Fix errors and improve readability.</li>
+<li>Document how the program works.</li>
+</ol>
+<h3>16.6 Good Programming Practices</h3>
+<ul>
+<li>Use meaningful variable and function names.</li>
+<li>Keep functions focused on a single task.</li>
+<li>Validate user input.</li>
+<li>Check the results of file and memory operations.</li>
+<li>Use comments to explain complex logic.</li>
+<li>Compile with warnings enabled and test thoroughly.</li>
+</ul>
+<div class="exercise"><h3>Project Questions</h3><ol><li>Why are practical projects important?</li><li>Explain the working of a calculator program.</li><li>Which C concepts can be used in a student record system?</li><li>Write five good programming practices.</li></ol></div>
+<div class="page-number">Chapter 16 • Page 17</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>Glossary</h2>
+<ul>
+<li><strong>Algorithm:</strong> A step-by-step method for solving a problem.</li>
+<li><strong>Array:</strong> A collection of elements of the same type.</li>
+<li><strong>Compiler:</strong> A program that translates source code.</li>
+<li><strong>Constant:</strong> A value intended not to change during its use.</li>
+<li><strong>Data Type:</strong> Defines the kind of value an object can store.</li>
+<li><strong>Function:</strong> A named block of reusable code.</li>
+<li><strong>Loop:</strong> A statement that repeats a block of code.</li>
+<li><strong>Pointer:</strong> An object that stores a memory address.</li>
+<li><strong>Recursion:</strong> A technique in which a function calls itself.</li>
+<li><strong>Structure:</strong> A user-defined type that groups related members.</li>
+<li><strong>Union:</strong> A type whose members share storage.</li>
+<li><strong>Variable:</strong> A named object that stores a value.</li>
+<li><strong>String:</strong> A sequence of characters terminated by a null character.</li>
+<li><strong>Memory Leak:</strong> Allocated memory that is not properly released.</li>
+<li><strong>File Handling:</strong> Reading and writing data using file streams.</li>
+<li><strong>Header File:</strong> A file containing declarations shared by source files.</li>
+</ul>
+<div class="page-number">Glossary • Page 18</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+<p>The following resources can help students explore C programming in greater detail.</p>
+<ol>
+<li>Brian W. Kernighan and Dennis M. Ritchie, <em>The C Programming Language</em>, Second Edition.</li>
+<li>ISO C language standard and related documentation.</li>
+<li>GNU Compiler Collection (GCC) documentation.</li>
+<li>cppreference, C language reference.</li>
+<li>SEI CERT C Coding Standard.</li>
+<li>University programming course materials and laboratory exercises.</li>
+</ol>
+<h3>Suggested Study Method</h3>
+<ul>
+<li>Practice each program using a C compiler.</li>
+<li>Understand the logic before memorizing syntax.</li>
+<li>Try changing inputs and observe the output.</li>
+<li>Debug errors instead of copying programs without testing.</li>
+<li>Complete the exercises at the end of every chapter.</li>
+</ul>
+<div class="info-box"><strong>End of Book</strong><br>C Programming — Smart Digital Library Team, First Edition 2026.</div>
+<div class="page-number">References • Page 19</div>
+</section>
+
+<div class="action-row">
+<button onclick="window.print()">Print / Save as PDF</button>
+<button id="bottomBookmarkBtn" onclick="toggleBookmark()">☆ Save Bookmark</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">© 2026 Smart Digital Library | C Programming Textbook</footer>
+
+<script>
+const bookmarkKey = "cProgrammingBookmark";
+const historyKey = "readingHistory";
+
+function toggleBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+    localStorage.setItem(bookmarkKey, String(!saved));
+    updateBookmark();
+}
+
+function updateBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    const status = document.getElementById("bookmarkStatus");
+    if (status) {
+        status.textContent = saved
+            ? "✓ This book is bookmarked"
+            : "This book is not bookmarked";
+    }
+
+    const topButton = document.getElementById("topBookmarkBtn");
+    if (topButton) {
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    if (bottomButton) {
+        bottomButton.textContent = saved ? "★ Remove Bookmark" : "☆ Save Bookmark";
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+}
+
+function updateProgress(){
+    const scrollTop = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? (scrollTop / total) * 100 : 0;
+    document.getElementById("progressFill").style.width = progress + "%";
+}
+
+function saveReadingHistory(){
+    const sections = document.querySelectorAll(".cover, .page");
+    let currentPage = 1;
+
+    sections.forEach((section,index)=>{
+        const rect = section.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.65){
+            currentPage = index + 1;
+        }
+    });
+
+    let history = [];
+
+    try{
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        if(!Array.isArray(history)) history = [];
+    }catch(error){
+        history = [];
+    }
+
+    const existing = history.findIndex(item => item.title === "C Programming");
+
+    const record = {
+        title: "C Programming",
+        icon: "💻",
+        category: "Programming",
+        page: currentPage,
+        time: new Date().toLocaleString()
+    };
+
+    if(existing >= 0){
+        history[existing] = record;
+    }else{
+        history.push(record);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(history));
+}
+
+window.addEventListener("scroll",()=>{
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("load",()=>{
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("storage", (event) => {
+    if (event.key === bookmarkKey || event.key === null) {
+        updateBookmark();
+    }
+});
+</script>
+
+</body>
+</html>

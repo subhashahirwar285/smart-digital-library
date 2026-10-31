@@ -1,0 +1,1391 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Programming - Smart Digital Library</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,"Times New Roman",serif;background:#e8edf4;color:#222;line-height:1.8}
+.topbar{background:#173a63;color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-family:Arial}
+.topbar a,.topbar button{color:white;text-decoration:none;background:#24558b;border:0;padding:9px 14px;border-radius:5px;cursor:pointer}
+.progress-wrap{height:5px;background:#d5dce5;position:sticky;top:0;z-index:10}
+.progress{height:5px;background:#1976d2;width:0}
+.layout{max-width:1200px;margin:25px auto;display:grid;grid-template-columns:245px 1fr;gap:22px;padding:0 15px}
+.sidebar{background:white;padding:20px;height:max-content;position:sticky;top:35px;border-radius:8px;box-shadow:0 3px 12px #00000012;font-family:Arial}
+.sidebar h3{color:#173a63;margin-bottom:12px}
+.sidebar a{display:block;text-decoration:none;color:#444;padding:7px 5px;border-bottom:1px solid #eee;font-size:14px}
+.sidebar a:hover{color:#1976d2}
+.book{min-width:0}
+.page{background:white;padding:55px 65px;margin-bottom:22px;min-height:700px;box-shadow:0 3px 14px #00000012;border-radius:3px;position:relative}
+.cover{background:linear-gradient(145deg,#35100a,#7b2716 55%,#d17b22);color:white;text-align:center;min-height:760px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;padding:45px 35px}
+.cover-brand{font:bold 19px Arial;letter-spacing:2px}
+.cover-icon{font-size:105px;margin:35px 0 5px}
+.cover h1{font:bold 65px Arial;line-height:1.1;color:#fff}
+.cover h1 span{color:#ffd36b}
+.cover h2{font:bold 24px Arial;letter-spacing:5px;margin-top:15px}
+.cover-sub{font:17px Arial;margin-top:20px;color:#ffebd2}
+.cover-line{width:100px;height:5px;background:#ffd36b;margin:25px auto;border-radius:5px}
+.cover-features{display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap;font:14px Arial;margin:35px 0}
+.cover-features div{padding:12px;border:1px solid #ffffff55;border-radius:8px}
+.cover-author{font:17px Arial;border-top:1px solid #ffffff55;padding-top:20px}
+h1,h2,h3,h4{color:#173a63}
+.page h2{font-size:29px;border-bottom:2px solid #1976d2;padding-bottom:12px;margin-bottom:25px}
+.page h3{font-size:21px;margin:25px 0 10px}
+.page h4{font-size:17px;margin:18px 0 8px}
+p{margin:12px 0;text-align:justify}
+ul,ol{padding-left:25px;margin:12px 0}
+li{margin:7px 0}
+pre{background:#101d30;color:#d8e8ff;padding:18px;border-radius:7px;overflow-x:auto;margin:15px 0;font:14px/1.7 Consolas,monospace}
+.note{background:#eaf4ff;border-left:4px solid #1976d2;padding:15px;margin:18px 0}
+.exercise{background:#f3f6fa;padding:16px;border-radius:6px;margin-top:20px}
+.output{background:#edf1f5;color:#27364a;padding:14px;border-left:4px solid #637b98;margin:12px 0;font:14px/1.7 Consolas,monospace}
+.toc a{color:#24558b;text-decoration:none}
+.page-number{position:absolute;bottom:20px;right:35px;color:#777;font-size:13px}
+.meta{text-align:center;margin:35px 0}
+.meta p{text-align:center}
+.footer{text-align:center;padding:20px;color:#667;font:13px Arial}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.sidebar{position:static}.page{padding:35px 23px;min-height:550px}.cover{min-height:650px;padding:35px 18px}.cover h1{font-size:43px}.cover-icon{font-size:75px}}
+@media print{body{background:white}.topbar,.sidebar,.progress-wrap,.footer{display:none!important}.layout{display:block;margin:0;padding:0}.page{box-shadow:none;border-radius:0;margin:0;min-height:0;padding:35px 45px;page-break-after:always}.cover{min-height:95vh;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<header class="topbar">
+    <a href="index.html">← Back to Library</a>
+
+    <div>📚 Smart Digital Library</div>
+
+    <div>
+        <a href="qr.html?book=java">QR Code</a>
+        <button onclick="window.print()">Print Book</button>
+        <button onclick="toggleBookmark()">☆ Bookmark</button>
+    </div>
+</header>
+<div class="progress-wrap"><div class="progress" id="progress"></div></div>
+
+<div class="layout">
+<aside class="sidebar">
+<h3>Book Contents</h3>
+<a href="#cover">Cover Page</a>
+<a href="#publication">Publication Details</a>
+<a href="#preface">Preface</a>
+<a href="#toc">Table of Contents</a>
+<a href="#chapter1">1. Introduction to Java</a>
+<a href="#chapter2">2. Java Environment</a>
+<a href="#chapter3">3. Variables and Data Types</a>
+<a href="#chapter4">4. Operators</a>
+<a href="#chapter5">5. Control Statements</a>
+<a href="#chapter6">6. Arrays and Strings</a>
+<a href="#chapter7">7. Classes and Objects</a>
+<a href="#chapter8">8. Constructors and Methods</a>
+<a href="#chapter9">9. Inheritance</a>
+<a href="#chapter10">10. Polymorphism</a>
+<a href="#chapter11">11. Abstraction and Interfaces</a>
+<a href="#chapter12">12. Packages and Access</a>
+<a href="#chapter13">13. Exception Handling</a>
+<a href="#chapter14">14. Multithreading</a>
+<a href="#chapter15">15. Collections and File Handling</a>
+<a href="#chapter16">16. JDBC and Database</a>
+<a href="#chapter17">17. Mini Projects</a>
+<a href="#glossary">Glossary</a>
+<a href="#references">References</a>
+</aside>
+
+<main class="book">
+
+<section class="page cover" id="cover">
+<div class="cover-brand">📚 SMART DIGITAL LIBRARY</div>
+<div>
+<div class="cover-icon">☕</div>
+<h1><span>Java</span><br>Programming</h1>
+<h2>COMPLETE TEXTBOOK</h2>
+<div class="cover-line"></div>
+<p class="cover-sub">From Programming Fundamentals to Application Development</p>
+<div class="cover-features">
+<div>💻<br>Core Java</div>
+<div>📘<br>OOP Concepts</div>
+<div>⚙️<br>Practical Programs</div>
+<div>🚀<br>Build Projects</div>
+</div>
+</div>
+<div class="cover-author">Prepared by<br><strong>Smart Digital Library Team</strong><br><br>First Edition | 2026</div>
+</section>
+
+<section class="page" id="publication">
+<h2>Publication Details</h2>
+<div class="meta">
+<h3>JAVA PROGRAMMING</h3>
+<p><strong>A Complete Textbook for Computer Science Students</strong></p>
+<p>First Edition - 2026</p>
+<p>Published by Smart Digital Library</p>
+</div>
+<h3>About This Book</h3>
+<p>This textbook provides a structured introduction to Java programming, beginning with fundamental programming concepts and progressing towards object-oriented development, exception handling, multithreading, collections and database connectivity.</p>
+<h3>Target Readers</h3>
+<p>BCA students, computer science learners, programming beginners and students preparing for practical examinations.</p>
+<h3>Learning Objectives</h3>
+<ul>
+<li>Understand Java architecture and program execution.</li>
+<li>Write programs using variables, operators and control structures.</li>
+<li>Apply object-oriented programming principles.</li>
+<li>Handle exceptions and work with files.</li>
+<li>Understand collections, threads and database connectivity.</li>
+<li>Develop small Java-based applications.</li>
+</ul>
+<div class="note">This book is designed for learning and practice. Execute the examples using a Java Development Kit and experiment with the programs.</div>
+<div class="page-number">1</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+<p>Java is an important programming language used in education, enterprise software, web services and application development. Its object-oriented design, portability and extensive standard library make it a valuable language for computer science students.</p>
+<p>This textbook has been prepared to help learners understand Java from the beginning. It introduces the programming environment, syntax, data types, operators, control statements and arrays before moving towards classes, objects, inheritance, polymorphism and abstraction.</p>
+<p>Advanced chapters introduce exception handling, multithreading, collections, file handling and JDBC. These topics demonstrate how Java is used to build applications that process information, manage tasks and communicate with databases.</p>
+<p>Every chapter contains explanations, examples and exercises. Students should practise writing programs independently, observe their output and modify the examples to explore different situations.</p>
+<p>The purpose of this book is to develop both theoretical understanding and practical programming skills.</p>
+<p><strong>Smart Digital Library Team</strong><br>First Edition, 2026</p>
+<div class="page-number">2</div>
+</section>
+
+<section class="page toc" id="toc">
+<h2>Table of Contents</h2>
+<ol>
+<li><a href="#chapter1">Introduction to Java</a></li>
+<li><a href="#chapter2">Java Environment and First Program</a></li>
+<li><a href="#chapter3">Variables and Data Types</a></li>
+<li><a href="#chapter4">Operators and Expressions</a></li>
+<li><a href="#chapter5">Conditional Statements and Loops</a></li>
+<li><a href="#chapter6">Arrays and Strings</a></li>
+<li><a href="#chapter7">Classes and Objects</a></li>
+<li><a href="#chapter8">Constructors, Methods and Keywords</a></li>
+<li><a href="#chapter9">Inheritance</a></li>
+<li><a href="#chapter10">Polymorphism</a></li>
+<li><a href="#chapter11">Abstraction and Interfaces</a></li>
+<li><a href="#chapter12">Packages and Access Modifiers</a></li>
+<li><a href="#chapter13">Exception Handling</a></li>
+<li><a href="#chapter14">Multithreading</a></li>
+<li><a href="#chapter15">Collections and File Handling</a></li>
+<li><a href="#chapter16">JDBC and Database Connectivity</a></li>
+<li><a href="#chapter17">Practical Mini Projects</a></li>
+<li><a href="#glossary">Glossary</a></li>
+<li><a href="#references">References</a></li>
+</ol>
+<div class="note">Recommended approach: Study the chapters in order, run each program and complete the exercises before moving forward.</div>
+<div class="page-number">3</div>
+</section>
+
+<section class="page" id="chapter1">
+<h2>Chapter 1: Introduction to Java</h2>
+<h3>1.1 What is Java?</h3>
+<p>Java is a high-level, class-based, general-purpose programming language. It was developed by James Gosling and his team at Sun Microsystems and was officially released in 1995. Java was designed to make software development portable, reliable and suitable for a wide range of computing environments.</p>
+<p>A programming language allows developers to write instructions that a computer can execute. Java programs are generally compiled into bytecode, which can be executed by a compatible Java Virtual Machine.</p>
+<h3>1.2 History of Java</h3>
+<p>Java began as a project called Green at Sun Microsystems. It was initially designed for electronic devices and later developed into a general-purpose language for networked computing. The language became popular because of its portability and object-oriented programming model. Oracle acquired Sun Microsystems in 2010 and now leads the development of Oracle's Java platform, while OpenJDK provides the open-source reference implementation.</p>
+<h3>1.3 Features of Java</h3>
+<ul>
+<li><strong>Simple:</strong> Java has a structured syntax influenced by C and C++.</li>
+<li><strong>Object-Oriented:</strong> It supports classes, objects, inheritance and polymorphism.</li>
+<li><strong>Platform Independent:</strong> Java bytecode can execute on compatible JVM implementations.</li>
+<li><strong>Secure:</strong> Java includes runtime checks, type safety and security mechanisms.</li>
+<li><strong>Robust:</strong> Exception handling and automatic memory management help build reliable software.</li>
+<li><strong>Multithreaded:</strong> Java supports concurrent execution using threads.</li>
+<li><strong>Portable:</strong> Programs can be moved between compatible platforms.</li>
+<li><strong>High Performance:</strong> Just-in-time compilation can improve execution speed.</li>
+</ul>
+<h3>1.4 Java Platform Components</h3>
+<p>The Java platform provides tools and runtime components for developing and executing Java applications.</p>
+<ul>
+<li><strong>JDK:</strong> Java Development Kit. It contains tools used to develop, compile and debug programs.</li>
+<li><strong>JRE:</strong> Java Runtime Environment. It describes the runtime components required to execute Java applications.</li>
+<li><strong>JVM:</strong> Java Virtual Machine. It loads and executes Java bytecode.</li>
+</ul>
+<h3>1.5 Applications of Java</h3>
+<p>Java is used in banking systems, enterprise applications, server-side software, web services, desktop applications, scientific tools and many other areas. It is also widely used in educational programming and software development projects.</p>
+<div class="note"><strong>Important:</strong> Java is both a programming language and part of a larger software platform. The JVM is a major reason Java programs can run on different operating systems.</div>
+<h3>1.6 Advantages and Limitations</h3>
+<p>Java offers portability, a large ecosystem, strong typing and automatic memory management. However, it may require more code than some scripting languages, and its runtime memory requirements may be higher for small applications.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is Java?</li><li>Who developed Java?</li><li>Explain any six features of Java.</li><li>What is the role of JVM?</li><li>Differentiate JDK and JVM.</li><li>Write five applications of Java.</li></ol></div>
+<div class="page-number">4</div>
+</section>
+
+<section class="page" id="chapter2">
+<h2>Chapter 2: Java Environment and First Program</h2>
+<h3>2.1 Java Development Environment</h3>
+<p>A development environment contains the software tools required to create and run Java programs. The most important requirement is a suitable JDK. A programmer also needs a code editor or an Integrated Development Environment.</p>
+<p>Popular development environments include IntelliJ IDEA, Eclipse and Visual Studio Code with appropriate Java extensions.</p>
+<h3>2.2 Installing and Checking Java</h3>
+<p>Install a suitable JDK and configure the system PATH if required. Open a terminal and check the installed Java runtime and compiler:</p>
+<pre>java -version
+javac -version</pre>
+<p>The java command launches Java applications, while javac compiles Java source files.</p>
+<h3>2.3 Structure of a Java Program</h3>
+<pre>public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}</pre>
+<h3>2.4 Explanation of the Program</h3>
+<ul>
+<li><strong>public:</strong> An access modifier that makes the class accessible according to Java visibility rules.</li>
+<li><strong>class:</strong> A keyword used to declare a class.</li>
+<li><strong>Main:</strong> The class name. The public class name must match the source filename.</li>
+<li><strong>main():</strong> The standard entry point for launching this application.</li>
+<li><strong>String[] args:</strong> An array that receives command-line arguments.</li>
+<li><strong>System.out.println():</strong> Displays output followed by a new line.</li>
+</ul>
+<h3>2.5 Compilation and Execution</h3>
+<p>Save the source file as Main.java. Open the terminal in the same folder and execute:</p>
+<pre>javac Main.java
+java Main</pre>
+<div class="output">Hello, World!</div>
+<p>The compiler generates a Main.class file containing bytecode. The Java launcher starts the class through the JVM.</p>
+<h3>2.6 Comments in Java</h3>
+<p>Comments provide explanations for programmers and are not executed as program instructions.</p>
+<pre>// Single-line comment
+
+/*
+   Multi-line comment
+*/
+
+/**
+ * Documentation comment
+ */</pre>
+<h3>2.7 Input Using Scanner</h3>
+<p>The Scanner class can read user input from the keyboard. It belongs to the java.util package.</p>
+<pre>import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("Enter your name: ");
+        String name = input.nextLine();
+
+        System.out.println("Welcome " + name);
+        input.close();
+    }
+}</pre>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is JDK?</li><li>What is the purpose of main()?</li><li>Which command compiles a Java file?</li><li>What is bytecode?</li><li>Write a program to display your name and course.</li><li>Explain the use of Scanner.</li></ol></div>
+<div class="page-number">5</div>
+</section>
+
+<section class="page" id="chapter3">
+<h2>Chapter 3: Variables and Data Types</h2>
+<h3>3.1 Variables</h3>
+<p>A variable is a named reference to a value stored during program execution. Every variable has a data type that determines the kind of value it can hold and the operations that can be performed on it.</p>
+<pre>int age = 20;
+double price = 99.50;
+char grade = 'A';
+boolean active = true;
+String name = "Rahul";</pre>
+<h3>3.2 Rules for Naming Variables</h3>
+<ul><li>A name may contain letters, digits, underscores and dollar signs.</li><li>A name cannot begin with a digit.</li><li>Java keywords cannot be used as variable names.</li><li>Names are case-sensitive.</li><li>Descriptive names improve readability.</li></ul>
+<h3>3.3 Primitive Data Types</h3>
+<p>Java provides eight primitive data types:</p>
+<ul>
+<li><strong>byte:</strong> An 8-bit signed integer.</li>
+<li><strong>short:</strong> A 16-bit signed integer.</li>
+<li><strong>int:</strong> A 32-bit signed integer.</li>
+<li><strong>long:</strong> A 64-bit signed integer.</li>
+<li><strong>float:</strong> A 32-bit floating-point number.</li>
+<li><strong>double:</strong> A 64-bit floating-point number.</li>
+<li><strong>char:</strong> A 16-bit UTF-16 code unit.</li>
+<li><strong>boolean:</strong> Represents true or false.</li>
+</ul>
+<h3>3.4 Reference Data Types</h3>
+<p>Reference types refer to objects. Examples include classes, arrays, interfaces and enumerations. String is a commonly used reference type.</p>
+<h3>3.5 Constants Using final</h3>
+<p>The final keyword prevents a variable from being reassigned after it has been initialized.</p>
+<pre>final double PI = 3.14159;
+System.out.println(PI);</pre>
+<h3>3.6 Type Casting</h3>
+<p>Type conversion changes a value from one data type to another. Widening conversions are generally automatic when the target type can represent the source type. Narrowing conversions require an explicit cast and may lose information.</p>
+<pre>int number = 25;
+double result = number;
+
+double value = 19.75;
+int wholeNumber = (int) value;
+
+System.out.println(result);
+System.out.println(wholeNumber);</pre>
+<div class="output">25.0<br>19</div>
+<h3>3.7 Variable Scope</h3>
+<p>Scope determines where a variable can be accessed. Local variables are declared inside methods or blocks. Instance variables belong to objects, while static variables belong to the class itself.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>Define a variable.</li><li>List all eight primitive data types.</li><li>Differentiate int and double.</li><li>What is type casting?</li><li>Explain local and instance variables.</li><li>Write a program to store and display student details.</li></ol></div>
+<div class="page-number">6</div>
+</section>
+
+<section class="page" id="chapter4">
+<h2>Chapter 4: Operators and Expressions</h2>
+<h3>4.1 Introduction to Operators</h3>
+<p>Operators are symbols that perform operations on values and variables. An expression combines operands and operators to produce a result.</p>
+<h3>4.2 Arithmetic Operators</h3>
+<p>Arithmetic operators perform mathematical calculations. They include addition (+), subtraction (-), multiplication (*), division (/) and remainder (%).</p>
+<pre>int a = 20;
+int b = 6;
+
+System.out.println(a + b);
+System.out.println(a - b);
+System.out.println(a * b);
+System.out.println(a / b);
+System.out.println(a % b);</pre>
+<div class="output">26<br>14<br>120<br>3<br>2</div>
+<p>When both operands are integers, division produces an integer result. Use a floating-point operand when a decimal result is required.</p>
+<h3>4.3 Relational Operators</h3>
+<p>Relational operators compare two values and return a boolean result. Examples include ==, !=, &gt;, &lt;, &gt;= and &lt;=.</p>
+<pre>int x = 10;
+int y = 20;
+
+System.out.println(x == y);
+System.out.println(x < y);
+System.out.println(x != y);</pre>
+<h3>4.4 Logical Operators</h3>
+<p>Logical operators combine Boolean expressions. The && operator means logical AND, || means logical OR, and ! reverses a Boolean value. The && and || operators use short-circuit evaluation.</p>
+<pre>int age = 20;
+boolean hasID = true;
+
+System.out.println(age >= 18 && hasID);
+System.out.println(age < 18 || hasID);
+System.out.println(!hasID);</pre>
+<h3>4.5 Assignment Operators</h3>
+<p>Assignment operators store values or update an existing variable. Common examples are =, +=, -=, *=, /= and %=.</p>
+<pre>int number = 10;
+number += 5;
+number *= 2;
+System.out.println(number);</pre>
+<h3>4.6 Increment and Decrement</h3>
+<p>The ++ operator increases a variable by one, while -- decreases it by one. Prefix and postfix forms differ in when the updated value is used in an expression.</p>
+<pre>int a = 5;
+System.out.println(++a);
+
+int b = 5;
+System.out.println(b++);</pre>
+<h3>4.7 Conditional Operator</h3>
+<p>The conditional operator ?: provides a compact way to select one of two values based on a condition.</p>
+<pre>int marks = 75;
+String result = marks >= 40 ? "Pass" : "Fail";
+System.out.println(result);</pre>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is an operator?</li><li>Explain arithmetic operators.</li><li>Differentiate == and =.</li><li>Explain logical operators.</li><li>What is the conditional operator?</li><li>Write a program to calculate the area of a rectangle.</li></ol></div>
+<div class="page-number">7</div>
+</section>
+
+<section class="page" id="chapter5">
+<h2>Chapter 5: Conditional Statements and Loops</h2>
+<h3>5.1 Decision Making</h3>
+<p>Decision-making statements allow a program to select different actions based on conditions. Java provides if, if-else, else-if and switch statements.</p>
+<h3>5.2 If-Else Statement</h3>
+<pre>int marks = 75;
+
+if (marks >= 40) {
+    System.out.println("Pass");
+} else {
+    System.out.println("Fail");
+}</pre>
+<h3>5.3 Else-If Ladder</h3>
+<p>An else-if ladder checks multiple conditions in sequence. The first true condition determines the block that executes.</p>
+<pre>int marks = 82;
+
+if (marks >= 90) {
+    System.out.println("Grade A+");
+} else if (marks >= 75) {
+    System.out.println("Grade A");
+} else if (marks >= 60) {
+    System.out.println("Grade B");
+} else {
+    System.out.println("Needs Improvement");
+}</pre>
+<h3>5.4 Switch Statement</h3>
+<p>A switch statement selects a branch based on the value of an expression. The break statement prevents execution from falling through into subsequent cases in the traditional switch form.</p>
+<pre>int day = 2;
+
+switch (day) {
+    case 1:
+        System.out.println("Monday");
+        break;
+    case 2:
+        System.out.println("Tuesday");
+        break;
+    default:
+        System.out.println("Other day");
+}</pre>
+<h3>5.5 For Loop</h3>
+<p>A for loop is useful when the number of repetitions is known or controlled by an initialization, condition and update expression.</p>
+<pre>for (int i = 1; i <= 5; i++) {
+    System.out.println(i);
+}</pre>
+<h3>5.6 While Loop</h3>
+<p>A while loop checks its condition before each iteration. It is useful when the number of repetitions depends on a condition.</p>
+<pre>int i = 1;
+
+while (i <= 5) {
+    System.out.println(i);
+    i++;
+}</pre>
+<h3>5.7 Do-While Loop</h3>
+<p>A do-while loop executes its body at least once because the condition is checked after the body.</p>
+<pre>int i = 1;
+
+do {
+    System.out.println(i);
+    i++;
+} while (i <= 5);</pre>
+<h3>5.8 Break and Continue</h3>
+<p>The break statement terminates the nearest loop or switch. The continue statement skips the remaining statements in the current loop iteration.</p>
+<pre>for (int i = 1; i <= 5; i++) {
+    if (i == 3) {
+        continue;
+    }
+    System.out.println(i);
+}</pre>
+<h3>5.9 Nested Loops</h3>
+<p>A nested loop is a loop inside another loop. It is commonly used for tables, matrices and pattern printing.</p>
+<pre>for (int row = 1; row <= 3; row++) {
+    for (int col = 1; col <= 3; col++) {
+        System.out.print("* ");
+    }
+    System.out.println();
+}</pre>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is an if statement?</li><li>Differentiate while and do-while.</li><li>Explain break and continue.</li><li>What is a nested loop?</li><li>Write a program to check whether a number is even or odd.</li><li>Write a program to print a multiplication table.</li></ol></div>
+<div class="page-number">8</div>
+</section>
+
+<section class="page" id="chapter6">
+<h2>Chapter 6: Arrays and Strings</h2>
+<h3>6.1 Introduction to Arrays</h3>
+<p>An array is a fixed-size data structure that stores multiple values of the same declared element type. Each element is accessed through an index, starting from zero. The length of an array is available through its length field.</p>
+<pre>int[] marks = {75, 80, 90, 85};
+
+System.out.println(marks[0]);
+System.out.println(marks.length);</pre>
+<h3>6.2 Creating an Array</h3>
+<pre>int[] numbers = new int[5];
+
+numbers[0] = 10;
+numbers[1] = 20;
+numbers[2] = 30;
+
+System.out.println(numbers[1]);</pre>
+<h3>6.3 Traversing an Array</h3>
+<p>Array elements can be processed using a for loop or an enhanced for loop.</p>
+<pre>int[] values = {10, 20, 30, 40};
+
+for (int value : values) {
+    System.out.println(value);
+}</pre>
+<h3>6.4 Two-Dimensional Arrays</h3>
+<p>A two-dimensional array is an array whose elements are themselves arrays. It is useful for representing rows and columns, such as a matrix.</p>
+<pre>int[][] matrix = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+
+System.out.println(matrix[1][2]);</pre>
+<h3>6.5 Searching an Array</h3>
+<p>Linear search checks each element until the target is found or the array ends. It works on both sorted and unsorted arrays.</p>
+<pre>int[] numbers = {5, 10, 15, 20};
+int target = 15;
+int position = -1;
+
+for (int i = 0; i < numbers.length; i++) {
+    if (numbers[i] == target) {
+        position = i;
+        break;
+    }
+}
+
+System.out.println(position);</pre>
+<h3>6.6 Introduction to Strings</h3>
+<p>A String represents a sequence of characters. String objects are immutable, meaning their contents cannot be changed after creation. Operations that appear to modify a String create another String value.</p>
+<pre>String name = "Java Programming";
+
+System.out.println(name.length());
+System.out.println(name.toUpperCase());
+System.out.println(name.toLowerCase());
+System.out.println(name.charAt(0));
+System.out.println(name.substring(0, 4));</pre>
+<h3>6.7 String Comparison</h3>
+<p>Use equals() to compare String contents. The == operator compares object references rather than text contents.</p>
+<pre>String first = "Java";
+String second = new String("Java");
+
+System.out.println(first.equals(second));
+System.out.println(first == second);</pre>
+<div class="output">true<br>false</div>
+<h3>6.8 StringBuilder</h3>
+<p>StringBuilder is useful when a program needs to modify text repeatedly. Unlike String, its contents can be changed without creating a new String object for every operation.</p>
+<pre>StringBuilder text = new StringBuilder("Java");
+text.append(" Programming");
+System.out.println(text);</pre>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is an array?</li><li>Why does array indexing start at zero?</li><li>What is a two-dimensional array?</li><li>Explain String immutability.</li><li>Differentiate String and StringBuilder.</li><li>Write a program to calculate the sum of array elements.</li></ol></div>
+<div class="page-number">9</div>
+</section>
+
+<section class="page" id="chapter7">
+<h2>Chapter 7: Classes and Objects</h2>
+<h3>7.1 Object-Oriented Programming</h3>
+<p>Object-Oriented Programming is a programming approach that organizes software around objects. An object combines state, represented by fields, and behavior, represented by methods. OOP helps divide large applications into manageable components.</p>
+<h3>7.2 What is a Class?</h3>
+<p>A class is a blueprint that describes the fields and methods its objects can have. It defines the structure and behavior of a particular type of object.</p>
+<h3>7.3 What is an Object?</h3>
+<p>An object is an instance of a class. Different objects created from the same class can hold different values in their instance fields.</p>
+<h3>7.4 Creating a Class and Object</h3>
+<pre>class Student {
+    String name;
+    int age;
+
+    void display() {
+        System.out.println(name);
+        System.out.println(age);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Student student = new Student();
+
+        student.name = "Aman";
+        student.age = 20;
+
+        student.display();
+    }
+}</pre>
+<div class="output">Aman<br>20</div>
+<h3>7.5 Fields and Methods</h3>
+<p>Fields represent the data associated with an object. Methods define the operations an object can perform. A method may accept parameters and return a result.</p>
+<h3>7.6 The this Keyword</h3>
+<p>The this keyword refers to the current object. It is often used when a parameter has the same name as an instance field.</p>
+<pre>class Student {
+    String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+}</pre>
+<h3>7.7 Static Members</h3>
+<p>A static field or method belongs to the class rather than to a particular object. Static members are commonly accessed using the class name.</p>
+<pre>class Counter {
+    static int count = 0;
+
+    Counter() {
+        count++;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        new Counter();
+        new Counter();
+        System.out.println(Counter.count);
+    }
+}</pre>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>Define OOP.</li><li>What is a class?</li><li>What is an object?</li><li>Differentiate fields and methods.</li><li>Explain the this keyword.</li><li>Differentiate static and instance members.</li></ol></div>
+<div class="page-number">10</div>
+</section>
+
+<section class="page" id="chapter8">
+<h2>Chapter 8: Constructors, Methods and Keywords</h2>
+<h3>8.1 Constructors</h3>
+<p>A constructor initializes an object when it is created. It has the same name as its class and does not declare a return type. If no constructor is written, Java may provide a default constructor under the language rules.</p>
+<h3>8.2 No-Argument Constructor</h3>
+<pre>class Book {
+    String title;
+
+    Book() {
+        title = "Java Programming";
+    }
+
+    void display() {
+        System.out.println(title);
+    }
+}</pre>
+<h3>8.3 Parameterized Constructor</h3>
+<p>A parameterized constructor accepts values so an object can be initialized with specific data.</p>
+<pre>class Book {
+    String title;
+    String author;
+
+    Book(String title, String author) {
+        this.title = title;
+        this.author = author;
+    }
+
+    void display() {
+        System.out.println(title);
+        System.out.println(author);
+    }
+}</pre>
+<h3>8.4 Constructor Overloading</h3>
+<p>A class can define multiple constructors with different parameter lists. This allows objects to be initialized in different ways.</p>
+<pre>class Box {
+    int length;
+    int width;
+
+    Box() {
+        length = 1;
+        width = 1;
+    }
+
+    Box(int length, int width) {
+        this.length = length;
+        this.width = width;
+    }
+}</pre>
+<h3>8.5 Method Overloading</h3>
+<p>Method overloading allows multiple methods to share a name when their parameter lists differ. The compiler determines which method to call based on the arguments.</p>
+<pre>class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}</pre>
+<h3>8.6 The final Keyword</h3>
+<p>The final keyword can restrict reassignment of variables, overriding of methods and inheritance from classes, depending on where it is used.</p>
+<h3>8.7 The this and super Keywords</h3>
+<p>this refers to the current object. super refers to the superclass portion of the current object and can be used to access superclass constructors and members where permitted.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is a constructor?</li><li>Differentiate a constructor and a method.</li><li>What is constructor overloading?</li><li>Explain method overloading.</li><li>What is the use of this and super?</li><li>Explain the final keyword.</li></ol></div>
+<div class="page-number">11</div>
+</section>
+
+<section class="page" id="chapter9">
+<h2>Chapter 9: Inheritance</h2>
+<h3>9.1 Introduction</h3>
+<p>Inheritance is an OOP mechanism in which a class derives accessible fields and methods from another class. The existing class is called the superclass, while the derived class is called the subclass. Inheritance supports code reuse and allows related classes to share common behavior.</p>
+<h3>9.2 Single Inheritance</h3>
+<p>Single inheritance occurs when one subclass extends one superclass.</p>
+<pre>class Animal {
+    void eat() {
+        System.out.println("Animal is eating");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println("Dog is barking");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.eat();
+        dog.bark();
+    }
+}</pre>
+<h3>9.3 Multilevel Inheritance</h3>
+<p>In multilevel inheritance, a class extends another subclass, creating a chain of inheritance.</p>
+<pre>class Animal {
+    void eat() {
+        System.out.println("Eating");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println("Barking");
+    }
+}
+
+class Puppy extends Dog {
+    void play() {
+        System.out.println("Playing");
+    }
+}</pre>
+<h3>9.4 Hierarchical Inheritance</h3>
+<p>Hierarchical inheritance occurs when multiple subclasses extend the same superclass. Each subclass can add its own specialized behavior.</p>
+<pre>class Animal {
+    void eat() {
+        System.out.println("Eating");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println("Barking");
+    }
+}
+
+class Cat extends Animal {
+    void meow() {
+        System.out.println("Meowing");
+    }
+}</pre>
+<h3>9.5 Multiple Inheritance</h3>
+<p>Java does not allow a class to extend multiple classes. This avoids certain ambiguities in class inheritance. A class can, however, implement multiple interfaces to obtain multiple type contracts.</p>
+<h3>9.6 Method Overriding</h3>
+<p>A subclass can provide a new implementation of an inherited instance method. This is known as method overriding. The @Override annotation helps the compiler verify that the method actually overrides a superclass method.</p>
+<pre>class Animal {
+    void sound() {
+        System.out.println("Animal sound");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void sound() {
+        System.out.println("Meow");
+    }
+}</pre>
+<h3>9.7 Advantages of Inheritance</h3>
+<ul><li>Encourages code reuse.</li><li>Supports class hierarchies.</li><li>Allows specialized behavior in subclasses.</li><li>Works with runtime polymorphism.</li></ul>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is inheritance?</li><li>Explain single inheritance.</li><li>What is multilevel inheritance?</li><li>Does Java support multiple class inheritance?</li><li>What is method overriding?</li><li>Write a program demonstrating inheritance.</li></ol></div>
+<div class="page-number">12</div>
+</section>
+
+<section class="page" id="chapter10">
+<h2>Chapter 10: Polymorphism</h2>
+<h3>10.1 Meaning of Polymorphism</h3>
+<p>Polymorphism means many forms. In object-oriented programming, it allows a common method name or reference type to work with different forms of behavior. It helps build flexible and extensible programs.</p>
+<h3>10.2 Compile-Time Polymorphism</h3>
+<p>Method overloading is commonly described as compile-time polymorphism. Multiple methods share the same name but have different parameter lists.</p>
+<pre>class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculator c = new Calculator();
+
+        System.out.println(c.add(10, 20));
+        System.out.println(c.add(5.5, 2.5));
+    }
+}</pre>
+<h3>10.3 Runtime Polymorphism</h3>
+<p>Runtime polymorphism occurs when an overridden instance method is selected based on the actual object at runtime. A superclass reference can refer to a subclass object.</p>
+<pre>class Animal {
+    void sound() {
+        System.out.println("Animal sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void sound() {
+        System.out.println("Dog barks");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Dog();
+        animal.sound();
+    }
+}</pre>
+<div class="output">Dog barks</div>
+<h3>10.4 Dynamic Method Dispatch</h3>
+<p>Dynamic method dispatch is the process by which Java selects an overridden instance method at runtime based on the actual object. It is a key mechanism behind runtime polymorphism.</p>
+<h3>10.5 Benefits of Polymorphism</h3>
+<ul><li>Allows common interfaces for different objects.</li><li>Reduces dependence on specific implementation classes.</li><li>Supports extensible software design.</li><li>Makes code easier to maintain when new implementations are added.</li></ul>
+<h3>10.6 Overloading and Overriding</h3>
+<p>Overloading uses the same method name with different parameter lists. Overriding provides a subclass implementation of an inherited method with a compatible signature.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>Define polymorphism.</li><li>What is compile-time polymorphism?</li><li>What is runtime polymorphism?</li><li>Explain dynamic method dispatch.</li><li>Differentiate overloading and overriding.</li><li>Write a program demonstrating runtime polymorphism.</li></ol></div>
+<div class="page-number">13</div>
+</section>
+
+<section class="page" id="chapter11">
+<h2>Chapter 11: Abstraction and Interfaces</h2>
+<h3>11.1 Abstraction</h3>
+<p>Abstraction focuses on essential behavior while hiding unnecessary implementation details. It allows a programmer to work with what an object does without needing to know every detail of how it performs the task.</p>
+<h3>11.2 Abstract Classes</h3>
+<p>An abstract class is declared using the abstract keyword. It cannot be instantiated directly and may contain abstract methods as well as fully implemented methods.</p>
+<pre>abstract class Shape {
+    abstract void draw();
+
+    void message() {
+        System.out.println("Shape example");
+    }
+}
+
+class Circle extends Shape {
+    @Override
+    void draw() {
+        System.out.println("Drawing Circle");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Shape shape = new Circle();
+        shape.draw();
+        shape.message();
+    }
+}</pre>
+<h3>11.3 Interfaces</h3>
+<p>An interface defines a contract that implementing classes agree to follow. Interfaces can contain abstract methods, constants, default methods, static methods and private helper methods, depending on the Java version.</p>
+<pre>interface Printable {
+    void print();
+}
+
+class Document implements Printable {
+    public void print() {
+        System.out.println("Printing document");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Printable item = new Document();
+        item.print();
+    }
+}</pre>
+<h3>11.4 Multiple Interfaces</h3>
+<p>A class can implement more than one interface. This allows it to follow several independent contracts without inheriting from multiple classes.</p>
+<pre>interface Printable {
+    void print();
+}
+
+interface Scannable {
+    void scan();
+}
+
+class Machine implements Printable, Scannable {
+    public void print() {
+        System.out.println("Printing");
+    }
+
+    public void scan() {
+        System.out.println("Scanning");
+    }
+}</pre>
+<h3>11.5 Encapsulation</h3>
+<p>Encapsulation combines data and related methods inside a class while controlling access to internal state. Private fields and public methods are commonly used to protect data from uncontrolled modification.</p>
+<pre>class BankAccount {
+    private double balance;
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}</pre>
+<h3>11.6 Abstraction and Encapsulation</h3>
+<p>Abstraction focuses on exposing essential features and hiding implementation complexity. Encapsulation focuses on bundling state and behavior while controlling access to the internal data. Both concepts help create maintainable software.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>Define abstraction.</li><li>What is an abstract class?</li><li>What is an interface?</li><li>Can a class implement multiple interfaces?</li><li>Define encapsulation.</li><li>Differentiate abstraction and encapsulation.</li></ol></div>
+<div class="page-number">14</div>
+</section>
+
+<section class="page" id="chapter12">
+<h2>Chapter 12: Packages and Access Modifiers</h2>
+<h3>12.1 What is a Package?</h3>
+<p>A package is a namespace used to organize related Java classes and interfaces. Packages help prevent naming conflicts, improve code organization and control access.</p>
+<h3>12.2 Built-in Packages</h3>
+<ul><li><strong>java.lang:</strong> Fundamental language classes. It is imported automatically.</li><li><strong>java.util:</strong> Collections, Scanner and utility classes.</li><li><strong>java.io:</strong> Input and output operations.</li><li><strong>java.net:</strong> Networking classes.</li><li><strong>java.sql:</strong> Database connectivity interfaces and classes.</li></ul>
+<h3>12.3 Importing a Package</h3>
+<pre>import java.util.Scanner;
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Aman");
+        System.out.println(names);
+    }
+}</pre>
+<h3>12.4 Creating a User-Defined Package</h3>
+<p>A programmer can create a package by placing a package declaration at the beginning of a source file. The directory structure should match the package name when compiling and organizing the classes.</p>
+<pre>package mylibrary;
+
+public class Book {
+    public void display() {
+        System.out.println("Java Book");
+    }
+}</pre>
+<h3>12.5 Access Modifiers</h3>
+<ul>
+<li><strong>public:</strong> Accessible from any location where the declaring type is visible.</li>
+<li><strong>private:</strong> Accessible only within the declaring top-level class or enclosing context allowed by Java.</li>
+<li><strong>protected:</strong> Accessible within the same package and by subclasses under Java access rules.</li>
+<li><strong>Default:</strong> When no access modifier is written, access is limited to the same package.</li>
+</ul>
+<h3>12.6 Benefits of Packages</h3>
+<p>Packages group related code, make large projects easier to navigate, reduce class-name conflicts and support controlled access between components.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is a package?</li><li>Name four built-in Java packages.</li><li>How do you import a package?</li><li>What is a user-defined package?</li><li>Explain the four access levels.</li></ol></div>
+<div class="page-number">15</div>
+</section>
+
+<section class="page" id="chapter13">
+<h2>Chapter 13: Exception Handling</h2>
+<h3>13.1 What is an Exception?</h3>
+<p>An exception is an event that interrupts the normal flow of a program. Java represents exceptions as objects. Exception handling allows a program to respond to expected error conditions rather than terminating without a useful response.</p>
+<h3>13.2 Types of Problems</h3>
+<ul><li><strong>Checked Exceptions:</strong> Checked by the compiler, such as IOException.</li><li><strong>Unchecked Exceptions:</strong> Runtime exceptions, such as ArithmeticException and NullPointerException.</li><li><strong>Errors:</strong> Serious problems that applications generally do not handle as ordinary exceptions.</li></ul>
+<h3>13.3 try and catch</h3>
+<p>The try block contains statements that may throw an exception. A matching catch block handles the exception.</p>
+<pre>public class Main {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0;
+            System.out.println(result);
+        } catch (ArithmeticException e) {
+            System.out.println("Cannot divide by zero");
+        }
+    }
+}</pre>
+<div class="output">Cannot divide by zero</div>
+<h3>13.4 Multiple Catch Blocks</h3>
+<p>A try block can be followed by multiple catch blocks to handle different exception types. More specific exception types should appear before broader types.</p>
+<pre>try {
+    int[] numbers = {10, 20};
+    System.out.println(numbers[5]);
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("Invalid array index");
+} catch (Exception e) {
+    System.out.println("An error occurred");
+}</pre>
+<h3>13.5 Finally Block</h3>
+<p>The finally block is generally used for cleanup operations. It normally executes whether or not an exception occurs, although there are exceptional circumstances such as abrupt JVM termination.</p>
+<pre>try {
+    System.out.println("Inside try");
+} catch (Exception e) {
+    System.out.println("Error occurred");
+} finally {
+    System.out.println("Cleanup completed");
+}</pre>
+<h3>13.6 throw and throws</h3>
+<p>The throw keyword explicitly throws an exception object. The throws keyword declares that a method may pass certain exceptions to its caller.</p>
+<pre>public class Main {
+    static void checkAge(int age) {
+        if (age < 18) {
+            throw new IllegalArgumentException("Age below 18");
+        }
+
+        System.out.println("Eligible");
+    }
+
+    public static void main(String[] args) {
+        checkAge(20);
+    }
+}</pre>
+<h3>13.7 Custom Exceptions</h3>
+<p>A programmer can create a custom exception class to represent an application-specific error condition.</p>
+<pre>class InvalidMarksException extends Exception {
+    InvalidMarksException(String message) {
+        super(message);
+    }
+}</pre>
+<h3>13.8 Benefits of Exception Handling</h3>
+<ul><li>Separates error-handling logic from normal program logic.</li><li>Improves reliability.</li><li>Allows meaningful error messages.</li><li>Supports cleanup of resources.</li></ul>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>Define exception handling.</li><li>Differentiate checked and unchecked exceptions.</li><li>Explain try and catch.</li><li>What is the purpose of finally?</li><li>Differentiate throw and throws.</li><li>Write a program to handle division by zero.</li></ol></div>
+<div class="page-number">16</div>
+</section>
+
+<section class="page" id="chapter14">
+<h2>Chapter 14: Multithreading</h2>
+<h3>14.1 Introduction to Threads</h3>
+<p>A thread is a path of execution within a process. Multithreading allows multiple threads to make progress within one application. It is useful for responsive interfaces, background tasks and concurrent processing.</p>
+<h3>14.2 Process and Thread</h3>
+<p>A process is an executing program with its own resources. Threads exist within a process and generally share the process's memory. Each thread has its own execution stack and program state.</p>
+<h3>14.3 Creating a Thread by Extending Thread</h3>
+<pre>class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread t = new MyThread();
+        t.start();
+    }
+}</pre>
+<p>The start() method asks the JVM to schedule a new thread. The thread executes its run() method. Calling run() directly is an ordinary method call and does not start a new thread.</p>
+<h3>14.4 Creating a Thread Using Runnable</h3>
+<p>The Runnable interface represents a task that can be executed by a thread. It is often preferred because the class remains free to extend another class.</p>
+<pre>class MyTask implements Runnable {
+    public void run() {
+        System.out.println("Task is running");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Thread t = new Thread(new MyTask());
+        t.start();
+    }
+}</pre>
+<h3>14.5 Thread Life Cycle</h3>
+<p>Java defines thread states such as NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING and TERMINATED. A thread moves between states as it is started, scheduled, waits for resources or finishes execution.</p>
+<h3>14.6 Thread Methods</h3>
+<ul><li><strong>start():</strong> Starts a new thread.</li><li><strong>run():</strong> Contains the task executed by the thread.</li><li><strong>sleep():</strong> Temporarily pauses the current thread.</li><li><strong>join():</strong> Waits for another thread to finish.</li><li><strong>isAlive():</strong> Checks whether a thread has been started and has not terminated.</li></ul>
+<h3>14.7 Synchronization</h3>
+<p>When multiple threads access shared mutable data, their operations can interfere with one another. Synchronization provides controlled access to critical sections and helps prevent certain race conditions.</p>
+<pre>class Counter {
+    private int count = 0;
+
+    public synchronized void increment() {
+        count++;
+    }
+
+    public int getCount() {
+        return count;
+    }
+}</pre>
+<h3>14.8 Applications of Multithreading</h3>
+<p>Multithreading is used in servers, background file processing, user interfaces, simulations and applications that perform multiple tasks concurrently.</p>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is a thread?</li><li>Differentiate process and thread.</li><li>Explain two ways to create a thread.</li><li>What is the use of start()?</li><li>What is synchronization?</li><li>Write a program using Runnable.</li></ol></div>
+<div class="page-number">17</div>
+</section>
+
+<section class="page" id="chapter15">
+<h2>Chapter 15: Collections and File Handling</h2>
+<h3>15.1 Java Collections Framework</h3>
+<p>The Java Collections Framework provides interfaces and classes for storing, retrieving and processing groups of objects. It reduces the need to create common data structures from scratch.</p>
+<h3>15.2 List Interface</h3>
+<p>A List is an ordered collection that allows duplicate elements. ArrayList and LinkedList are commonly used List implementations.</p>
+<pre>import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<String> names = new ArrayList<>();
+
+        names.add("Aman");
+        names.add("Ravi");
+        names.add("Priya");
+
+        for (String name : names) {
+            System.out.println(name);
+        }
+    }
+}</pre>
+<h3>15.3 Set Interface</h3>
+<p>A Set represents a collection that does not contain duplicate elements. HashSet is a common implementation and does not guarantee a particular iteration order.</p>
+<pre>import java.util.HashSet;
+
+public class Main {
+    public static void main(String[] args) {
+        HashSet<Integer> numbers = new HashSet<>();
+
+        numbers.add(10);
+        numbers.add(20);
+        numbers.add(10);
+
+        System.out.println(numbers);
+    }
+}</pre>
+<h3>15.4 Map Interface</h3>
+<p>A Map stores key-value associations. Keys are unique, and each key maps to at most one value. HashMap is a commonly used implementation.</p>
+<pre>import java.util.HashMap;
+
+public class Main {
+    public static void main(String[] args) {
+        HashMap<Integer, String> students = new HashMap<>();
+
+        students.put(1, "Aman");
+        students.put(2, "Ravi");
+
+        System.out.println(students.get(1));
+    }
+}</pre>
+<h3>15.5 Generics</h3>
+<p>Generics allow classes, interfaces and methods to work with specified types. They improve type safety and reduce the need for explicit casting.</p>
+<pre>ArrayList<String> names = new ArrayList<>();
+names.add("Java");
+names.add("Python");</pre>
+<h3>15.6 Introduction to File Handling</h3>
+<p>File handling allows a program to store information permanently and retrieve it later. Java provides classes such as File, FileReader, FileWriter, BufferedReader and BufferedWriter.</p>
+<h3>15.7 Writing to a File</h3>
+<pre>import java.io.FileWriter;
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        try (FileWriter writer = new FileWriter("notes.txt")) {
+            writer.write("Welcome to Java File Handling");
+            System.out.println("File written successfully");
+        } catch (IOException e) {
+            System.out.println("Unable to write file");
+        }
+    }
+}</pre>
+<h3>15.8 Reading a File</h3>
+<pre>import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        try (BufferedReader reader =
+                 new BufferedReader(new FileReader("notes.txt"))) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Unable to read file");
+        }
+    }
+}</pre>
+<h3>15.9 Advantages of Collections</h3>
+<ul><li>Ready-made data structures.</li><li>Reusable operations for storing and retrieving objects.</li><li>Support for generic type safety.</li><li>Useful algorithms for sorting and searching.</li></ul>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is the Collections Framework?</li><li>What is ArrayList?</li><li>Differentiate List and Set.</li><li>What is a HashMap?</li><li>Explain generics.</li><li>Write a program to create and display an ArrayList.</li><li>What is file handling?</li></ol></div>
+<div class="page-number">18</div>
+</section>
+
+<section class="page" id="chapter16">
+<h2>Chapter 16: JDBC and Database Connectivity</h2>
+<h3>16.1 Introduction to JDBC</h3>
+<p>JDBC stands for Java Database Connectivity. It is a Java API that allows applications to connect to databases, send SQL statements and process query results. JDBC provides a common programming interface while database drivers handle database-specific communication.</p>
+<h3>16.2 JDBC Architecture</h3>
+<p>A typical JDBC application contains a Java application, JDBC API, a database driver and a database server. The application uses JDBC interfaces such as Connection, PreparedStatement and ResultSet to interact with the database.</p>
+<h3>16.3 Important JDBC Components</h3>
+<ul><li><strong>DriverManager:</strong> Helps establish database connections through registered drivers.</li><li><strong>Connection:</strong> Represents a connection to a database.</li><li><strong>Statement:</strong> Executes SQL statements.</li><li><strong>PreparedStatement:</strong> Executes parameterized SQL statements.</li><li><strong>ResultSet:</strong> Represents data returned by a query.</li></ul>
+<h3>16.4 Steps to Connect a Database</h3>
+<ol><li>Install and configure a database system.</li><li>Add the correct JDBC driver to the project.</li><li>Prepare the database URL and credentials.</li><li>Establish a connection.</li><li>Execute SQL statements.</li><li>Process the results.</li><li>Close database resources.</li></ol>
+<h3>16.5 Example: JDBC Connection</h3>
+<p>The following example uses a MySQL JDBC driver. The driver dependency must be included in the project, and the database must exist.</p>
+<pre>import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Main {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/library";
+        String user = "root";
+        String password = "your_password";
+
+        try (Connection connection =
+                 DriverManager.getConnection(url, user, password)) {
+
+            System.out.println("Database connected");
+
+        } catch (SQLException e) {
+            System.out.println("Database connection failed");
+        }
+    }
+}</pre>
+<h3>16.6 PreparedStatement</h3>
+<p>PreparedStatement is used for parameterized SQL statements. It helps separate SQL structure from supplied values and is the preferred approach for user-provided input.</p>
+<pre>String sql = "INSERT INTO students(name, course) VALUES (?, ?)";
+
+try (PreparedStatement statement =
+         connection.prepareStatement(sql)) {
+
+    statement.setString(1, "Aman");
+    statement.setString(2, "BCA");
+
+    int rows = statement.executeUpdate();
+    System.out.println(rows + " row inserted");
+}</pre>
+<h3>16.7 ResultSet</h3>
+<p>ResultSet represents rows returned by a query. Its next() method moves the cursor to the next available row.</p>
+<pre>String sql = "SELECT id, name FROM students";
+
+try (PreparedStatement statement =
+         connection.prepareStatement(sql);
+     ResultSet result = statement.executeQuery()) {
+
+    while (result.next()) {
+        System.out.println(result.getInt("id"));
+        System.out.println(result.getString("name"));
+    }
+}</pre>
+<h3>16.8 Database Transactions</h3>
+<p>A transaction groups database operations into a unit of work. Transactions can be committed when successful or rolled back when an operation fails. This helps preserve data consistency.</p>
+<div class="note">Never store real database passwords directly in source code in a production application. Use secure configuration and suitable access controls.</div>
+<div class="exercise"><strong>Practice Questions</strong><ol><li>What is JDBC?</li><li>Explain JDBC architecture.</li><li>What is a Connection object?</li><li>Differentiate Statement and PreparedStatement.</li><li>What is ResultSet?</li><li>Explain database transactions.</li></ol></div>
+<div class="page-number">19</div>
+</section>
+
+<section class="page" id="chapter17">
+<h2>Chapter 17: Practical Mini Projects</h2>
+<h3>17.1 Importance of Projects</h3>
+<p>Projects allow students to apply programming concepts to practical problems. A project combines variables, control statements, methods, classes, collections and sometimes file or database operations.</p>
+<h3>17.2 Project: Simple Calculator</h3>
+<p>This program accepts two numbers and performs a selected arithmetic operation.</p>
+<pre>import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("First number: ");
+        double a = input.nextDouble();
+
+        System.out.print("Second number: ");
+        double b = input.nextDouble();
+
+        System.out.println("1. Addition");
+        System.out.println("2. Subtraction");
+        System.out.println("3. Multiplication");
+        System.out.println("4. Division");
+
+        int choice = input.nextInt();
+
+        switch (choice) {
+            case 1:
+                System.out.println(a + b);
+                break;
+            case 2:
+                System.out.println(a - b);
+                break;
+            case 3:
+                System.out.println(a * b);
+                break;
+            case 4:
+                if (b != 0) {
+                    System.out.println(a / b);
+                } else {
+                    System.out.println("Cannot divide by zero");
+                }
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
+
+        input.close();
+    }
+}</pre>
+<h3>17.3 Project: Student Record System</h3>
+<p>A student record system can store student names, roll numbers, courses and marks. An ArrayList can hold multiple student objects. Methods can be created to add, display, search and update records.</p>
+<h3>17.4 Project: Library Management System</h3>
+<p>A basic library application can manage book titles, authors, availability and issue status. A Book class can represent each book, while a collection can store the records. A larger version can use JDBC to connect to a database.</p>
+<h3>17.5 Project: Quiz Application</h3>
+<p>A quiz application can display multiple-choice questions, accept answers, calculate scores and show results. Questions can be stored in objects or retrieved from a database.</p>
+<h3>17.6 Project Development Steps</h3>
+<ol><li>Identify the problem and define the project objective.</li><li>List the required features.</li><li>Design classes and data structures.</li><li>Write the program in small modules.</li><li>Test normal and invalid inputs.</li><li>Fix errors and improve the interface.</li><li>Prepare documentation and demonstrate the project.</li></ol>
+<h3>17.7 Future Learning</h3>
+<p>After learning Core Java, students can explore GUI development, web frameworks, enterprise applications, testing tools, cloud services and advanced database programming.</p>
+<div class="exercise"><strong>Final Practical Exercises</strong><ol><li>Create a calculator using methods.</li><li>Build a student record system using classes.</li><li>Demonstrate inheritance using an employee example.</li><li>Create a quiz application using collections.</li><li>Write and read student information from a file.</li><li>Connect a Java program to a database using JDBC.</li></ol></div>
+<div class="page-number">20</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>Glossary</h2>
+<ul>
+<li><strong>Abstraction:</strong> Exposing essential behavior while hiding implementation details.</li>
+<li><strong>Array:</strong> A fixed-size sequence of elements of the same declared type.</li>
+<li><strong>Bytecode:</strong> Intermediate code produced by the Java compiler.</li>
+<li><strong>Class:</strong> A blueprint for creating objects.</li>
+<li><strong>Collection:</strong> An object that groups multiple elements.</li>
+<li><strong>Constructor:</strong> A special member used to initialize a new object.</li>
+<li><strong>Encapsulation:</strong> Bundling state and behavior while controlling access.</li>
+<li><strong>Exception:</strong> An event that disrupts normal program execution.</li>
+<li><strong>Inheritance:</strong> A mechanism for deriving a class from another class.</li>
+<li><strong>Interface:</strong> A Java type that defines a contract for implementing classes.</li>
+<li><strong>JDK:</strong> Java Development Kit.</li>
+<li><strong>JDBC:</strong> Java Database Connectivity.</li>
+<li><strong>JRE:</strong> Java Runtime Environment.</li>
+<li><strong>JVM:</strong> Java Virtual Machine.</li>
+<li><strong>Method:</strong> A block of code that performs a task.</li>
+<li><strong>Object:</strong> An instance of a class.</li>
+<li><strong>Package:</strong> A namespace used to organize Java types.</li>
+<li><strong>Polymorphism:</strong> The ability to represent different forms of behavior.</li>
+<li><strong>Thread:</strong> A path of execution within a process.</li>
+<li><strong>Variable:</strong> A named storage location or reference to a value.</li>
+</ul>
+<div class="page-number">21</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+<p>The following resources provide official documentation and additional learning material for Java programming.</p>
+<ol>
+<li>Oracle Java Documentation - Java platform and language documentation.</li>
+<li>OpenJDK - Open-source Java development resources.</li>
+<li>Java Language Specification - Official language specification.</li>
+<li>Java API Documentation - Standard library reference.</li>
+<li>Java Tutorials - Learning resources for Java concepts.</li>
+<li>JDBC Documentation - Database connectivity information.</li>
+</ol>
+<h3>Recommended Learning Topics</h3>
+<ul>
+<li>Core Java and object-oriented programming.</li>
+<li>Data structures and algorithms.</li>
+<li>Database management and JDBC.</li>
+<li>Software testing and debugging.</li>
+<li>Application development frameworks.</li>
+</ul>
+<h3>Conclusion</h3>
+<p>Java provides a strong foundation for software development. Understanding its syntax, data types, control statements, object-oriented principles, exception handling and collections helps learners build reliable programs.</p>
+<p>Practical programming and project development are important for improving problem-solving skills. Students should continue exploring Java documentation and building applications to strengthen their knowledge.</p>
+<div class="meta">
+<h3>SMART DIGITAL LIBRARY</h3>
+<p>Read • Learn • Grow</p>
+<p><strong>End of Book</strong></p>
+</div>
+<div class="page-number">22</div>
+</section>
+
+</main>
+</div>
+
+<div class="footer">Smart Digital Library | Java Programming Textbook | 2026</div>
+
+<script>
+const progressBar = document.getElementById("progress");
+
+function updateProgress() {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const value = total > 0 ? (window.scrollY / total) * 100 : 0;
+    progressBar.style.width = value + "%";
+    localStorage.setItem("javaProgress", Math.round(value));
+}
+
+window.addEventListener("scroll", updateProgress);
+
+function toggleBookmark() {
+    const saved = localStorage.getItem("javaBookmark") === "true";
+    localStorage.setItem("javaBookmark", String(!saved));
+    alert(!saved ? "Java book bookmarked!" : "Bookmark removed!");
+}
+
+function saveToHistory() {
+    let history = JSON.parse(localStorage.getItem("readingHistory") || "[]");
+
+    const book = {
+        book: "Java Programming",
+        title: "Java Programming",
+        icon: "☕",
+        category: "Programming",
+        page: "java.html",
+        date: new Date().toLocaleString(),
+        time: new Date().toLocaleString()
+    };
+
+    history = history.filter(function(item) {
+        return item.page !== "java.html" &&
+               item.book !== "Java Programming" &&
+               item.title !== "Java Programming";
+    });
+
+    history.unshift(book);
+    localStorage.setItem("readingHistory", JSON.stringify(history));
+}
+
+function openQRCode() {
+    window.location.href = "qr.html?book=java";
+}
+
+window.addEventListener("load", function() {
+    const saved = localStorage.getItem("javaProgress");
+    if (saved) {
+        progressBar.style.width = saved + "%";
+    }
+
+    saveToHistory();
+    updateProgress();
+});
+</script>
+</body>
+</html>
+```

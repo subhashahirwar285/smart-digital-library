@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Digital Library</title>
+    <link rel="stylesheet" href="style.css">
+
+```
+<style>
+    .book-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    .book {
+        text-align: center;
+    }
+
+    .book-author {
+        color: #52677e;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .no-books-message {
+        display: none;
+        text-align: center;
+        padding: 25px;
+        margin-top: 25px;
+        color: #173a63;
+        font-weight: 600;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .category {
+        cursor: pointer;
+    }
+
+    .category:active {
+        transform: scale(0.98);
+    }
+
+    .book-filter-buttons {
+        margin-bottom: 30px;
+    }
+
+    .filter-btn {
+        border: none;
+        background: #1565c0;
+        color: white;
+        padding: 11px 20px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .filter-btn:hover {
+        background: #0d47a1;
+        transform: translateY(-2px);
+    }
+
+    .book .book-btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: #1565c0;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .book .book-btn:hover {
+        background: #0d47a1;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header class="top-header">
+    <div class="logo">📚 Smart Digital Library</div>
+
+<nav class="unique-nav">
+    <a href="#" class="active">🏠 Home</a>
+    <a href="#books">📚 Books</a>
+    <a href="#categories">🗂️ Categories</a>
+    <a href="quiz.html">🧠 Quiz</a>
+    <a href="dasbord.html" id="dashboardLink" style="display:none;">🏠 Dashboard</a>
+    <a href="bookmark.html">🔖 My Bookmarks</a>
+    <a href="login.html" id="loginLink">🔐 Login</a>
+    <a href="#about">ℹ️ About</a>
+    <a href="#contact">📞 Contact</a>
+</nav>
+
+</header>
+
+<section class="home">
+    <div class="home-content">
+        <span class="welcome-badge">📚 Welcome to Digital Learning</span>
+
+```
+    <h1>Your Smart Digital <span>Library</span></h1>
+
+    <p>
+        Explore books, discover new knowledge
+        and read your favourite books anytime, anywhere.
+    </p>
+
+    <div class="search-box">
+        <input type="text" id="bookSearch"
+            placeholder="🔍 Search books, subjects or authors...">
+        <button type="button" onclick="searchBooks()">Search</button>
+    </div>
+
+    <a href="#books" class="explore-btn">Explore Books →</a>
+</div>
+
+<div class="library-stats">
+    <div class="stat">
+        <h2>12+</h2>
+        <p>Books</p>
+    </div>
+    <div class="stat">
+        <h2>6+</h2>
+        <p>Categories</p>
+    </div>
+    <div class="stat">
+        <h2>24/7</h2>
+        <p>Access</p>
+    </div>
+    <div class="stat">
+        <h2>100%</h2>
+        <p>Digital</p>
+    </div>
+</div>
+```
+
+</section>
+
+<section class="books" id="books">
+
+```
+<h2>Digital Library Books</h2>
+
+<div class="book-filter-buttons">
+    <button onclick="showAllBooks()" class="filter-btn" type="button">
+        📚 View All Books
+    </button>
+</div>
+
+<div class="book-box">
+
+    <div class="book" data-category="web">
+        <div class="book-img">
+            <div class="book-cover html-cover">
+                <span>HTML</span>
+                <strong>&</strong>
+                <span>CSS</span>
+                <small>Web Development</small>
+            </div>
+        </div>
+        <h3>HTML &amp; CSS</h3>
+        <p>Web Development</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="html-css.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="programming">
+        <div class="book-img">
+            <div class="book-cover java-cover">
+                <span>JAVA</span>
+                <small>Programming</small>
+            </div>
+        </div>
+        <h3>Java Programming</h3>
+        <p>Programming</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="java.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="programming">
+        <div class="book-img">
+            <div class="book-cover python-cover">
+                <span>PYTHON</span>
+                <small>Programming</small>
+            </div>
+        </div>
+        <h3>Python Programming</h3>
+        <p>Programming</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="python.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="data">
+        <div class="book-img">
+            <div class="book-cover data-cover">
+                <span>DATA</span>
+                <strong>STRUCTURES</strong>
+                <small>Computer Science</small>
+            </div>
+        </div>
+        <h3>Data Structures</h3>
+        <p>Computer Science</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="data-structures.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="ai">
+        <div class="book-img">
+            <div class="book-cover ai-cover">
+                <span>🤖</span>
+                <strong>AI</strong>
+                <small>Artificial Intelligence</small>
+            </div>
+        </div>
+        <h3>Artificial Intelligence</h3>
+        <p>AI &amp; Machine Learning</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="ai.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="programming">
+        <div class="book-img">
+            <div class="book-cover c-cover">
+                <span>C</span>
+                <strong>PROGRAMMING</strong>
+                <small>Computer Programming</small>
+            </div>
+        </div>
+        <h3>C Programming</h3>
+        <p>Programming Fundamentals</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="c-programming.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="programming">
+        <div class="book-img">
+            <div class="book-cover cpp-cover">
+                <span>C++</span>
+                <strong>PROGRAMMING</strong>
+                <small>Object Oriented Programming</small>
+            </div>
+        </div>
+        <h3>C++ Programming</h3>
+        <p>Object Oriented Programming</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="cpp.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="database">
+        <div class="book-img">
+            <div class="book-cover dbms-cover">
+                <span>DBMS</span>
+                <strong>DATABASE</strong>
+                <small>Database Management</small>
+            </div>
+        </div>
+        <h3>Database Management System</h3>
+        <p>Database &amp; SQL</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="dbms.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="computer-science">
+        <div class="book-img">
+            <div class="book-cover os-cover">
+                <span>OS</span>
+                <strong>OPERATING SYSTEM</strong>
+                <small>Computer Science</small>
+            </div>
+        </div>
+        <h3>Operating System</h3>
+        <p>Computer Science</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="operating-system.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="computer-science">
+        <div class="book-img">
+            <div class="book-cover cn-cover">
+                <span>CN</span>
+                <strong>NETWORKS</strong>
+                <small>Computer Networks</small>
+            </div>
+        </div>
+        <h3>Computer Networks</h3>
+        <p>Networking Fundamentals</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="computer-networks.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="programming">
+        <div class="book-img">
+            <div class="book-cover se-cover">
+                <span>SE</span>
+                <strong>ENGINEERING</strong>
+                <small>Software Development</small>
+            </div>
+        </div>
+        <h3>Software Engineering</h3>
+        <p>Software Development</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="software-engineering.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+    <div class="book" data-category="web">
+        <div class="book-img">
+            <div class="book-cover js-cover">
+                <span>JS</span>
+                <strong>JAVASCRIPT</strong>
+                <small>Web Development</small>
+            </div>
+        </div>
+        <h3>JavaScript</h3>
+        <p>Interactive Web Development</p>
+        <p class="book-author">Writer: Smart Digital Library Team</p>
+        <div class="book-actions">
+            <a href="javascript.html" class="book-btn">📖 OPEN BOOK</a>
+        </div>
+    </div>
+
+</div>
+
+<p class="no-books-message" id="noBooksMessage">
+    No books found. Try another search.
+</p>
+```
+
+</section>
+
+<section class="categories" id="categories">
+    <h2>Book Categories</h2>
+
+```
+<div class="category-box">
+    <div class="category" onclick="filterBooks('programming')">
+        <div class="category-icon">💻</div>
+        <h3>Programming</h3>
+        <p>C, C++, Java, Python</p>
+    </div>
+
+    <div class="category" onclick="filterBooks('web')">
+        <div class="category-icon">🌐</div>
+        <h3>Web Development</h3>
+        <p>HTML, CSS, JavaScript</p>
+    </div>
+
+    <div class="category" onclick="filterBooks('ai')">
+        <div class="category-icon">🤖</div>
+        <h3>Artificial Intelligence</h3>
+        <p>AI and Machine Learning</p>
+    </div>
+
+    <div class="category" onclick="filterBooks('data')">
+        <div class="category-icon">🗃️</div>
+        <h3>Data Structures</h3>
+        <p>Data and Algorithms</p>
+    </div>
+
+    <div class="category" onclick="filterBooks('database')">
+        <div class="category-icon">🛢️</div>
+        <h3>Database</h3>
+        <p>DBMS and SQL</p>
+    </div>
+
+    <div class="category" onclick="filterBooks('computer-science')">
+        <div class="category-icon">🖥️</div>
+        <h3>Computer Science</h3>
+        <p>OS and Computer Networks</p>
+    </div>
+</div>
+```
+
+</section>
+
+<section class="about" id="about">
+    <h2>About Smart Digital Library</h2>
+    <p>
+        Smart Digital Library is a digital learning platform where
+        students can explore, search, bookmark and read educational
+        books with organized chapters and topics.
+    </p>
+</section>
+
+<section class="contact" id="contact">
+    <h2>Contact Us</h2>
+    <p>Have any questions? Contact Smart Digital Library.</p>
+
+```
+<div class="contact-box">
+    <p>📧 Email: library@example.com</p>
+    <p>📞 Phone: +91 8349177617</p>
+    <p>📍 Location: Oriental University, Indore</p>
+</div>
+```
+
+</section>
+
+<footer>
+    <p>© 2026 Smart Digital Library. All Rights Reserved.</p>
+</footer>
+
+<script src="script.js"></script>
+
+<script>
+    function updateNavigation() {
+        const loggedInUser = localStorage.getItem("libraryUserEmail");
+        const dashboardLink = document.getElementById("dashboardLink");
+        const loginLink = document.getElementById("loginLink");
+
+        if (loggedInUser) {
+            dashboardLink.style.display = "inline-block";
+            loginLink.style.display = "none";
+        } else {
+            dashboardLink.style.display = "none";
+            loginLink.style.display = "inline-block";
+        }
+    }
+
+    updateNavigation();
+
+    function searchBooks() {
+        const input = document.getElementById("bookSearch").value.toLowerCase().trim();
+        const books = document.querySelectorAll(".book");
+        let visibleCount = 0;
+
+        books.forEach(function(book) {
+            const text = book.innerText.toLowerCase();
+            const matches = text.includes(input);
+
+            book.style.display = matches ? "" : "none";
+
+            if (matches) visibleCount++;
+        });
+
+        document.getElementById("noBooksMessage").style.display =
+            visibleCount === 0 ? "block" : "none";
+    }
+
+    document.getElementById("bookSearch").addEventListener("input", searchBooks);
+
+    function showAllBooks() {
+        document.querySelectorAll(".book").forEach(function(book) {
+            book.style.display = "";
+        });
+
+        document.getElementById("bookSearch").value = "";
+        document.getElementById("noBooksMessage").style.display = "none";
+    }
+
+    function filterBooks(category) {
+        const books = document.querySelectorAll(".book");
+        let visibleCount = 0;
+
+        books.forEach(function(book) {
+            const matches = book.dataset.category === category;
+            book.style.display = matches ? "" : "none";
+
+            if (matches) visibleCount++;
+        });
+
+        document.getElementById("noBooksMessage").style.display =
+            visibleCount === 0 ? "block" : "none";
+
+        document.getElementById("books").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+</script>
+
+</body>
+</html>

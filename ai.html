@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artificial Intelligence - Smart Digital Library</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#173a63;--blue:#1565c0;--light:#e3f2fd;--ink:#263238}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f7;color:var(--ink);line-height:1.8}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial,sans-serif}
+.topbar a,.topbar button{color:white;text-decoration:none;border:1px solid #ffffff70;background:transparent;padding:8px 13px;border-radius:5px;cursor:pointer;font-size:14px}
+.topbar a:hover,.topbar button:hover{background:#ffffff20}
+.progress-track{height:5px;background:#d7e3ef;position:sticky;top:0;z-index:10}
+.progress-fill{height:5px;width:0;background:#2196f3}
+.layout{max-width:1250px;margin:25px auto;padding:0 18px;display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+.sidebar{background:white;padding:20px;border-radius:10px;box-shadow:0 3px 14px #173a6310;position:sticky;top:20px;max-height:85vh;overflow:auto;font-family:Arial,sans-serif}
+.sidebar h3{color:var(--navy);margin-bottom:12px}
+.sidebar a{display:block;color:#34495e;text-decoration:none;padding:7px 9px;border-radius:5px;font-size:13px;border-bottom:1px solid #edf1f5}
+.sidebar a:hover{background:var(--light);color:var(--blue)}
+.book{min-width:0}
+.cover{min-height:570px;background:linear-gradient(135deg,#102b4d,#145a9e 58%,#42a5f5);color:white;border-radius:12px;padding:55px 45px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 25px #173a6330}
+.cover:before,.cover:after{content:"";position:absolute;border:1px solid #ffffff35;border-radius:50%;width:380px;height:380px;right:-110px;top:50px}
+.cover:after{width:260px;height:260px;right:-50px;top:110px}
+.cover-top,.cover-main,.cover-bottom{position:relative;z-index:1}
+.cover-label{letter-spacing:4px;font:12px Arial,sans-serif;color:#c9e5ff}
+.cover-symbol{font-size:75px;margin:30px 0 5px}
+.cover h1{font:bold clamp(38px,6vw,65px)/1.08 Arial,sans-serif;max-width:650px;margin:10px 0 18px}
+.cover-subtitle{font:18px Arial,sans-serif;color:#d9ecff;max-width:550px}
+.cover-line{width:75px;height:5px;background:#90caf9;margin:25px 0}
+.cover-bottom{border-top:1px solid #ffffff55;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font:14px Arial,sans-serif}
+.page{background:white;margin-top:22px;padding:42px 48px;border-radius:8px;box-shadow:0 3px 14px #173a6310;scroll-margin-top:20px;min-height:300px}
+.page h2{font:bold 27px Arial,sans-serif;color:var(--navy);border-bottom:2px solid #dceaf7;padding-bottom:12px;margin-bottom:20px}
+.page h3{font:bold 19px Arial,sans-serif;color:var(--blue);margin:24px 0 10px}
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 28px}
+.page li{margin:6px 0}
+.page-number{text-align:right;border-top:1px solid #ddd;margin-top:35px;padding-top:12px;color:#718096;font:12px Arial,sans-serif}
+.info-box{background:#eef6ff;border-left:4px solid var(--blue);padding:14px 17px;margin:18px 0;border-radius:4px}
+.note{background:#fff8e6;border-left:4px solid #e0a326;padding:14px 17px;margin:18px 0}
+pre{background:#172536;color:#e5f2ff;padding:17px;border-radius:7px;overflow-x:auto;margin:15px 0;font:14px/1.65 Consolas,monospace}
+code{font-family:Consolas,monospace}
+.exercise{background:#f4f7fa;padding:16px 20px;border-radius:7px;margin-top:20px}
+.exercise h3{margin-top:0}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;font-family:Arial,sans-serif}
+.action-row button{background:var(--blue);color:white;border:0;border-radius:5px;padding:9px 14px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.bookmark-status{font:13px Arial,sans-serif;color:#287443;margin-top:7px}
+.footer{text-align:center;padding:25px;color:#65758b;font:13px Arial,sans-serif}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:relative;top:0;max-height:300px}.cover{min-height:480px;padding:35px 25px}.page{padding:28px 23px}}
+@media print{body{background:white}.topbar,.progress-track,.sidebar,.action-row,.footer{display:none!important}.layout{display:block;max-width:100%;margin:0;padding:0}.cover,.page{box-shadow:none;border-radius:0;break-after:page;margin:0;min-height:95vh}.page{padding:25mm 22mm}.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<header class="topbar">
+    <a href="index.html">← Back to Library</a>
+    <strong>📘 Smart Digital Library</strong>
+    <div>
+        <button id="topBookmarkBtn" type="button" onclick="toggleBookmark()">☆ Bookmark</button>
+        <a href="qr.html?book=ai">QR Code</a>
+        <button type="button" onclick="window.print()">Print</button>
+    </div>
+</header>
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="layout">
+<aside class="sidebar">
+    <h3>📚 Contents</h3>
+    <a href="#preface">Preface</a><a href="#chapter1">1. Introduction to AI</a>
+    <a href="#chapter2">2. History and Evolution</a><a href="#chapter3">3. Types of AI</a>
+    <a href="#chapter4">4. Intelligent Agents</a><a href="#chapter5">5. Problem Solving and Search</a>
+    <a href="#chapter6">6. Knowledge Representation</a><a href="#chapter7">7. Machine Learning</a>
+    <a href="#chapter8">8. Neural Networks and Deep Learning</a><a href="#chapter9">9. Natural Language Processing</a>
+    <a href="#chapter10">10. Computer Vision</a><a href="#chapter11">11. Expert Systems</a>
+    <a href="#chapter12">12. Robotics</a><a href="#chapter13">13. Generative AI</a>
+    <a href="#chapter14">14. AI Applications</a><a href="#chapter15">15. AI Ethics and Challenges</a>
+    <a href="#chapter16">16. Building an AI Project</a><a href="#glossary">Glossary</a>
+    <a href="#references">References</a>
+    <div class="bookmark-status" id="bookmarkStatus">This book is not bookmarked</div>
+</aside>
+<main class="book">
+<section class="cover">
+    <div class="cover-top"><div class="cover-label">SMART DIGITAL LIBRARY • COMPUTER SCIENCE SERIES</div><div class="cover-symbol">🤖</div></div>
+    <div class="cover-main"><div class="cover-label">A COMPLETE STUDENT TEXTBOOK</div><h1>ARTIFICIAL<br>INTELLIGENCE</h1><div class="cover-line"></div><p class="cover-subtitle">Concepts, Machine Learning, Deep Learning, Robotics and Real-World Applications</p></div>
+    <div class="cover-bottom"><span>First Edition • 2026</span><span>Smart Digital Library Team</span></div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+<p>Artificial Intelligence is one of the most important areas of modern computer science. It focuses on creating computer systems that can perform tasks commonly associated with human intelligence, such as learning, reasoning, recognizing patterns, understanding language and solving problems.</p>
+<p>AI is used in many areas of everyday life. Search engines recommend useful information, navigation applications suggest routes, digital assistants respond to questions, and medical systems help professionals examine information. These examples show how intelligent computer systems can support people in different activities.</p>
+<p>This textbook introduces the fundamental concepts of Artificial Intelligence in a structured and student-friendly way. It begins with the meaning and history of AI, then explains intelligent agents, search techniques, knowledge representation, machine learning, neural networks, natural language processing, computer vision and robotics.</p>
+<p>The book also discusses practical applications, responsible AI development and the basic steps involved in creating an AI project. Each chapter includes examples and practice questions to support learning.</p>
+<div class="info-box"><strong>Learning approach:</strong> Understand the concept first, study the example, and then attempt the practice questions at the end of each chapter.</div>
+<h3>Learning Outcomes</h3><ul><li>Explain the meaning, goals and development of Artificial Intelligence.</li><li>Identify different categories and applications of AI.</li><li>Understand intelligent agents and basic problem-solving methods.</li><li>Describe machine learning, deep learning and neural networks.</li><li>Understand NLP, computer vision, expert systems and robotics.</li><li>Recognize ethical issues and responsible AI practices.</li></ul>
+<div class="page-number">Preface • Page 1</div>
+</section>
+
+<section class="page" id="chapter1"><h2>Chapter 1: Introduction to Artificial Intelligence</h2>
+<h3>1.1 Meaning of Artificial Intelligence</h3><p>Artificial Intelligence (AI) is a branch of computer science that develops systems capable of performing tasks that normally require human intelligence. These tasks may include learning from experience, understanding language, recognizing images, making predictions and solving problems.</p><p>An AI system receives information from its environment, processes that information and produces an output or action. Its ability depends on the design of the system, the data available and the task it has been developed to perform.</p>
+<h3>1.2 Goals of AI</h3><ul><li><strong>Learning:</strong> Improving performance by using data or experience.</li><li><strong>Reasoning:</strong> Using available information to reach conclusions.</li><li><strong>Problem solving:</strong> Finding suitable solutions to defined problems.</li><li><strong>Perception:</strong> Interpreting information from images, sound or sensors.</li><li><strong>Language understanding:</strong> Processing and generating human language.</li><li><strong>Planning:</strong> Selecting actions to achieve a particular goal.</li></ul>
+<h3>1.3 How an AI System Works</h3><p>A typical AI application follows a process that includes collecting relevant data, preparing the data, selecting an algorithm, training or configuring the model, evaluating its performance and using it to produce results.</p><div class="info-box"><strong>Example:</strong> An email spam filter examines features of incoming messages and estimates whether a message is unwanted. It can use patterns learned from previously labelled examples.</div>
+<h3>1.4 AI, Machine Learning and Deep Learning</h3><p>Artificial Intelligence is the broader field. Machine Learning is a part of AI in which systems learn patterns from data. Deep Learning is a specialized area of machine learning that uses neural networks with multiple processing layers.</p>
+<h3>1.5 Advantages and Limitations</h3><p>AI can process large amounts of information, automate repetitive tasks and provide consistent results for well-defined problems. However, AI systems may make mistakes, reflect biases in their training data, require significant computing resources and struggle when used outside the conditions for which they were designed.</p>
+<div class="exercise"><h3>Practice Questions</h3><ol><li>Define Artificial Intelligence.</li><li>Explain any four goals of AI.</li><li>Differentiate AI, Machine Learning and Deep Learning.</li><li>Write two advantages and two limitations of AI.</li></ol></div><div class="page-number">Chapter 1 • Page 2</div></section>
+
+<section class="page" id="chapter2"><h2>Chapter 2: History and Evolution of AI</h2><h3>2.1 Early Ideas</h3><p>The idea of creating machines that can perform intelligent tasks existed long before modern computers. Researchers in mathematics, logic and computing gradually developed methods that made machine intelligence a scientific research area.</p><h3>2.2 Birth of AI as a Research Field</h3><p>The term Artificial Intelligence became established as a research topic during the 1950s. The Dartmouth summer research project in 1956 is commonly recognized as an important event in the formal beginning of AI as a field.</p><h3>2.3 Important Stages</h3><ul><li><strong>1950s–1960s:</strong> Early research in symbolic reasoning, games and problem solving.</li><li><strong>1970s–1980s:</strong> Development of knowledge-based systems and expert systems, along with periods of reduced funding and expectations.</li><li><strong>1990s–2000s:</strong> Increased use of statistical learning, data-driven methods and practical applications.</li><li><strong>2010s:</strong> Rapid progress in deep learning, image recognition, speech processing and translation.</li><li><strong>2020s:</strong> Wider adoption of generative AI systems capable of producing text, images, audio and code.</li></ul><h3>2.4 AI Winters</h3><p>An AI winter refers to a period when interest, investment or research support in AI decreases. Such periods occurred when systems failed to meet high expectations or available computers and data were insufficient for ambitious goals.</p><h3>2.5 Modern AI</h3><p>Modern AI development has been supported by large datasets, improved algorithms, powerful processors and cloud computing. Current research also focuses on reliability, explainability, privacy, safety and responsible use.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>When did AI become a formal research field?</li><li>What was the Dartmouth project?</li><li>What is an AI winter?</li><li>Mention three developments in modern AI.</li></ol></div><div class="page-number">Chapter 2 • Page 3</div></section>
+
+<section class="page" id="chapter3"><h2>Chapter 3: Types of Artificial Intelligence</h2><h3>3.1 Classification Based on Capability</h3><p>AI is often described using three capability categories. These categories are useful for discussing ideas about machine intelligence, although they do not represent three equally developed types of products available today.</p><ul><li><strong>Narrow AI (ANI):</strong> Designed to perform a specific task or a limited group of tasks. Examples include recommendation systems, speech recognition and image classification.</li><li><strong>Artificial General Intelligence (AGI):</strong> A proposed form of AI that could learn and perform a wide range of intellectual tasks at a human-like level. It has not been achieved.</li><li><strong>Artificial Superintelligence (ASI):</strong> A hypothetical form of intelligence that would greatly exceed human abilities across many areas.</li></ul><h3>3.2 Classification Based on Functionality</h3><ul><li><strong>Reactive machines:</strong> Respond to current inputs without using a stored personal history of past experiences.</li><li><strong>Limited-memory systems:</strong> Use information from past observations or stored data for a task.</li><li><strong>Theory-of-mind AI:</strong> A research concept involving the ability to understand beliefs, intentions and emotions.</li><li><strong>Self-aware AI:</strong> A hypothetical concept involving self-awareness; it is not an established capability of current AI systems.</li></ul><h3>3.3 Practical Examples</h3><p>A chess-playing program is an example of narrow AI because it is designed for a particular task. A recommendation engine suggests items based on patterns in user activity. A hypothetical system that could learn many unrelated tasks independently would be closer to the idea of AGI.</p><div class="note"><strong>Important:</strong> Most AI applications in use today are examples of Narrow AI. AGI and ASI remain concepts and research goals, not established everyday technologies.</div><div class="exercise"><h3>Practice Questions</h3><ol><li>What is Narrow AI?</li><li>Explain AGI and ASI.</li><li>Differentiate capability-based and functionality-based classifications.</li><li>Give two examples of Narrow AI.</li></ol></div><div class="page-number">Chapter 3 • Page 4</div></section>
+
+<section class="page" id="chapter4"><h2>Chapter 4: Intelligent Agents</h2><h3>4.1 Meaning of an Agent</h3><p>An intelligent agent is a system that observes its environment through sensors and takes actions through actuators to achieve a goal. A software agent may receive information from files, databases or websites and respond by performing digital actions.</p><h3>4.2 Agent Components</h3><ul><li><strong>Sensors:</strong> Collect information from the environment.</li><li><strong>Actuators:</strong> Carry out actions that affect the environment.</li><li><strong>Agent program:</strong> Processes observations and selects actions.</li><li><strong>Performance measure:</strong> Defines how successful the agent is.</li></ul><h3>4.3 PEAS Description</h3><p>PEAS stands for Performance measure, Environment, Actuators and Sensors. It is a framework used to describe an intelligent agent's task environment.</p><div class="info-box"><strong>Example: Robot vacuum cleaner</strong><br>Performance: clean floors efficiently. Environment: rooms and floor surfaces. Actuators: wheels and cleaning motor. Sensors: obstacle and dirt sensors.</div><h3>4.4 Types of Agents</h3><ul><li><strong>Simple reflex agent:</strong> Selects actions using current observations and condition-action rules.</li><li><strong>Model-based reflex agent:</strong> Maintains an internal model of the environment.</li><li><strong>Goal-based agent:</strong> Selects actions that help achieve a defined goal.</li><li><strong>Utility-based agent:</strong> Compares possible outcomes using a utility measure.</li><li><strong>Learning agent:</strong> Improves its behavior through experience or feedback.</li></ul><h3>4.5 Rational Agent</h3><p>A rational agent selects an action expected to produce the best result according to its performance measure and available information. Rationality does not mean that the agent knows everything; its decisions are limited by its observations and design.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>Define an intelligent agent.</li><li>Explain PEAS with an example.</li><li>List five types of agents.</li><li>What is a rational agent?</li></ol></div><div class="page-number">Chapter 4 • Page 5</div></section>
+
+<section class="page" id="chapter5"><h2>Chapter 5: Problem Solving and Search Techniques</h2><h3>5.1 Problem Formulation</h3><p>AI problem solving often begins by defining an initial state, possible actions, a transition model, a goal test and a path-cost measure. Together, these elements describe the problem that a search algorithm must solve.</p><h3>5.2 State Space</h3><p>A state space is the set of possible states that can be reached while solving a problem. For example, in a route-planning problem, locations can represent states and roads can represent actions that move from one state to another.</p><h3>5.3 Uninformed Search</h3><ul><li><strong>Breadth-First Search (BFS):</strong> Explores the search tree level by level. It can find a shortest path when all step costs are equal.</li><li><strong>Depth-First Search (DFS):</strong> Explores one branch deeply before backtracking. It can use less memory in some situations but may not find the shortest path.</li><li><strong>Uniform-Cost Search:</strong> Expands the path with the lowest accumulated cost.</li></ul><h3>5.4 Informed Search</h3><p>Informed search uses additional knowledge, called a heuristic, to guide exploration toward a goal. A heuristic estimates the remaining cost from a current state to the goal.</p><h3>5.5 A* Search Algorithm</h3><p>A* combines the cost already paid with an estimate of the remaining cost. Its evaluation function is:</p><pre>f(n) = g(n) + h(n)
+
+g(n) = cost from start to current node
+h(n) = estimated cost from current node to goal
+f(n) = estimated total path cost</pre><p>When the heuristic satisfies suitable conditions, A* can find an optimal solution. Its practical performance depends on the quality of the heuristic and the size of the search space.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>What is a state space?</li><li>Differentiate BFS and DFS.</li><li>What is a heuristic function?</li><li>Explain the A* evaluation formula.</li></ol></div><div class="page-number">Chapter 5 • Page 6</div></section>
+
+<section class="page" id="chapter6"><h2>Chapter 6: Knowledge Representation and Reasoning</h2><h3>6.1 Meaning</h3><p>Knowledge representation is the process of organizing information in a form that a computer system can store, process and use for reasoning. It helps AI systems represent facts, relationships, rules and concepts.</p><h3>6.2 Common Representation Methods</h3><ul><li><strong>Logical representation:</strong> Uses formal logic to express facts and relationships.</li><li><strong>Semantic networks:</strong> Represent concepts as nodes and relationships as connecting links.</li><li><strong>Frames:</strong> Organize information into structured records containing attributes and values.</li><li><strong>Production rules:</strong> Represent knowledge as IF-THEN rules.</li><li><strong>Ontologies:</strong> Define concepts and relationships within a particular knowledge domain.</li></ul><h3>6.3 Rule-Based Reasoning</h3><p>A rule-based system uses conditions and actions to derive conclusions or recommend decisions.</p><pre>IF temperature is high
+AND cough is present
+THEN recommend medical evaluation</pre><p>This is only an illustrative rule, not a medical diagnosis. Real systems require carefully validated knowledge and professional oversight.</p><h3>6.4 Inference</h3><p>Inference is the process of deriving new conclusions from known facts and rules. Forward chaining starts with known facts and applies rules to reach conclusions. Backward chaining starts with a goal and checks whether available facts support it.</p><h3>6.5 Uncertainty</h3><p>Real-world information is often incomplete or uncertain. AI systems may use probability, fuzzy logic or other methods to represent uncertainty instead of treating every statement as absolutely true or false.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>Define knowledge representation.</li><li>Explain semantic networks.</li><li>What is a production rule?</li><li>Differentiate forward chaining and backward chaining.</li></ol></div><div class="page-number">Chapter 6 • Page 7</div></section>
+
+<section class="page" id="chapter7"><h2>Chapter 7: Machine Learning</h2><h3>7.1 Meaning of Machine Learning</h3><p>Machine Learning (ML) is a branch of AI that enables computer systems to learn patterns from data and use those patterns to make predictions or decisions. Instead of manually writing every rule, developers train a model using examples or other learning signals.</p><h3>7.2 Main Types of Machine Learning</h3><ul><li><strong>Supervised learning:</strong> The model learns from labelled examples. It is commonly used for classification and regression.</li><li><strong>Unsupervised learning:</strong> The model examines data without predefined labels to identify patterns, groups or structure.</li><li><strong>Reinforcement learning:</strong> An agent learns by interacting with an environment and receiving rewards or penalties.</li></ul><h3>7.3 Classification and Regression</h3><p>Classification predicts a category, such as whether an email is spam or not spam. Regression predicts a numerical value, such as an estimated delivery time.</p><h3>7.4 Basic ML Workflow</h3><ol><li>Define the problem and the expected result.</li><li>Collect relevant and permitted data.</li><li>Clean and prepare the dataset.</li><li>Divide data into training, validation and test sets.</li><li>Select and train a suitable model.</li><li>Evaluate performance using appropriate metrics.</li><li>Deploy, monitor and update the model when necessary.</li></ol><h3>7.5 Overfitting and Underfitting</h3><p>Overfitting occurs when a model learns the training examples too closely and performs poorly on new data. Underfitting occurs when a model is too simple to capture important patterns. Good evaluation and suitable model selection help address these problems.</p><h3>7.6 Common Evaluation Measures</h3><p>Accuracy measures the proportion of correct predictions. Precision measures how many predicted positive cases are actually positive. Recall measures how many actual positive cases are identified. The F1-score combines precision and recall using their harmonic mean.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>Define Machine Learning.</li><li>Explain supervised, unsupervised and reinforcement learning.</li><li>Differentiate classification and regression.</li><li>What are overfitting and underfitting?</li></ol></div><div class="page-number">Chapter 7 • Page 8</div></section>
+
+<section class="page" id="chapter8"><h2>Chapter 8: Neural Networks and Deep Learning</h2><h3>8.1 Artificial Neural Network</h3><p>An Artificial Neural Network (ANN) is a computational model inspired in a broad way by connected biological neurons. It consists of processing units called artificial neurons that receive inputs, apply weights and calculate outputs using activation functions.</p><h3>8.2 Structure of a Neural Network</h3><ul><li><strong>Input layer:</strong> Receives the input features.</li><li><strong>Hidden layers:</strong> Transform information through learned weights and activation functions.</li><li><strong>Output layer:</strong> Produces the final prediction or result.</li></ul><h3>8.3 How a Neuron Works</h3><p>A simplified neuron calculates a weighted sum of inputs, adds a bias and applies an activation function.</p><pre>z = (w1*x1) + (w2*x2) + b
+output = activation(z)
+
+x = input
+w = weight
+b = bias</pre><h3>8.4 Activation Functions</h3><p>Activation functions introduce non-linearity into neural networks. Common examples include ReLU, sigmoid and tanh. The choice of activation function depends on the network architecture and task.</p><h3>8.5 Deep Learning</h3><p>Deep Learning uses neural networks with multiple layers to learn complex patterns. It has contributed to advances in speech recognition, image analysis, language processing and generative systems.</p><h3>8.6 Training a Neural Network</h3><p>Training usually involves a forward pass, calculation of a loss function, backpropagation of gradients and an optimization step that updates the network's parameters. This process is repeated over many examples.</p><div class="note"><strong>Remember:</strong> Deep Learning is a part of Machine Learning, and Machine Learning is a part of Artificial Intelligence.</div><div class="exercise"><h3>Practice Questions</h3><ol><li>What is an artificial neural network?</li><li>Name the three main layers.</li><li>What is an activation function?</li><li>Explain the basic training process.</li></ol></div><div class="page-number">Chapter 8 • Page 9</div></section>
+
+<section class="page" id="chapter9"><h2>Chapter 9: Natural Language Processing</h2><h3>9.1 Meaning of NLP</h3><p>Natural Language Processing (NLP) is a field of AI that enables computers to process, analyze and generate human language. It combines ideas from computer science, linguistics, statistics and machine learning.</p><h3>9.2 Common NLP Tasks</h3><ul><li><strong>Tokenization:</strong> Dividing text into smaller units such as words or sentences.</li><li><strong>Sentiment analysis:</strong> Estimating the opinion or emotional tone expressed in text.</li><li><strong>Named Entity Recognition:</strong> Identifying names of people, places, organizations and other entities.</li><li><strong>Machine translation:</strong> Translating text from one language to another.</li><li><strong>Text classification:</strong> Assigning text to categories.</li><li><strong>Question answering:</strong> Producing answers based on a question and available information.</li></ul><h3>9.3 Basic Text Processing</h3><p>Text processing may include removing unwanted characters, converting text to a consistent format, splitting text into tokens and representing words or documents numerically. The exact steps depend on the task and language.</p><h3>9.4 Applications of NLP</h3><p>NLP is used in chatbots, search engines, voice assistants, translation tools, document analysis, customer-support systems and spam detection.</p><h3>9.5 Challenges in NLP</h3><p>Human language contains ambiguity, slang, spelling variations, context, idioms and multiple meanings. A sentence can have different meanings depending on the situation. Systems must also consider language diversity and the quality of their training data.</p><div class="info-box"><strong>Example:</strong> A customer-support chatbot may identify that a message is asking about an order status and then retrieve the relevant information from an authorized database.</div><div class="exercise"><h3>Practice Questions</h3><ol><li>Define NLP.</li><li>What is tokenization?</li><li>Explain sentiment analysis.</li><li>Write four applications of NLP.</li></ol></div><div class="page-number">Chapter 9 • Page 10</div></section>
+
+<section class="page" id="chapter10"><h2>Chapter 10: Computer Vision</h2><h3>10.1 Meaning</h3><p>Computer Vision is a field of AI that enables computers to extract useful information from images and videos. It aims to identify objects, recognize patterns, understand scenes and interpret visual information.</p><h3>10.2 Image Processing and Computer Vision</h3><p>Image processing focuses on operations performed on images, such as resizing, filtering and enhancement. Computer Vision goes further by interpreting image content, for example identifying a vehicle or detecting an object in a scene.</p><h3>10.3 Common Tasks</h3><ul><li><strong>Image classification:</strong> Assigning a category to an entire image.</li><li><strong>Object detection:</strong> Locating and classifying objects within an image.</li><li><strong>Image segmentation:</strong> Dividing an image into meaningful regions or pixels.</li><li><strong>Face detection:</strong> Finding the location of faces in an image.</li><li><strong>Optical Character Recognition:</strong> Extracting text from images or scanned documents.</li></ul><h3>10.4 Basic Computer Vision Pipeline</h3><ol><li>Capture or obtain an image.</li><li>Prepare the image by resizing or normalizing it.</li><li>Apply a suitable computer vision model or algorithm.</li><li>Interpret the model's output.</li><li>Evaluate results and check for errors.</li></ol><h3>10.5 Applications</h3><p>Computer Vision is used in manufacturing inspection, document scanning, agricultural monitoring, medical image analysis, traffic systems and image search. Sensitive applications such as identity recognition require strong privacy and accuracy safeguards.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>Define Computer Vision.</li><li>Differentiate image classification and object detection.</li><li>What is image segmentation?</li><li>Write four applications of Computer Vision.</li></ol></div><div class="page-number">Chapter 10 • Page 11</div></section>
+
+<section class="page" id="chapter11"><h2>Chapter 11: Expert Systems</h2><h3>11.1 Meaning of Expert System</h3><p>An expert system is a computer program designed to solve problems in a limited domain by using stored knowledge and reasoning rules. Traditional expert systems attempt to reproduce parts of the decision-making process used by human specialists.</p><h3>11.2 Main Components</h3><ul><li><strong>Knowledge base:</strong> Stores domain facts, rules and relationships.</li><li><strong>Inference engine:</strong> Applies rules to available facts to derive conclusions.</li><li><strong>User interface:</strong> Allows users to provide information and receive results.</li><li><strong>Explanation facility:</strong> May explain how a conclusion was reached.</li><li><strong>Knowledge acquisition:</strong> The process of collecting and organizing expert knowledge.</li></ul><h3>11.3 Working of an Expert System</h3><p>A user provides information about a problem. The inference engine compares the information with rules stored in the knowledge base. It then produces a conclusion or recommendation based on the available knowledge.</p><pre>IF account_balance is below minimum
+AND monthly_fee is applicable
+THEN display fee information</pre><h3>11.4 Applications</h3><p>Expert systems have been used in equipment troubleshooting, technical support, configuration assistance and decision support. Their usefulness depends on the quality and completeness of their knowledge base.</p><h3>11.5 Advantages and Limitations</h3><p>They can preserve specialized knowledge, provide consistent rule-based results and support routine decisions. However, they may not handle situations outside their defined rules and require regular knowledge updates.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>What is an expert system?</li><li>Explain its main components.</li><li>What is an inference engine?</li><li>Mention two advantages and two limitations.</li></ol></div><div class="page-number">Chapter 11 • Page 12</div></section>
+
+<section class="page" id="chapter12"><h2>Chapter 12: Robotics and Artificial Intelligence</h2><h3>12.1 Meaning of Robotics</h3><p>Robotics is the field concerned with designing, building, programming and operating robots. AI can make robots more capable by helping them interpret sensor data, plan actions and adapt to changing conditions.</p><h3>12.2 Main Components of a Robot</h3><ul><li><strong>Sensors:</strong> Detect distance, light, temperature, movement or other environmental information.</li><li><strong>Actuators:</strong> Produce movement or other physical actions.</li><li><strong>Controller:</strong> Processes information and coordinates actions.</li><li><strong>Power source:</strong> Supplies energy to the robot.</li><li><strong>Software:</strong> Defines behavior, control and decision-making logic.</li></ul><h3>12.3 Role of AI in Robotics</h3><p>AI techniques can support object recognition, navigation, path planning, speech interaction and decision-making. A robot may combine sensor readings with a map to estimate its location and select a route.</p><h3>12.4 Types of Robots</h3><ul><li>Industrial robots used in manufacturing.</li><li>Service robots used for assistance and delivery.</li><li>Mobile robots that move through an environment.</li><li>Educational robots used for learning and experimentation.</li><li>Research robots developed to test new technologies.</li></ul><h3>12.5 Challenges</h3><p>Robots must operate safely around people and objects. They may face uncertain environments, sensor errors, hardware failures, energy limitations and complex control requirements. Testing and safety mechanisms are essential.</p><div class="exercise"><h3>Practice Questions</h3><ol><li>Define robotics.</li><li>List the main components of a robot.</li><li>Explain the role of AI in robotics.</li><li>Give four applications of robots.</li></ol></div><div class="page-number">Chapter 12 • Page 13</div></section>
+
+<section class="page" id="chapter13"><h2>Chapter 13: Generative Artificial Intelligence</h2><h3>13.1 Meaning of Generative AI</h3><p>Generative AI refers to AI systems that create new content, such as text, images, audio, video or computer code. These systems learn patterns from training data and use those patterns to generate outputs in response to instructions or other inputs.</p><h3>13.2 Large Language Models</h3><p>Large Language Models (LLMs) are trained on large collections of text and learn statistical relationships between language units. They can generate text, summarize documents, answer questions and assist with writing or programming tasks.</p><h3>13.3 How Text Generation Works</h3><p>Many language models generate text by predicting likely next tokens based on the preceding context. A token may represent a word, part of a word or another unit of text. The model repeatedly selects tokens to produce a response.</p><h3>13.4 Common Uses</h3><ul><li>Drafting and summarizing written material.</li><li>Helping explain educational concepts.</li><li>Generating ideas and examples.</li><li>Assisting with software development.</li><li>Creating or editing images and other media.</li></ul><h3>13.5 Limitations</h3><p>Generative systems can produce incorrect or misleading information, sometimes in a confident style. They may reflect biases, misunderstand context or generate content that requires copyright and privacy review. Important information should be checked against reliable sources.</p><div class="note"><strong>Responsible use:</strong> Treat generated content as a draft or aid. Verify facts, respect privacy, follow academic rules and disclose AI assistance when required.</div><div class="exercise"><h3>Practice Questions</h3><ol><li>Define Generative AI.</li><li>What is an LLM?</li><li>Write four uses of Generative AI.</li><li>Explain two limitations of generative systems.</li></ol></div><div class="page-number">Chapter 13 • Page 14</div></section>
+
+<section class="page" id="chapter14"><h2>Chapter 14: Applications of Artificial Intelligence</h2><h3>14.1 Healthcare</h3><p>AI tools can help analyze medical images, organize health information, support research and assist professionals with selected tasks. They are support tools and should not replace qualified medical judgment.</p><h3>14.2 Education</h3><p>Educational applications include personalized practice, language support, learning recommendations, automated feedback and tools that help teachers organize learning material.</p><h3>14.3 Banking and Finance</h3><p>Financial organizations use AI for transaction monitoring, fraud detection, customer service, document processing and risk analysis. Such systems need careful testing to reduce unfair or inaccurate decisions.</p><h3>14.4 Agriculture</h3><p>AI can help analyze crop images, estimate field conditions, monitor irrigation and support decisions using weather and soil information. Its effectiveness depends on local data and farming conditions.</p><h3>14.5 Transportation</h3><p>AI is used in route planning, traffic prediction, driver assistance and logistics. Autonomous driving research combines sensors, computer vision, mapping and control systems.</p><h3>14.6 E-Commerce and Entertainment</h3><p>Recommendation systems suggest products, music, films or other content based on patterns in user activity and item information. Search and ranking systems help users find relevant results.</p><h3>14.7 Smart Digital Library Example</h3><p>A digital library can use AI-inspired features to improve learning and information discovery. For example, a recommendation module can suggest books based on selected subjects, while a search feature can help users locate relevant titles.</p><div class="info-box"><strong>Project connection:</strong> In a Smart Digital Library, book information can be stored in a database. A recommendation feature can use book categories or user-selected interests to suggest related learning material.</div><div class="exercise"><h3>Practice Questions</h3><ol><li>Explain four applications of AI.</li><li>How can AI support education?</li><li>Describe AI use in agriculture.</li><li>Give two possible AI features in a digital library.</li></ol></div><div class="page-number">Chapter 14 • Page 15</div></section>
+
+<section class="page" id="chapter15"><h2>Chapter 15: Ethics, Risks and Challenges of AI</h2><h3>15.1 Fairness and Bias</h3><p>An AI model may produce unfair outcomes if its training data or design reflects historical or social biases. Developers should examine datasets, evaluate results across relevant groups and create processes for correcting problems.</p><h3>15.2 Privacy and Data Protection</h3><p>AI applications may process personal or sensitive information. Data should be collected only for legitimate purposes, protected with appropriate security measures and handled according to applicable laws and policies.</p><h3>15.3 Transparency and Explainability</h3><p>Users should be given appropriate information about how an AI system is used and what its limitations are. Explainability methods can help people understand which factors influenced a model's output.</p><h3>15.4 Reliability and Safety</h3><p>AI systems can make incorrect predictions or fail when conditions change. Testing, monitoring, human review and clear procedures for handling errors help improve reliability.</p><h3>15.5 Accountability</h3><p>Organizations that develop or use AI should define who is responsible for decisions, system performance, data protection and responding to harm. Important decisions should have appropriate human oversight.</p><h3>15.6 Responsible AI Principles</h3><ul><li>Use accurate and relevant data.</li><li>Respect privacy and obtain appropriate permissions.</li><li>Test systems for bias and reliability.</li><li>Explain important limitations to users.</li><li>Maintain human oversight for high-impact decisions.</li><li>Monitor systems after deployment.</li></ul><div class="exercise"><h3>Practice Questions</h3><ol><li>What is AI bias?</li><li>Why is privacy important in AI?</li><li>Explain transparency and accountability.</li><li>Write five principles of responsible AI.</li></ol></div><div class="page-number">Chapter 15 • Page 16</div></section>
+
+<section class="page" id="chapter16"><h2>Chapter 16: Building a Basic AI Project</h2><h3>16.1 Select a Problem</h3><p>A good AI project begins with a clear problem. The developer should identify who will use the system, what information it needs and what result it should produce.</p><h3>16.2 Example: Book Recommendation System</h3><p>Consider a digital library containing books from subjects such as programming, databases, networking and artificial intelligence. A simple recommendation feature can suggest books that match a student's selected category.</p><h3>16.3 Basic Project Workflow</h3><ol><li><strong>Requirement analysis:</strong> Define the purpose and expected features.</li><li><strong>Data collection:</strong> Gather suitable book information with permission.</li><li><strong>Data preparation:</strong> Organize titles, categories and descriptions.</li><li><strong>Method selection:</strong> Start with a simple category-based recommendation method.</li><li><strong>Development:</strong> Build the interface and connect it to the database.</li><li><strong>Testing:</strong> Check whether the suggested books match the selected category.</li><li><strong>Improvement:</strong> Use feedback to improve the system.</li></ol><h3>16.4 Simple Python Example</h3><p>The following example uses a basic rule-based approach. It is not a trained machine learning model, but it demonstrates how a recommendation feature can work.</p><pre>books = [
+    {"title": "Python Basics", "category": "Programming"},
+    {"title": "Java Guide", "category": "Programming"},
+    {"title": "Database Systems", "category": "DBMS"},
+    {"title": "AI Fundamentals", "category": "Artificial Intelligence"}
+]
+
+selected_category = "Programming"
+
+for book in books:
+    if book["category"] == selected_category:
+        print(book["title"])</pre><h3>16.5 Testing and Evaluation</h3><p>Test the feature with different categories, empty results and incorrect input. Check whether the recommendations are relevant, whether the application handles errors and whether user information is protected.</p><h3>16.6 Future Improvements</h3><p>A future version could use book descriptions, user-selected interests, ratings or borrowing history to create more advanced recommendations. Any use of personal activity data should be transparent and appropriately protected.</p><div class="exercise"><h3>Project Questions</h3><ol><li>What is the first step in an AI project?</li><li>Explain the book recommendation example.</li><li>Is the given Python example machine learning? Why?</li><li>Suggest two improvements for a digital library recommendation system.</li></ol></div><div class="page-number">Chapter 16 • Page 17</div></section>
+
+<section class="page" id="glossary"><h2>Glossary</h2><ul><li><strong>Artificial Intelligence:</strong> Computer science field focused on intelligent tasks performed by machines.</li><li><strong>Agent:</strong> A system that observes an environment and takes actions.</li><li><strong>Algorithm:</strong> A defined sequence of steps for solving a problem.</li><li><strong>Dataset:</strong> A collection of data used for analysis or model development.</li><li><strong>Machine Learning:</strong> Methods that learn patterns from data.</li><li><strong>Deep Learning:</strong> Machine learning based on multi-layer neural networks.</li><li><strong>Neural Network:</strong> A computational model made of connected artificial neurons.</li><li><strong>Training:</strong> The process of adjusting a model using data or feedback.</li><li><strong>Inference:</strong> Using a trained model or reasoning system to produce an output.</li><li><strong>Heuristic:</strong> An estimate used to guide a search process.</li><li><strong>NLP:</strong> Natural Language Processing, the processing of human language by computers.</li><li><strong>Computer Vision:</strong> AI methods for interpreting images and videos.</li><li><strong>Expert System:</strong> A program that uses domain knowledge and rules to support decisions.</li><li><strong>Generative AI:</strong> AI systems that create new content.</li><li><strong>Bias:</strong> A systematic tendency that can lead to unfair or inaccurate results.</li><li><strong>Dataset Label:</strong> The target category or value associated with a training example.</li></ul><div class="page-number">Glossary • Page 18</div></section>
+
+<section class="page" id="references"><h2>References and Further Reading</h2><p>The following resources provide additional information about Artificial Intelligence, machine learning and related technologies.</p><ol><li>Stuart Russell and Peter Norvig, <em>Artificial Intelligence: A Modern Approach</em>.</li><li>IBM, Artificial Intelligence learning resources.</li><li>Google Machine Learning educational resources.</li><li>Microsoft Learn, AI and machine learning documentation.</li><li>Stanford University, Artificial Intelligence course materials.</li><li>Python Software Foundation, Python documentation.</li><li>National Institute of Standards and Technology (NIST), AI Risk Management Framework resources.</li></ol><h3>Suggested Study Method</h3><ul><li>Read the chapter introduction before studying the details.</li><li>Write important definitions in your own words.</li><li>Practice explaining each algorithm with a simple example.</li><li>Complete the chapter questions after reading.</li><li>Use reliable references to explore advanced topics.</li></ul><div class="info-box"><strong>End of Book</strong><br>Artificial Intelligence — Smart Digital Library Team, First Edition 2026.</div><div class="page-number">References • Page 19</div></section>
+
+<div class="action-row">
+    <button type="button" onclick="window.print()">Print / Save as PDF</button>
+    <button id="bottomBookmarkBtn" type="button" onclick="toggleBookmark()">☆ Save Bookmark</button>
+    <button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+</main>
+</div>
+<footer class="footer">© 2026 Smart Digital Library | Artificial Intelligence Textbook</footer>
+
+<script>
+"use strict";
+
+const bookmarkKey = "aiBookmark";
+const historyKey = "readingHistory";
+
+function toggleBookmark() {
+    try {
+        const currentlySaved = localStorage.getItem(bookmarkKey) === "true";
+        const nextValue = !currentlySaved;
+
+        localStorage.setItem(bookmarkKey, String(nextValue));
+
+        // Confirm that the browser actually stored the new value.
+        if ((localStorage.getItem(bookmarkKey) === "true") !== nextValue) {
+            throw new Error("Bookmark value could not be verified.");
+        }
+
+        updateBookmark();
+
+        alert(nextValue
+            ? "Artificial Intelligence book saved to My Bookmarks!"
+            : "Artificial Intelligence book removed from My Bookmarks.");
+    } catch (error) {
+        console.error("Bookmark save/remove failed:", error);
+        alert("Bookmark save nahi ho paya. Please open the library using the same Live Server address and check browser storage settings.");
+    }
+}
+
+function updateBookmark() {
+    let saved = false;
+
+    try {
+        saved = localStorage.getItem(bookmarkKey) === "true";
+    } catch (error) {
+        console.error("Unable to read bookmark:", error);
+    }
+
+    const topButton = document.getElementById("topBookmarkBtn");
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    const status = document.getElementById("bookmarkStatus");
+
+    if (topButton) {
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if (bottomButton) {
+        bottomButton.textContent = saved ? "★ Bookmarked" : "☆ Save Bookmark";
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if (status) {
+        status.textContent = saved
+            ? "✓ This book is bookmarked"
+            : "This book is not bookmarked";
+    }
+}
+
+function updateProgress() {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
+    const fill = document.getElementById("progressFill");
+
+    if (fill) {
+        fill.style.width = progress + "%";
+    }
+}
+
+function saveReadingHistory() {
+    try {
+        const sections = document.querySelectorAll(".cover, .page");
+        let currentPage = 1;
+
+        sections.forEach((section, index) => {
+            if (section.getBoundingClientRect().top < window.innerHeight * 0.65) {
+                currentPage = index + 1;
+            }
+        });
+
+        let history = [];
+        try {
+            history = JSON.parse(localStorage.getItem(historyKey) || "[]");
+            if (!Array.isArray(history)) history = [];
+        } catch (error) {
+            history = [];
+        }
+
+        const record = {
+            title: "Artificial Intelligence",
+            icon: "🤖",
+            category: "Computer Science",
+            page: currentPage,
+            time: new Date().toLocaleString()
+        };
+
+        const index = history.findIndex(item => item && item.title === record.title);
+
+        if (index >= 0) {
+            history[index] = record;
+        } else {
+            history.push(record);
+        }
+
+        localStorage.setItem(historyKey, JSON.stringify(history));
+    } catch (error) {
+        console.error("Reading history could not be saved:", error);
+    }
+}
+
+window.addEventListener("scroll", function() {
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("DOMContentLoaded", function() {
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("storage", function(event) {
+    if (event.key === bookmarkKey || event.key === null) {
+        updateBookmark();
+    }
+});
+</script>
+</body>
+</html>

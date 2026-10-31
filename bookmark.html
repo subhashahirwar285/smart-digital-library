@@ -1,0 +1,376 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookmarks - Smart Digital Library</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .bookmark-page {
+            min-height: 100vh;
+            background: #f5f7fb;
+            padding: 50px 6%;
+        }
+
+        .bookmark-container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 11px 20px;
+            background: #1565c0;
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            font-weight: bold;
+        }
+
+        .bookmark-header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .bookmark-header .icon {
+            font-size: 60px;
+        }
+
+        .bookmark-header h1 {
+            color: #173a63;
+            font-size: 36px;
+            margin: 10px 0;
+        }
+
+        .bookmark-header p {
+            color: #777;
+        }
+
+        .bookmark-section {
+            margin-bottom: 55px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .section-title h2 {
+            color: #173a63;
+            font-size: 25px;
+        }
+
+        .count {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .bookmark-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .bookmark-card {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .bookmark-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        .bookmark-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .bookmark-card h3 {
+            color: #173a63;
+            margin-bottom: 8px;
+        }
+
+        .bookmark-card p {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .read-btn,
+        .unbookmark-btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 4px;
+        }
+
+        .read-btn {
+            background: #1565c0;
+            color: white;
+        }
+
+        .unbookmark-btn {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .qr-btn {
+            display: inline-block;
+            padding: 10px 16px;
+            margin: 4px;
+            background: #e8f5e9;
+            color: #287443;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            background: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .empty-message .empty-icon {
+            font-size: 55px;
+        }
+
+        .empty-message h3 {
+            color: #173a63;
+            margin: 10px 0;
+        }
+
+        .empty-message p {
+            color: #777;
+        }
+
+        @media (max-width: 900px) {
+            .bookmark-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .bookmark-page {
+                padding: 30px 4%;
+            }
+
+            .bookmark-header h1 {
+                font-size: 28px;
+            }
+
+            .bookmark-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                align-items: flex-start;
+                gap: 10px;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="bookmark-page">
+    <div class="bookmark-container">
+
+        <a href="index.html" class="back-btn">← Back to Library</a>
+
+        <div class="bookmark-header">
+            <div class="icon">🔖</div>
+            <h1>My Bookmarks</h1>
+            <p>Your personally saved books appear here.</p>
+        </div>
+
+        <section class="bookmark-section">
+            <div class="section-title">
+                <h2>🔖 My Saved Books</h2>
+                <span class="count" id="bookmarkedCount">0 Books</span>
+            </div>
+
+            <div class="bookmark-grid" id="bookmarkedGrid"></div>
+
+            <div class="empty-message" id="bookmarkedEmpty">
+                <div class="empty-icon">📚</div>
+                <h3>No Saved Books Yet</h3>
+                <p>Open a book and click its Bookmark button to save it here.</p>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script>
+const bookmarkBooks = [
+    {
+        key: "html-css-bookmark",
+        title: "HTML & CSS",
+        category: "Web Development",
+        icon: "🌐",
+        link: "html-css.html",
+        qr: "qr.html?book=html-css"
+    },
+    {
+        key: "javaBookmark",
+        title: "Java Programming",
+        category: "Programming",
+        icon: "☕",
+        link: "java.html"
+    },
+    {
+        key: "pythonBookmark",
+        title: "Python Programming",
+        category: "Programming",
+        icon: "🐍",
+        link: "python.html"
+    },
+    {
+        key: "dataStructuresBookmark",
+        title: "Data Structures",
+        category: "Computer Science",
+        icon: "📊",
+        link: "data-structures.html"
+    },
+    {
+        key: "cProgrammingBookmark",
+        title: "C Programming",
+        category: "Programming",
+        icon: "💻",
+        link: "c-programming.html",
+        qr: "qr.html?book=c-programming"
+    },
+    {
+        key: "aiBookmark",
+        title: "Artificial Intelligence",
+        category: "Computer Science",
+        icon: "🤖",
+        link: "ai.html",
+        qr: "qr.html?book=ai"
+    },
+    {
+        key: "computerNetworksBookmark",
+        title: "Computer Networks",
+        category: "Networking",
+        icon: "🌐",
+        link: "computer-networks.html",
+        qr: "qr.html?book=computer-networks"
+    }
+];
+
+function loadBookmarks() {
+    const grid = document.getElementById("bookmarkedGrid");
+    const emptyMessage = document.getElementById("bookmarkedEmpty");
+
+    grid.replaceChildren();
+
+    let count = 0;
+
+    bookmarkBooks.forEach(function(book) {
+        if (localStorage.getItem(book.key) === "true") {
+            grid.appendChild(createBookCard(book));
+            count++;
+        }
+    });
+
+    document.getElementById("bookmarkedCount").textContent =
+        count + (count === 1 ? " Book" : " Books");
+
+    emptyMessage.style.display = count === 0 ? "block" : "none";
+}
+
+function createBookCard(book) {
+    const card = document.createElement("div");
+    card.className = "bookmark-card";
+
+    const icon = document.createElement("div");
+    icon.className = "bookmark-icon";
+    icon.textContent = book.icon;
+
+    const title = document.createElement("h3");
+    title.textContent = book.title;
+
+    const category = document.createElement("p");
+    category.textContent = book.category;
+
+    const readButton = document.createElement("a");
+    readButton.href = book.link;
+    readButton.className = "read-btn";
+    readButton.textContent = "📖 Read Book";
+
+    card.append(icon, title, category, readButton);
+
+    if (book.qr) {
+        const qrButton = document.createElement("a");
+        qrButton.href = book.qr;
+        qrButton.className = "qr-btn";
+        qrButton.textContent = "▦ QR Code";
+        card.appendChild(qrButton);
+    }
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "unbookmark-btn";
+    removeButton.textContent = "❌ Remove Bookmark";
+
+    removeButton.addEventListener("click", function() {
+        try {
+            localStorage.removeItem(book.key);
+            loadBookmarks();
+        } catch (error) {
+            console.error("Unable to remove bookmark:", error);
+            alert("Bookmark remove nahi ho paya.");
+        }
+    });
+
+    card.appendChild(removeButton);
+
+    return card;
+}
+
+function safeLoadBookmarks() {
+    try {
+        loadBookmarks();
+    } catch (error) {
+        console.error("Unable to load bookmarks:", error);
+        document.getElementById("bookmarkedEmpty").style.display = "block";
+    }
+}
+
+window.addEventListener("DOMContentLoaded", safeLoadBookmarks);
+
+window.addEventListener("storage", function(event) {
+    if (
+        event.key === null ||
+        bookmarkBooks.some(function(book) {
+            return book.key === event.key;
+        })
+    ) {
+        safeLoadBookmarks();
+    }
+});
+</script>
+
+</body>
+</html>
+```

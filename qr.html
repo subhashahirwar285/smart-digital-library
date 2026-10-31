@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book QR Code - Smart Digital Library</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #e3f2fd, #ffffff, #bbdefb);
+            font-family: Arial, sans-serif;
+        }
+
+        .qr-card {
+            width: 350px;
+            padding: 35px;
+            text-align: center;
+            background: white;
+            border-radius: 22px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .qr-card h1 {
+            color: #173a63;
+            margin-bottom: 8px;
+        }
+
+        .qr-card p {
+            color: #666;
+        }
+
+        #qrcode {
+            margin: 25px auto;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .book-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1565c0;
+        }
+
+        .book-info {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #1565c0;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .back-btn:hover {
+            background: #0d47a1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="qr-card">
+
+        <h1>📚 Book QR Code</h1>
+
+        <p>Scan this QR code to open the book</p>
+
+        <div id="qrcode"></div>
+
+        <div class="book-name" id="bookName">
+            HTML & CSS
+        </div>
+
+        <div class="book-info" id="bookCategory">
+            Web Development
+        </div>
+
+        <a href="index.html" class="back-btn">
+            ← Back to Library
+        </a>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        const books = {
+
+            html: {
+                name: "HTML & CSS",
+                category: "Web Development",
+                page: "html-css.html"
+            },
+
+            java: {
+                name: "Java Programming",
+                category: "Programming",
+                page: "java.html"
+            },
+
+            python: {
+                name: "Python",
+                category: "Programming",
+                page: "python.html"
+            },
+
+            "data-structures": {
+                name: "Data Structures",
+                category: "Computer Science",
+                page: "data-structures.html"
+            },
+
+            ai: {
+                name: "Artificial Intelligence",
+                category: "AI & Machine Learning",
+                page: "ai.html"
+            }
+
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const selectedBook = urlParams.get("book") || "html";
+
+        const book = books[selectedBook] || books.html;
+
+        document.getElementById("bookName").textContent = book.name;
+
+        document.getElementById("bookCategory").textContent = book.category;
+
+        new QRCode(document.getElementById("qrcode"), {
+            text: "http://10.193.73.56:3000/" + book.page,
+            width: 200,
+            height: 200
+        });
+    </script>
+
+</body>
+
+</html>

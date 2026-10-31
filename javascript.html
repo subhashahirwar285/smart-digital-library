@@ -1,0 +1,1514 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript | Smart Digital Library</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#173a63;--blue:#1565c0;--light:#e3f2fd;--ink:#263238}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f7;color:var(--ink);line-height:1.85}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial,sans-serif}
+.topbar a,.topbar button{color:white;text-decoration:none;border:1px solid #ffffff70;background:transparent;padding:8px 13px;border-radius:5px;cursor:pointer;font-size:14px}
+.topbar button:hover,.topbar a:hover{background:#ffffff20}
+.progress-track{height:5px;background:#d7e3ef;position:sticky;top:0;z-index:10}
+.progress-fill{height:5px;width:0;background:#2196f3}
+.layout{max-width:1300px;margin:25px auto;padding:0 18px;display:grid;grid-template-columns:255px minmax(0,1fr);gap:22px;align-items:start}
+.sidebar{background:white;padding:18px;border-radius:10px;box-shadow:0 3px 14px #173a6310;position:sticky;top:18px;max-height:88vh;overflow:auto;font-family:Arial,sans-serif}
+.sidebar h3{color:var(--navy);margin-bottom:10px}
+.sidebar a{display:block;color:#34495e;text-decoration:none;padding:6px 8px;border-bottom:1px solid #edf1f5;border-radius:4px;font-size:12px}
+.sidebar a:hover{background:var(--light);color:var(--blue)}
+.book{min-width:0}
+.cover{min-height:570px;background:linear-gradient(135deg,#8a5800,#f2b600 58%,#ffe082);color:#292313;border-radius:12px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 25px #173a6330}
+.cover:before,.cover:after{content:"";position:absolute;border:1px solid #ffffff70;border-radius:50%;width:380px;height:380px;right:-110px;top:50px}
+.cover:after{width:260px;height:260px;right:-50px;top:110px}
+.cover-top,.cover-main,.cover-bottom{position:relative;z-index:1}
+.cover-label{letter-spacing:3px;font:12px Arial,sans-serif}
+.cover-symbol{font-size:70px;margin:25px 0}
+.cover h1{font:bold clamp(38px,6vw,64px)/1.08 Arial,sans-serif;margin:10px 0 18px}
+.cover-subtitle{font:18px/1.6 Arial,sans-serif;max-width:600px}
+.cover-line{width:75px;height:5px;background:#7c5a00;margin:25px 0}
+.cover-bottom{border-top:1px solid #ffffff90;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font:14px Arial,sans-serif}
+.page{background:white;margin-top:22px;padding:38px 45px;border-radius:8px;box-shadow:0 3px 14px #173a6310;scroll-margin-top:18px;min-height:300px}
+.page h2{font:bold 27px Arial,sans-serif;color:var(--navy);border-bottom:2px solid #dceaf7;padding-bottom:12px;margin-bottom:20px;line-height:1.4}
+.page h3{font:bold 19px Arial,sans-serif;color:var(--blue);margin:25px 0 9px;line-height:1.5}
+.page h4{font:bold 16px Arial,sans-serif;color:#37474f;margin:18px 0 6px}
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 27px}
+.page li{margin:7px 0}
+.page-number{text-align:right;border-top:1px solid #ddd;margin-top:35px;padding-top:12px;color:#718096;font:12px Arial,sans-serif}
+.info-box{background:#eef6ff;border-left:4px solid var(--blue);padding:14px 17px;margin:18px 0;border-radius:4px}
+.note{background:#fff8e6;border-left:4px solid #e0a326;padding:14px 17px;margin:18px 0}
+.exercise{background:#f4f7fa;padding:16px 20px;border-radius:7px;margin-top:20px}
+.exercise h3{margin-top:0}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{border:1px solid #d5dfeb;padding:10px;text-align:left;vertical-align:top}
+th{background:#e8f2fc;color:#173a63}
+pre{background:#f4f7fa;padding:15px;overflow-x:auto;border-radius:6px;font-size:13px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;font-family:Arial,sans-serif}
+.action-row button{background:var(--blue);color:white;border:0;border-radius:5px;padding:10px 14px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.bookmark-status{font:12px Arial,sans-serif;color:#287443;margin-top:10px}
+.footer{text-align:center;padding:25px;color:#65758b;font:13px Arial,sans-serif}
+
+/* Book-specific QR Code */
+.qr-card{background:#f7fbff;border:1px solid #d7e7f8;border-radius:12px;padding:25px;text-align:center;max-width:620px;margin:0 auto}
+.qr-card p{ text-align:center }
+.qr-image{display:flex;justify-content:center;align-items:center;min-height:220px;margin:18px auto}
+.qr-image canvas,.qr-image img{max-width:100%;height:auto}
+.qr-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px;font-family:Arial,sans-serif}
+.qr-actions button{background:var(--blue);color:white;border:0;border-radius:6px;padding:11px 16px;cursor:pointer}
+.qr-actions button:hover{background:var(--navy)}
+.qr-note{font:13px/1.6 Arial,sans-serif;color:#5c6b7a;background:#fff8e6;border-left:4px solid #e0a326;padding:12px;margin-top:16px;text-align:left}
+
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:relative;top:0;max-height:300px}.cover{min-height:480px;padding:30px 24px}.page{padding:26px 22px}.page h2{font-size:23px}table{font-size:12px}th,td{padding:7px}}
+@media print{body{background:white}.topbar,.progress-track,.sidebar,.action-row,.footer{display:none!important}.layout{display:block;max-width:100%;margin:0;padding:0}.cover,.page{box-shadow:none;border-radius:0;break-after:page;margin:0;min-height:95vh}.page{padding:18mm}.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<a href="index.html">← Back to Library</a>
+<strong>📚 Smart Digital Library</strong>
+<div>
+<button id="topBookmarkBtn" type="button" onclick="toggleBookmark()">☆ Bookmark</button>
+<button type="button" onclick="window.print()">Print</button>
+<a href="qr.html?book=javascript">QR Code</a>
+</div>
+</header>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="layout">
+
+<aside class="sidebar">
+<h3>📚 Book Contents</h3>
+<a href="#book-qr">📱 JavaScript Book QR Code</a>
+<a href="#preface">Preface</a>
+<a href="#ch1">1. Introduction to JavaScript</a>
+<a href="#ch2">2. Setup and First Program</a>
+<a href="#ch3">3. Variables and Data Types</a>
+<a href="#ch4">4. Operators</a>
+<a href="#ch5">5. Conditional Statements</a>
+<a href="#ch6">6. Loops</a>
+<a href="#ch7">7. Functions</a>
+<a href="#ch8">8. Arrays</a>
+<a href="#ch9">9. Strings and Template Literals</a>
+<a href="#ch10">10. Objects</a>
+<a href="#ch11">11. DOM Manipulation</a>
+<a href="#ch12">12. Events</a>
+<a href="#ch13">13. Form Validation</a>
+<a href="#ch14">14. ES6+ Features</a>
+<a href="#ch15">15. Array Methods</a>
+<a href="#ch16">16. Error Handling</a>
+<a href="#ch17">17. JSON and Storage</a>
+<a href="#ch18">18. Asynchronous JavaScript</a>
+<a href="#ch19">19. Fetch API and APIs</a>
+<a href="#ch20">20. Mini Projects and Revision</a>
+<a href="#glossary">Glossary</a>
+<a href="#questions">Important Questions</a>
+<a href="#references">References</a>
+<div class="bookmark-status" id="bookmarkStatus">☆ This book is not bookmarked</div>
+</aside>
+
+<main class="book">
+
+<section class="cover">
+<div class="cover-top">
+<div class="cover-label">SMART DIGITAL LIBRARY • PROGRAMMING SERIES</div>
+<div class="cover-symbol">🟨</div>
+</div>
+<div class="cover-main">
+<div class="cover-label">DETAILED STUDENT TEXTBOOK</div>
+<h1>JAVA<br>SCRIPT</h1>
+<div class="cover-line"></div>
+<p class="cover-subtitle">Learn JavaScript from fundamentals to interactive web development, DOM manipulation, APIs and practical projects.</p>
+</div>
+<div class="cover-bottom">
+<span>Student Edition • 2026</span>
+<span>Smart Digital Library Team</span>
+</div>
+</section>
+
+
+<section class="page" id="book-qr">
+<h2>📱 JavaScript Book QR Code</h2>
+<div class="qr-card">
+    <p>Scan this QR code to open the JavaScript book page.</p>
+    <div class="qr-image" id="javascriptQRCode" aria-label="QR code for the JavaScript book"></div>
+    <div class="qr-actions">
+        <button type="button" onclick="downloadJavaScriptQR()">⬇ Download QR Code</button>
+        <button type="button" onclick="refreshJavaScriptQR()">↻ Refresh QR Code</button>
+    </div>
+    <div class="qr-note" id="qrNotice">This QR code uses the current page address. For students to open the book on their phones, first publish the library online and then generate/download the QR code from the online JavaScript book page.</div>
+</div>
+<div class="page-number">JavaScript Book QR Code</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface and Learning Outcomes</h2>
+<p>JavaScript is a programming language widely used to make websites interactive. It can respond to clicks, validate forms, update page content, communicate with web services and build applications. JavaScript also runs outside the browser in environments such as Node.js.</p>
+<p>This book introduces JavaScript concepts step by step. Each chapter contains explanations, examples and revision questions. Beginners should type the examples themselves, run them in a browser or suitable JavaScript environment, and experiment with small changes.</p>
+<h3>What You Will Learn</h3>
+<ul>
+<li>Understand JavaScript syntax, variables and data types.</li>
+<li>Use operators, conditions, loops and functions.</li>
+<li>Work with arrays, strings and objects.</li>
+<li>Manipulate HTML elements using the DOM.</li>
+<li>Handle events and validate forms.</li>
+<li>Understand modern JavaScript features.</li>
+<li>Use JSON, browser storage, promises and async/await.</li>
+<li>Fetch data from APIs and build beginner projects.</li>
+</ul>
+<div class="info-box"><strong>Learning tip:</strong> Run each program, observe its output and modify the values. Programming becomes easier when you practise rather than only memorising definitions.</div>
+<div class="page-number">Preface</div>
+</section>
+
+<section class="page" id="ch1">
+<h2>Chapter 1: Introduction to JavaScript</h2>
+<h3>1.1 What Is JavaScript?</h3>
+<p>JavaScript is a high-level programming language commonly used to create interactive web pages. HTML defines the structure of a page, CSS controls its presentation, and JavaScript adds behaviour and dynamic functionality.</p>
+<p>For example, HTML can create a button, CSS can make it blue, and JavaScript can display a message when the user clicks it.</p>
+<h3>1.2 Main Uses</h3>
+<ul>
+<li>Responding to button clicks and keyboard input.</li>
+<li>Validating form information before submission.</li>
+<li>Updating page content without reloading the entire page.</li>
+<li>Creating interactive menus, quizzes and calculators.</li>
+<li>Communicating with remote APIs.</li>
+<li>Building server-side applications with Node.js.</li>
+</ul>
+<h3>1.3 JavaScript and Java</h3>
+<p>JavaScript and Java are different programming languages despite their similar names. They have different language designs, runtimes and typical usage patterns. Knowledge of one can help with general programming concepts, but their syntax and development environments are not interchangeable.</p>
+<h3>1.4 Where Does JavaScript Run?</h3>
+<p>A browser contains a JavaScript engine that executes scripts. JavaScript can also run in environments such as Node.js, which provides APIs for server-side and command-line applications. Browser-specific features such as the DOM are not automatically available in every JavaScript environment.</p>
+<h3>1.5 How a Web Page Uses JavaScript</h3>
+<ol>
+<li>The browser loads the HTML document.</li>
+<li>The browser processes the CSS used to style the page.</li>
+<li>JavaScript runs when the script is evaluated or when an event triggers a handler.</li>
+<li>The script can update the page, respond to users or request data.</li>
+</ol>
+<div class="info-box"><strong>Example:</strong> A quiz website can use JavaScript to check answers, calculate a score and show feedback immediately.</div>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Define JavaScript.</li><li>Explain five uses of JavaScript.</li><li>Differentiate HTML, CSS and JavaScript.</li><li>Is JavaScript the same language as Java?</li></ol></div>
+<div class="page-number">Chapter 1</div>
+</section>
+
+<section class="page" id="ch2">
+<h2>Chapter 2: Setup and Your First Program</h2>
+<h3>2.1 Requirements</h3>
+<p>You can begin learning browser JavaScript with a modern web browser and a text editor. Create an HTML file and write JavaScript inside a script element, or put the JavaScript in a separate .js file.</p>
+<h3>2.2 JavaScript Inside HTML</h3>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;My First JavaScript&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello JavaScript&lt;/h1&gt;
+
+  &lt;script&gt;
+    console.log("Hello, World!");
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>Save the file with an .html extension and open it in a browser. Open the developer tools and select the Console panel to see the message.</p>
+<h3>2.3 External JavaScript File</h3>
+<p>For larger projects, keeping JavaScript in a separate file makes the code easier to organise and maintain.</p>
+<pre><code>&lt;!-- index.html --&gt;
+&lt;script src="script.js" defer&gt;&lt;/script&gt;</code></pre>
+<pre><code>// script.js
+console.log("External JavaScript is working!");</code></pre>
+<p>The defer attribute makes an external classic script execute after the HTML has been parsed. This is helpful when the script needs to access page elements.</p>
+<h3>2.4 Console Output</h3>
+<pre><code>console.log("Hello");
+console.log(10 + 20);
+console.warn("This is a warning");
+console.error("This is an error message");</code></pre>
+<h3>2.5 Displaying a Message</h3>
+<pre><code>alert("Welcome to JavaScript!");</code></pre>
+<p>The alert function displays a browser dialog. It is useful for basic demonstrations, but modern websites usually display feedback inside the page instead of repeatedly opening dialogs.</p>
+<h3>2.6 Comments</h3>
+<pre><code>// This is a single-line comment
+
+/*
+This is a
+multi-line comment.
+*/</code></pre>
+<p>Comments explain code to people reading it. They are not executed as JavaScript statements.</p>
+<div class="exercise"><h3>Practical Task</h3><ol><li>Print your name in the console.</li><li>Print the result of 25 + 75.</li><li>Create a separate script.js file and link it to an HTML page.</li></ol></div>
+<div class="page-number">Chapter 2</div>
+</section>
+
+<section class="page" id="ch3">
+<h2>Chapter 3: Variables and Data Types</h2>
+<h3>3.1 Variables</h3>
+<p>A variable is a named binding used to refer to a value. JavaScript provides let, const and var. In modern code, let is commonly used when a binding must be reassigned, while const is used when the binding should not be reassigned.</p>
+<pre><code>let age = 20;
+const college = "My College";
+let city = "Indore";
+
+console.log(age);
+console.log(college);
+console.log(city);</code></pre>
+<h3>3.2 let, const and var</h3>
+<table>
+<tr><th>Keyword</th><th>Reassignment</th><th>Scope</th><th>Typical use</th></tr>
+<tr><td>let</td><td>Allowed</td><td>Block scope</td><td>Values that change</td></tr>
+<tr><td>const</td><td>Not allowed for the binding</td><td>Block scope</td><td>Bindings not reassigned</td></tr>
+<tr><td>var</td><td>Allowed</td><td>Function scope</td><td>Legacy code; use carefully</td></tr>
+</table>
+<p>A const object or array can still have its contents changed. const prevents reassignment of the variable binding, not every possible mutation of the referenced object.</p>
+<h3>3.3 Primitive Data Types</h3>
+<ul>
+<li><strong>String:</strong> Text, such as "Hello".</li>
+<li><strong>Number:</strong> Numeric values, including integers and decimals.</li>
+<li><strong>Boolean:</strong> true or false.</li>
+<li><strong>Undefined:</strong> A value commonly seen when a declared variable has not been assigned a value.</li>
+<li><strong>Null:</strong> A value intentionally used to represent the absence of an object value.</li>
+<li><strong>BigInt:</strong> Integers larger than the safe range of ordinary Number values.</li>
+<li><strong>Symbol:</strong> A primitive used to create unique identifiers.</li>
+</ul>
+<h3>3.4 Checking a Data Type</h3>
+<pre><code>let name = "Subhash";
+let age = 20;
+let isStudent = true;
+
+console.log(typeof name);      // string
+console.log(typeof age);       // number
+console.log(typeof isStudent); // boolean</code></pre>
+<p>One JavaScript quirk is that typeof null returns "object". This is a historical behaviour of the language, not evidence that null is an ordinary object.</p>
+<h3>3.5 Type Conversion</h3>
+<pre><code>let textNumber = "25";
+
+let numberValue = Number(textNumber);
+console.log(numberValue + 5); // 30
+
+let score = 90;
+console.log(String(score));  // "90"</code></pre>
+<p>Explicit conversion helps avoid confusing results when strings and numbers are combined. For example, the + operator can concatenate strings rather than add numeric values.</p>
+<h3>3.6 Naming Rules</h3>
+<p>Variable names can contain letters, digits, underscores and dollar signs, but they cannot begin with a digit. Names are case-sensitive. For example, totalMarks and totalmarks are different identifiers. Use meaningful names such as studentName instead of unclear names such as x1.</p>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Explain let, const and var.</li><li>List JavaScript primitive data types.</li><li>What is the difference between null and undefined?</li><li>Write a program that converts a numeric string into a number.</li></ol></div>
+<div class="page-number">Chapter 3</div>
+</section>
+
+<section class="page" id="ch4">
+<h2>Chapter 4: Operators in JavaScript</h2>
+<h3>4.1 Arithmetic Operators</h3>
+<p>Arithmetic operators perform mathematical operations. The main operators are +, -, *, /, %, ** and increment/decrement operators.</p>
+<pre><code>let a = 10;
+let b = 3;
+
+console.log(a + b);  // 13
+console.log(a - b);  // 7
+console.log(a * b);  // 30
+console.log(a / b);  // 3.333...
+console.log(a % b);  // 1
+console.log(a ** b); // 1000</code></pre>
+<h3>4.2 Assignment Operators</h3>
+<pre><code>let score = 10;
+score += 5;  // score is now 15
+score *= 2;  // score is now 30
+score -= 4;  // score is now 26</code></pre>
+<h3>4.3 Comparison Operators</h3>
+<p>Comparison operators return a Boolean result. They include &gt;, &lt;, &gt;=, &lt;=, === and !==. Prefer strict equality operators when you want to compare values without automatic type conversion.</p>
+<pre><code>console.log(5 === 5);   // true
+console.log(5 === "5"); // false
+console.log(5 == "5");  // true
+console.log(8 > 3);     // true</code></pre>
+<h3>4.4 Logical Operators</h3>
+<p>The logical AND operator (&&), OR operator (||) and NOT operator (!) are used in conditions. In JavaScript, && and || can return one of their operands rather than always returning true or false.</p>
+<pre><code>let age = 20;
+let hasID = true;
+
+console.log(age >= 18 && hasID); // true
+console.log(age < 18 || hasID);  // true
+console.log(!hasID);             // false</code></pre>
+<h3>4.5 Increment and Decrement</h3>
+<pre><code>let count = 5;
+count++;
+console.log(count); // 6
+
+count--;
+console.log(count); // 5</code></pre>
+<h3>4.6 Ternary Operator</h3>
+<p>The conditional or ternary operator is a short expression for choosing between two values.</p>
+<pre><code>let age = 20;
+let result = age >= 18 ? "Adult" : "Minor";
+console.log(result); // Adult</code></pre>
+<h3>4.7 Operator Precedence</h3>
+<p>Operators follow precedence rules that determine evaluation order. Parentheses make the intended order clearer.</p>
+<pre><code>let result = (2 + 3) * 4;
+console.log(result); // 20</code></pre>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Explain arithmetic operators.</li><li>Differentiate == and ===.</li><li>Explain logical operators with examples.</li><li>What is the ternary operator?</li></ol></div>
+<div class="page-number">Chapter 4</div>
+</section>
+
+<section class="page" id="ch5">
+<h2>Chapter 5: Conditional Statements</h2>
+<h3>5.1 if Statement</h3>
+<p>The if statement executes a block when its condition is truthy.</p>
+<pre><code>let age = 20;
+
+if (age >= 18) {
+    console.log("Eligible by age");
+}</code></pre>
+<h3>5.2 if...else</h3>
+<pre><code>let number = 7;
+
+if (number % 2 === 0) {
+    console.log("Even");
+} else {
+    console.log("Odd");
+}</code></pre>
+<h3>5.3 else if</h3>
+<p>An else if chain checks multiple conditions in order. The first matching branch is executed.</p>
+<pre><code>let marks = 78;
+
+if (marks >= 90) {
+    console.log("Grade A");
+} else if (marks >= 75) {
+    console.log("Grade B");
+} else if (marks >= 50) {
+    console.log("Grade C");
+} else {
+    console.log("Needs improvement");
+}</code></pre>
+<h3>5.4 switch Statement</h3>
+<p>A switch statement compares one expression against case values. Use break when you want to prevent execution from falling through into the next case.</p>
+<pre><code>let day = 2;
+
+switch (day) {
+    case 1:
+        console.log("Monday");
+        break;
+    case 2:
+        console.log("Tuesday");
+        break;
+    default:
+        console.log("Other day");
+}</code></pre>
+<h3>5.5 Truthy and Falsy Values</h3>
+<p>JavaScript conditions convert values to Boolean form. Values such as false, 0, -0, 0n, an empty string, null, undefined and NaN are falsy. Most other values, including empty arrays and empty objects, are truthy.</p>
+<h3>5.6 Nested Conditions</h3>
+<p>A nested condition is an if statement inside another conditional block. Nesting can be useful, but overly complex nesting can make code difficult to understand. Clear conditions and early returns can sometimes simplify the logic.</p>
+<div class="exercise"><h3>Practice Programs</h3><ol><li>Check whether a number is positive, negative or zero.</li><li>Find the largest of three numbers.</li><li>Check whether a year is a leap year.</li><li>Build a simple calculator using switch.</li></ol></div>
+<div class="page-number">Chapter 5</div>
+</section>
+
+<section class="page" id="ch6">
+<h2>Chapter 6: Loops in JavaScript</h2>
+<h3>6.1 What Is a Loop?</h3>
+<p>A loop repeats a block of code while a condition or iteration rule allows it to continue. Loops are useful for processing lists, counting, repeating calculations and traversing data.</p>
+<h3>6.2 for Loop</h3>
+<pre><code>for (let i = 1; i <= 5; i++) {
+    console.log(i);
+}</code></pre>
+<p>Output: 1, 2, 3, 4, 5. The initialisation runs once, the condition is checked before each iteration, and the update expression normally runs after the body.</p>
+<h3>6.3 while Loop</h3>
+<pre><code>let i = 1;
+
+while (i <= 5) {
+    console.log(i);
+    i++;
+}</code></pre>
+<p>A while loop checks the condition before running its body. If the condition is false at the start, the body does not execute.</p>
+<h3>6.4 do...while Loop</h3>
+<pre><code>let i = 1;
+
+do {
+    console.log(i);
+    i++;
+} while (i <= 5);</code></pre>
+<p>A do...while loop executes the body at least once because its condition is checked afterward.</p>
+<h3>6.5 for...of</h3>
+<p>The for...of loop iterates over values from iterable objects such as arrays and strings.</p>
+<pre><code>const colors = ["Blue", "Green", "Yellow"];
+
+for (const color of colors) {
+    console.log(color);
+}</code></pre>
+<h3>6.6 break and continue</h3>
+<p>break exits the nearest loop. continue skips the remainder of the current iteration and proceeds to the next one.</p>
+<pre><code>for (let i = 1; i <= 10; i++) {
+    if (i === 4) continue;
+    if (i === 8) break;
+    console.log(i);
+}</code></pre>
+<h3>6.7 Nested Loops</h3>
+<p>A nested loop is a loop inside another loop. It is often used for tables, grids and combinations. Since the inner loop runs for each outer iteration, nested loops can increase the amount of work significantly.</p>
+<pre><code>for (let row = 1; row <= 3; row++) {
+    let line = "";
+    for (let col = 1; col <= 3; col++) {
+        line += "* ";
+    }
+    console.log(line);
+}</code></pre>
+<div class="exercise"><h3>Practice Programs</h3><ol><li>Print numbers from 1 to 100.</li><li>Print the multiplication table of a number.</li><li>Calculate the sum of the first N natural numbers.</li><li>Calculate a factorial using a loop.</li><li>Print a simple star pattern.</li></ol></div>
+<div class="page-number">Chapter 6</div>
+</section>
+
+<section class="page" id="ch7">
+<h2>Chapter 7: Functions</h2>
+<h3>7.1 Meaning of a Function</h3>
+<p>A function is a reusable block of code that performs a task. Functions help organise programs into smaller units, reduce duplication and make testing easier.</p>
+<h3>7.2 Function Declaration</h3>
+<pre><code>function greet() {
+    console.log("Welcome!");
+}
+
+greet();</code></pre>
+<h3>7.3 Parameters and Arguments</h3>
+<p>Parameters are names listed in a function definition. Arguments are the values supplied when the function is called.</p>
+<pre><code>function greetUser(name) {
+    console.log("Hello, " + name);
+}
+
+greetUser("Aman");</code></pre>
+<h3>7.4 Return Statement</h3>
+<p>The return statement sends a value back to the caller and ends the current function execution.</p>
+<pre><code>function add(a, b) {
+    return a + b;
+}
+
+const result = add(10, 20);
+console.log(result); // 30</code></pre>
+<h3>7.5 Function Expressions</h3>
+<pre><code>const multiply = function(a, b) {
+    return a * b;
+};
+
+console.log(multiply(4, 5));</code></pre>
+<h3>7.6 Arrow Functions</h3>
+<p>Arrow functions provide a concise way to write function expressions. They do not have their own this binding, so they are not interchangeable with ordinary functions in every context.</p>
+<pre><code>const square = number => number * number;
+console.log(square(6)); // 36
+
+const add = (a, b) => a + b;
+console.log(add(2, 3)); // 5</code></pre>
+<h3>7.7 Default Parameters</h3>
+<pre><code>function welcome(name = "Student") {
+    return `Welcome, ${name}!`;
+}
+
+console.log(welcome());
+console.log(welcome("Aman"));</code></pre>
+<h3>7.8 Scope</h3>
+<p>Scope determines where a variable can be accessed. Variables declared with let and const have block scope, while var has function scope. Functions can access variables in enclosing scopes according to JavaScript's lexical scoping rules.</p>
+<h3>7.9 Recursion</h3>
+<p>Recursion occurs when a function calls itself. A recursive function needs a base case to stop recursion and prevent unbounded calls.</p>
+<pre><code>function factorial(n) {
+    if (n < 0) return undefined;
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+console.log(factorial(5)); // 120</code></pre>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Define function and explain its benefits.</li><li>Differentiate parameters and arguments.</li><li>Explain return with an example.</li><li>Compare function declarations and arrow functions.</li><li>What is recursion?</li></ol></div>
+<div class="page-number">Chapter 7</div>
+</section>
+
+<section class="page" id="ch8">
+<h2>Chapter 8: Arrays</h2>
+<h3>8.1 What Is an Array?</h3>
+<p>An array stores an ordered collection of values. Its indexes are zero-based, meaning the first item is at index 0. Arrays can hold values of different types, although keeping related data consistent often makes code easier to maintain.</p>
+<pre><code>const fruits = ["Apple", "Mango", "Banana"];
+
+console.log(fruits[0]); // Apple
+console.log(fruits[1]); // Mango</code></pre>
+<h3>8.2 Reading and Updating Items</h3>
+<pre><code>const numbers = [10, 20, 30];
+
+numbers[1] = 25;
+
+console.log(numbers); // [10, 25, 30]
+console.log(numbers.length); // 3</code></pre>
+<h3>8.3 Common Array Methods</h3>
+<ul>
+<li><strong>push:</strong> Adds an item to the end.</li>
+<li><strong>pop:</strong> Removes the last item.</li>
+<li><strong>unshift:</strong> Adds an item to the beginning.</li>
+<li><strong>shift:</strong> Removes the first item.</li>
+<li><strong>includes:</strong> Checks whether a value is present.</li>
+<li><strong>indexOf:</strong> Finds the first matching index.</li>
+<li><strong>slice:</strong> Returns a selected shallow copy without changing the original array.</li>
+<li><strong>splice:</strong> Can remove, replace or insert items in the original array.</li>
+</ul>
+<pre><code>const colors = ["Blue", "Green"];
+
+colors.push("Yellow");
+console.log(colors);
+
+colors.pop();
+console.log(colors);
+
+console.log(colors.includes("Blue"));</code></pre>
+<h3>8.4 Looping Through an Array</h3>
+<pre><code>const marks = [70, 85, 90];
+
+for (const mark of marks) {
+    console.log(mark);
+}</code></pre>
+<h3>8.5 Arrays of Objects</h3>
+<p>Arrays often store objects representing related records. For example, a library application can store a list of books, each with a title and author.</p>
+<pre><code>const books = [
+    { title: "JavaScript Basics", author: "A. Kumar" },
+    { title: "Web Development", author: "R. Sharma" }
+];
+
+console.log(books[0].title);</code></pre>
+<h3>8.6 Copying Arrays</h3>
+<p>Assigning an array to another variable copies its reference rather than creating an independent array. Spread syntax or slice can create a shallow copy. Nested objects inside that array may still be shared.</p>
+<pre><code>const original = [1, 2, 3];
+const copy = [...original];
+
+copy.push(4);
+
+console.log(original); // [1, 2, 3]
+console.log(copy);     // [1, 2, 3, 4]</code></pre>
+<div class="exercise"><h3>Practice Programs</h3><ol><li>Find the largest number in an array.</li><li>Calculate the sum of array values.</li><li>Search for an item in an array.</li><li>Reverse an array without using reverse().</li></ol></div>
+<div class="page-number">Chapter 8</div>
+</section>
+
+<section class="page" id="ch9">
+<h2>Chapter 9: Strings and Template Literals</h2>
+<h3>9.1 Strings</h3>
+<p>A string represents text. Strings can be written using single quotes, double quotes or backticks. Strings are immutable, meaning their individual characters cannot be changed in place; string methods return new strings or other values.</p>
+<pre><code>const firstName = "Aman";
+const city = 'Indore';
+const message = `Hello ${firstName}`;
+
+console.log(message);</code></pre>
+<h3>9.2 String Length and Access</h3>
+<pre><code>const text = "JavaScript";
+
+console.log(text.length);
+console.log(text[0]);
+console.log(text.charAt(1));</code></pre>
+<h3>9.3 Common String Methods</h3>
+<pre><code>const text = "  Learn JavaScript  ";
+
+console.log(text.trim());
+console.log(text.toUpperCase());
+console.log(text.toLowerCase());
+console.log(text.includes("Java"));
+console.log(text.replace("JavaScript", "Programming"));
+console.log(text.slice(2, 7));</code></pre>
+<h3>9.4 Template Literals</h3>
+<p>Template literals use backticks and allow expressions to be inserted with ${...}. They also support multi-line strings.</p>
+<pre><code>const name = "Aman";
+const marks = 85;
+
+const result = `${name} scored ${marks} marks.`;
+console.log(result);</code></pre>
+<h3>9.5 Splitting and Joining</h3>
+<pre><code>const sentence = "HTML CSS JavaScript";
+const words = sentence.split(" ");
+
+console.log(words);
+
+const combined = words.join(", ");
+console.log(combined);</code></pre>
+<h3>9.6 Comparing Strings</h3>
+<p>String comparison is case-sensitive. For example, "hello" and "Hello" are different strings. When comparing text from users, consider whether normalisation or case-insensitive matching is appropriate for the application.</p>
+<div class="exercise"><h3>Practice Programs</h3><ol><li>Count the characters in a string.</li><li>Convert a sentence to uppercase.</li><li>Check whether a string contains a given word.</li><li>Build a greeting using a template literal.</li></ol></div>
+<div class="page-number">Chapter 9</div>
+</section>
+
+<section class="page" id="ch10">
+<h2>Chapter 10: Objects</h2>
+<h3>10.1 What Is an Object?</h3>
+<p>An object stores related data as properties. A property consists of a key and a value. Object values can include strings, numbers, arrays, functions and other objects.</p>
+<pre><code>const student = {
+    name: "Aman",
+    age: 20,
+    course: "BCA"
+};
+
+console.log(student.name);
+console.log(student["course"]);</code></pre>
+<h3>10.2 Adding and Updating Properties</h3>
+<pre><code>const book = {
+    title: "JavaScript Basics",
+    pages: 200
+};
+
+book.author = "A. Kumar";
+book.pages = 250;
+
+console.log(book);</code></pre>
+<h3>10.3 Methods</h3>
+<p>A method is a function stored as an object property.</p>
+<pre><code>const user = {
+    name: "Aman",
+    greet() {
+        return `Hello, ${this.name}`;
+    }
+};
+
+console.log(user.greet());</code></pre>
+<p>In an ordinary method call, this usually refers to the object used before the dot. Arrow functions do not create their own this binding.</p>
+<h3>10.4 Object Destructuring</h3>
+<pre><code>const student = {
+    name: "Aman",
+    age: 20
+};
+
+const { name, age } = student;
+
+console.log(name);
+console.log(age);</code></pre>
+<h3>10.5 Object Keys and Values</h3>
+<pre><code>const scores = {
+    maths: 80,
+    science: 90
+};
+
+console.log(Object.keys(scores));
+console.log(Object.values(scores));
+console.log(Object.entries(scores));</code></pre>
+<h3>10.6 Spread Syntax</h3>
+<pre><code>const first = { name: "Aman", age: 20 };
+const updated = { ...first, city: "Indore" };
+
+console.log(updated);</code></pre>
+<p>Object spread creates a shallow copy of enumerable own properties. Nested objects remain shared unless they are copied separately.</p>
+<h3>10.7 Arrays vs Objects</h3>
+<table>
+<tr><th>Array</th><th>Object</th></tr>
+<tr><td>Designed for ordered collections</td><td>Designed for named properties</td></tr>
+<tr><td>Commonly accessed by numeric index</td><td>Commonly accessed by property key</td></tr>
+<tr><td>Provides methods such as map and filter</td><td>Provides methods such as Object.keys and Object.values</td></tr>
+</table>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Define an object.</li><li>How can you access an object's properties?</li><li>Explain methods and this.</li><li>What is destructuring?</li></ol></div>
+<div class="page-number">Chapter 10</div>
+</section>
+
+<section class="page" id="ch11">
+<h2>Chapter 11: DOM Manipulation</h2>
+<h3>11.1 What Is the DOM?</h3>
+<p>The Document Object Model (DOM) represents an HTML document as a structured set of objects. JavaScript can use DOM APIs to find elements, read or update text, change attributes, modify styles and create new elements.</p>
+<h3>11.2 Selecting Elements</h3>
+<pre><code>document.getElementById("title");
+document.querySelector(".message");
+document.querySelectorAll("p");</code></pre>
+<p>getElementById selects an element by ID. querySelector returns the first element matching a CSS selector. querySelectorAll returns a collection of all matching elements.</p>
+<h3>11.3 Changing Text and HTML</h3>
+<pre><code>// HTML: &lt;h2 id="title"&gt;Old title&lt;/h2&gt;
+
+const title = document.getElementById("title");
+title.textContent = "New title";</code></pre>
+<p>Use textContent for plain text. Setting innerHTML interprets a string as HTML, so untrusted user input should not be inserted with innerHTML because it can create cross-site scripting risks.</p>
+<h3>11.4 Changing CSS Classes</h3>
+<pre><code>const box = document.querySelector(".box");
+
+box.classList.add("active");
+box.classList.remove("hidden");
+box.classList.toggle("selected");</code></pre>
+<h3>11.5 Creating Elements</h3>
+<pre><code>const item = document.createElement("li");
+item.textContent = "New book";
+
+document.getElementById("bookList").appendChild(item);</code></pre>
+<p>The HTML page must contain an element with the ID bookList for this example to work.</p>
+<h3>11.6 Reading Input Values</h3>
+<pre><code>// HTML: &lt;input id="username" value="Aman"&gt;
+
+const input = document.getElementById("username");
+console.log(input.value);</code></pre>
+<h3>11.7 Removing Elements</h3>
+<pre><code>const message = document.querySelector(".message");
+
+if (message) {
+    message.remove();
+}</code></pre>
+<div class="info-box"><strong>Practical use:</strong> A digital library can use DOM manipulation to add book cards, show search results, update reading progress and display feedback.</div>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Define DOM.</li><li>Compare querySelector and getElementById.</li><li>Differentiate textContent and innerHTML.</li><li>Explain how to create and remove an element.</li></ol></div>
+<div class="page-number">Chapter 11</div>
+</section>
+
+<section class="page" id="ch12">
+<h2>Chapter 12: Events in JavaScript</h2>
+<h3>12.1 What Is an Event?</h3>
+<p>An event represents something that occurs in the browser, such as a click, key press, form submission or page load. JavaScript event handlers allow programs to respond to these activities.</p>
+<h3>12.2 Click Event</h3>
+<pre><code>&lt;button id="myButton"&gt;Click Me&lt;/button&gt;
+&lt;p id="output"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+document.getElementById("myButton")
+    .addEventListener("click", function() {
+        document.getElementById("output").textContent =
+            "Button clicked!";
+    });
+&lt;/script&gt;</code></pre>
+<h3>12.3 addEventListener</h3>
+<p>addEventListener attaches a handler for a particular event. It is generally more flexible than assigning an inline event handler because it separates behaviour from HTML and allows multiple listeners.</p>
+<h3>12.4 Keyboard Events</h3>
+<pre><code>document.addEventListener("keydown", function(event) {
+    console.log("Key pressed:", event.key);
+});</code></pre>
+<h3>12.5 Form Submit Event</h3>
+<pre><code>const form = document.getElementById("myForm");
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    console.log("Form submission handled.");
+});</code></pre>
+<p>preventDefault prevents the browser's default action for the event. In this example, it prevents the normal form submission so JavaScript can handle the form.</p>
+<h3>12.6 Event Object</h3>
+<p>The event object contains information about the event. Its properties can identify the target element, key pressed or other details. The available information depends on the event type.</p>
+<h3>12.7 Event Bubbling</h3>
+<p>Many DOM events bubble from a target element through its ancestors. Event delegation takes advantage of this behaviour by attaching one handler to a parent element and identifying which child triggered the event.</p>
+<div class="exercise"><h3>Practice Tasks</h3><ol><li>Create a button that changes a heading.</li><li>Show the key pressed by the user.</li><li>Prevent a form's default submission.</li><li>Build a click counter.</li></ol></div>
+<div class="page-number">Chapter 12</div>
+</section>
+
+<section class="page" id="ch13">
+<h2>Chapter 13: Form Validation</h2>
+<h3>13.1 Why Validate Forms?</h3>
+<p>Form validation checks whether submitted information meets the application's requirements. Examples include checking required fields, email format, password length and whether numeric values fall within an allowed range.</p>
+<h3>13.2 HTML Validation</h3>
+<pre><code>&lt;form id="signupForm"&gt;
+  &lt;label&gt;Name:
+    &lt;input id="name" required minlength="2"&gt;
+  &lt;/label&gt;
+
+  &lt;label&gt;Email:
+    &lt;input id="email" type="email" required&gt;
+  &lt;/label&gt;
+
+  &lt;button type="submit"&gt;Create Account&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<p>HTML attributes such as required, type="email", min, max and minlength provide useful browser-side checks.</p>
+<h3>13.3 JavaScript Validation</h3>
+<pre><code>const form = document.getElementById("signupForm");
+
+form.addEventListener("submit", function(event) {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    if (name.length < 2 || email === "") {
+        event.preventDefault();
+        alert("Please enter a valid name and email.");
+    }
+});</code></pre>
+<p>This example assumes the form and input elements exist in the HTML. It demonstrates basic client-side checks, not complete email verification.</p>
+<h3>13.4 Client-Side and Server-Side Validation</h3>
+<p>Client-side validation improves usability by giving immediate feedback. However, users can bypass browser-side checks. A server must validate incoming data independently before saving it or performing sensitive actions.</p>
+<h3>13.5 Safe Form Handling</h3>
+<ul>
+<li>Tell users clearly which fields are required.</li>
+<li>Validate data on the client for usability.</li>
+<li>Repeat important validation on the server.</li>
+<li>Never trust submitted values simply because a browser form was used.</li>
+<li>Display error messages that help users correct their input.</li>
+</ul>
+<div class="exercise"><h3>Practice Tasks</h3><ol><li>Validate a required name field.</li><li>Check that a password meets a minimum length.</li><li>Display a message beside an invalid field.</li><li>Explain why server-side validation is necessary.</li></ol></div>
+<div class="page-number">Chapter 13</div>
+</section>
+
+<section class="page" id="ch14">
+<h2>Chapter 14: Modern JavaScript (ES6+)</h2>
+<h3>14.1 let and const</h3>
+<p>Modern JavaScript commonly uses let and const for block-scoped bindings. They help make reassignment and scope easier to reason about than older var-based patterns.</p>
+<h3>14.2 Arrow Functions</h3>
+<pre><code>const double = n => n * 2;
+console.log(double(5)); // 10</code></pre>
+<h3>14.3 Template Literals</h3>
+<pre><code>const name = "Aman";
+console.log(`Welcome, ${name}!`);</code></pre>
+<h3>14.4 Destructuring</h3>
+<pre><code>const user = { name: "Aman", age: 20 };
+const { name, age } = user;
+
+const numbers = [10, 20];
+const [first, second] = numbers;
+
+console.log(name, age, first, second);</code></pre>
+<h3>14.5 Spread Syntax</h3>
+<pre><code>const first = [1, 2];
+const second = [...first, 3, 4];
+
+console.log(second);</code></pre>
+<h3>14.6 Rest Parameters</h3>
+<p>Rest parameters collect remaining arguments into an array.</p>
+<pre><code>function sum(...numbers) {
+    return numbers.reduce((total, n) => total + n, 0);
+}
+
+console.log(sum(1, 2, 3, 4)); // 10</code></pre>
+<h3>14.7 Default Parameters</h3>
+<pre><code>function greet(name = "Student") {
+    return `Hello, ${name}`;
+}
+
+console.log(greet());</code></pre>
+<h3>14.8 Modules</h3>
+<p>JavaScript modules let code be divided into separate files. An export makes selected values available to other modules, while import brings them into another module. In browsers, modules normally use type="module" and are best tested through a local development server or supported web server.</p>
+<pre><code>// math.js
+export function add(a, b) {
+    return a + b;
+}
+
+// app.js
+import { add } from "./math.js";
+console.log(add(2, 3));</code></pre>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Explain arrow functions.</li><li>What is destructuring?</li><li>Differentiate spread and rest syntax.</li><li>Explain JavaScript modules.</li></ol></div>
+<div class="page-number">Chapter 14</div>
+</section>
+
+<section class="page" id="ch15">
+<h2>Chapter 15: Important Array Methods</h2>
+<h3>15.1 forEach()</h3>
+<p>forEach runs a callback for each array element. It is useful for side effects such as displaying values. It does not create a new array of returned callback values.</p>
+<pre><code>[1, 2, 3].forEach(number => {
+    console.log(number);
+});</code></pre>
+<h3>15.2 map()</h3>
+<p>map creates a new array by applying a callback to every element.</p>
+<pre><code>const numbers = [1, 2, 3];
+const doubled = numbers.map(n => n * 2);
+
+console.log(doubled); // [2, 4, 6]</code></pre>
+<h3>15.3 filter()</h3>
+<p>filter creates a new array containing elements that pass a test.</p>
+<pre><code>const numbers = [1, 2, 3, 4, 5, 6];
+const even = numbers.filter(n => n % 2 === 0);
+
+console.log(even); // [2, 4, 6]</code></pre>
+<h3>15.4 reduce()</h3>
+<p>reduce combines array elements into a single accumulated result. Supplying an initial value is often clearer and avoids errors with empty arrays.</p>
+<pre><code>const prices = [100, 200, 300];
+
+const total = prices.reduce(
+    (sum, price) => sum + price,
+    0
+);
+
+console.log(total); // 600</code></pre>
+<h3>15.5 find() and some()</h3>
+<pre><code>const numbers = [4, 7, 10, 13];
+
+console.log(numbers.find(n => n > 8)); // 10
+console.log(numbers.some(n => n > 12)); // true
+console.log(numbers.every(n => n > 0)); // true</code></pre>
+<h3>15.6 sort()</h3>
+<p>By default, sort converts array values to strings and sorts according to string order. For numeric sorting, supply a comparison function.</p>
+<pre><code>const numbers = [40, 5, 100, 25];
+
+numbers.sort((a, b) => a - b);
+console.log(numbers); // [5, 25, 40, 100]</code></pre>
+<h3>15.7 Choosing the Right Method</h3>
+<table>
+<tr><th>Method</th><th>Purpose</th></tr>
+<tr><td>forEach</td><td>Perform an action for each item</td></tr>
+<tr><td>map</td><td>Transform every item into a new array</td></tr>
+<tr><td>filter</td><td>Select items that pass a condition</td></tr>
+<tr><td>reduce</td><td>Accumulate a single result</td></tr>
+<tr><td>find</td><td>Return the first matching item</td></tr>
+<tr><td>some</td><td>Check whether at least one item passes a test</td></tr>
+<tr><td>every</td><td>Check whether all items pass a test</td></tr>
+</table>
+<div class="exercise"><h3>Practice Tasks</h3><ol><li>Double all values with map.</li><li>Filter all numbers greater than 50.</li><li>Calculate a total with reduce.</li><li>Sort an array of numbers in ascending order.</li></ol></div>
+<div class="page-number">Chapter 15</div>
+</section>
+
+<section class="page" id="ch16">
+<h2>Chapter 16: Error Handling and Debugging</h2>
+<h3>16.1 Types of Errors</h3>
+<p>A syntax error occurs when code does not follow valid language grammar. A runtime error occurs while code is executing. A logical error occurs when a program runs but produces an incorrect result.</p>
+<h3>16.2 try...catch</h3>
+<p>try...catch lets a program handle certain exceptions instead of allowing them to propagate without handling.</p>
+<pre><code>try {
+    const data = JSON.parse("{invalid}");
+    console.log(data);
+} catch (error) {
+    console.log("Could not parse the data.");
+}</code></pre>
+<h3>16.3 finally</h3>
+<p>A finally block runs after the try/catch process whether or not an exception was thrown, making it useful for cleanup actions.</p>
+<pre><code>try {
+    console.log("Working...");
+} catch (error) {
+    console.log("An error occurred.");
+} finally {
+    console.log("Finished.");
+}</code></pre>
+<h3>16.4 Throwing Errors</h3>
+<pre><code>function divide(a, b) {
+    if (b === 0) {
+        throw new Error("Cannot divide by zero.");
+    }
+
+    return a / b;
+}
+
+try {
+    console.log(divide(10, 0));
+} catch (error) {
+    console.log(error.message);
+}</code></pre>
+<h3>16.5 Debugging with Console</h3>
+<p>console.log can show intermediate values. console.error can report errors. Browser developer tools also provide breakpoints, call stacks, variable inspection and step-by-step execution.</p>
+<h3>16.6 Debugging Strategy</h3>
+<ol>
+<li>Reproduce the problem consistently.</li>
+<li>Read the complete error message.</li>
+<li>Identify the relevant line and variable values.</li>
+<li>Test a small hypothesis about the cause.</li>
+<li>Change the code and run the test again.</li>
+<li>Check that the fix does not break other features.</li>
+</ol>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Differentiate syntax, runtime and logical errors.</li><li>Explain try...catch and finally.</li><li>How does throw work?</li><li>Describe a systematic debugging process.</li></ol></div>
+<div class="page-number">Chapter 16</div>
+</section>
+
+<section class="page" id="ch17">
+<h2>Chapter 17: JSON and Browser Storage</h2>
+<h3>17.1 What Is JSON?</h3>
+<p>JSON stands for JavaScript Object Notation. It is a text format used to exchange structured data. JSON supports strings, numbers, Booleans, null, arrays and objects. JSON property names and string values use double quotes.</p>
+<pre><code>{
+  "name": "Aman",
+  "age": 20,
+  "skills": ["HTML", "CSS", "JavaScript"]
+}</code></pre>
+<h3>17.2 JSON.stringify()</h3>
+<p>JSON.stringify converts a supported JavaScript value into JSON text.</p>
+<pre><code>const student = {
+    name: "Aman",
+    age: 20
+};
+
+const jsonText = JSON.stringify(student);
+console.log(jsonText);</code></pre>
+<h3>17.3 JSON.parse()</h3>
+<p>JSON.parse converts valid JSON text into a JavaScript value. Invalid JSON throws a syntax error, so data from unreliable sources should be parsed with appropriate error handling.</p>
+<pre><code>const text = '{"name":"Aman","age":20}';
+const student = JSON.parse(text);
+
+console.log(student.name);</code></pre>
+<h3>17.4 localStorage</h3>
+<p>localStorage stores string values in the browser for an origin. Data normally persists across browser restarts until removed by the user or application, subject to browser storage rules. Do not store passwords or sensitive secrets in localStorage.</p>
+<pre><code>localStorage.setItem("theme", "dark");
+
+const theme = localStorage.getItem("theme");
+console.log(theme);
+
+localStorage.removeItem("theme");</code></pre>
+<h3>17.5 Saving Objects</h3>
+<pre><code>const settings = {
+    fontSize: 18,
+    theme: "light"
+};
+
+localStorage.setItem("settings", JSON.stringify(settings));
+
+const savedText = localStorage.getItem("settings");
+const savedSettings = savedText
+    ? JSON.parse(savedText)
+    : null;
+
+console.log(savedSettings);</code></pre>
+<h3>17.6 sessionStorage</h3>
+<p>sessionStorage stores string values for a browser tab's page session. It is useful for temporary state that should not normally persist after the tab's session ends.</p>
+<h3>17.7 Storage Limitations</h3>
+<p>Browser storage has size limits and can be unavailable in some restricted environments. Applications should handle parsing failures and storage errors. Important data should not rely solely on local browser storage.</p>
+<div class="exercise"><h3>Practice Tasks</h3><ol><li>Save a username in localStorage.</li><li>Save an object as JSON and read it back.</li><li>Explain localStorage and sessionStorage.</li><li>Explain why passwords should not be stored in browser storage.</li></ol></div>
+<div class="page-number">Chapter 17</div>
+</section>
+
+<section class="page" id="ch18">
+<h2>Chapter 18: Asynchronous JavaScript</h2>
+<h3>18.1 Synchronous Code</h3>
+<p>Synchronous code normally runs one statement after another. A long-running operation can delay subsequent work in the same execution flow. JavaScript environments use event-loop mechanisms to coordinate asynchronous tasks.</p>
+<h3>18.2 setTimeout()</h3>
+<pre><code>console.log("First");
+
+setTimeout(() => {
+    console.log("Later");
+}, 1000);
+
+console.log("Second");</code></pre>
+<p>Typical output order is First, Second, Later. The timeout schedules a callback after a minimum delay; it does not guarantee execution at an exact time.</p>
+<h3>18.3 Callbacks</h3>
+<p>A callback is a function passed to another function so that it can be invoked later or when an operation reaches a particular point. Callbacks are common in event handlers and asynchronous APIs.</p>
+<h3>18.4 Promises</h3>
+<p>A Promise represents the eventual result of an asynchronous operation. A promise can be pending, fulfilled or rejected. then handles successful fulfillment, catch handles rejection, and finally can run cleanup logic.</p>
+<pre><code>const task = new Promise((resolve, reject) => {
+    const success = true;
+
+    if (success) {
+        resolve("Task completed");
+    } else {
+        reject(new Error("Task failed"));
+    }
+});
+
+task
+    .then(result => console.log(result))
+    .catch(error => console.log(error.message));</code></pre>
+<h3>18.5 async and await</h3>
+<p>An async function returns a Promise. The await expression pauses that async function until the awaited promise settles, allowing asynchronous code to be written in a sequential style.</p>
+<pre><code>function waitOneSecond() {
+    return new Promise(resolve => {
+        setTimeout(resolve, 1000);
+    });
+}
+
+async function runTask() {
+    console.log("Start");
+    await waitOneSecond();
+    console.log("Finished waiting");
+}
+
+runTask();</code></pre>
+<h3>18.6 Handling Errors with async/await</h3>
+<pre><code>async function loadData() {
+    try {
+        const response = await fetch("/data.json");
+
+        if (!response.ok) {
+            throw new Error("Request failed");
+        }
+
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error("Could not load data:", error.message);
+    }
+}</code></pre>
+<p>This example requires a server route or file that returns valid JSON. The relative URL will not work in every local-file setup.</p>
+<h3>18.7 Why Asynchronous Programming Matters</h3>
+<p>Network requests, timers and many I/O operations complete later. Asynchronous programming helps an application remain responsive while it waits for such work. Correct error handling remains important because requests can fail, time out or return unexpected data.</p>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Define asynchronous programming.</li><li>Explain callbacks and promises.</li><li>What are async and await?</li><li>Explain error handling in asynchronous code.</li></ol></div>
+<div class="page-number">Chapter 18</div>
+</section>
+
+<section class="page" id="ch19">
+<h2>Chapter 19: Fetch API and Web APIs</h2>
+<h3>19.1 What Is an API?</h3>
+<p>An Application Programming Interface (API) defines how software components communicate. A web API allows a client application to request data or actions from a server through a defined interface.</p>
+<h3>19.2 HTTP Basics</h3>
+<p>HTTP is a protocol used for communication between clients and servers. Common methods include GET for retrieving a resource, POST for submitting data, PUT for replacing a resource, PATCH for partial updates and DELETE for requesting removal. Actual server behaviour depends on its implementation and permissions.</p>
+<h3>19.3 Fetch API</h3>
+<p>The Fetch API makes network requests and returns a Promise. A fulfilled fetch promise does not automatically mean the HTTP status was successful, so check response.ok or response.status.</p>
+<pre><code>async function loadPosts() {
+    try {
+        const response = await fetch(
+            "https://jsonplaceholder.typicode.com/posts/1"
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const post = await response.json();
+        console.log(post.title);
+    } catch (error) {
+        console.error("Request failed:", error.message);
+    }
+}
+
+loadPosts();</code></pre>
+<p>This example uses a public demonstration API. Internet access, server availability and browser cross-origin policies can affect the result.</p>
+<h3>19.4 Sending JSON</h3>
+<pre><code>async function createPost() {
+    const data = {
+        title: "My Post",
+        body: "Learning JavaScript",
+        userId: 1
+    };
+
+    const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Could not submit data");
+    }
+
+    return response.json();
+}</code></pre>
+<p>A demonstration API may simulate creation rather than permanently save the submitted record.</p>
+<h3>19.5 Displaying API Data</h3>
+<pre><code>async function showPost() {
+    const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts/1"
+    );
+
+    if (!response.ok) {
+        throw new Error("Could not load post");
+    }
+
+    const post = await response.json();
+
+    const output = document.getElementById("output");
+    output.textContent = post.title;
+}</code></pre>
+<p>The HTML must include an element such as &lt;div id="output"&gt;&lt;/div&gt; for this example.</p>
+<h3>19.6 API Errors and Security</h3>
+<ul>
+<li>Check HTTP status codes and handle rejected requests.</li>
+<li>Validate returned data before using it.</li>
+<li>Do not expose secret API keys in public browser code.</li>
+<li>Use HTTPS for sensitive network communication.</li>
+<li>Remember that CORS is controlled by server response policies.</li>
+</ul>
+<div class="exercise"><h3>Chapter Questions</h3><ol><li>Define an API.</li><li>Explain GET and POST methods.</li><li>How does fetch work?</li><li>Why should response.ok be checked?</li><li>What is CORS?</li></ol></div>
+<div class="page-number">Chapter 19</div>
+</section>
+
+<section class="page" id="ch20">
+<h2>Chapter 20: Mini Projects and Revision</h2>
+<h3>20.1 Project: Click Counter</h3>
+<p>This project demonstrates variables, DOM selection and click events.</p>
+<pre><code>&lt;h2&gt;Click Counter&lt;/h2&gt;
+&lt;p id="count"&gt;0&lt;/p&gt;
+&lt;button id="increase"&gt;Increase&lt;/button&gt;
+&lt;button id="reset"&gt;Reset&lt;/button&gt;
+
+&lt;script&gt;
+let count = 0;
+
+const output = document.getElementById("count");
+
+document.getElementById("increase")
+    .addEventListener("click", () => {
+        count++;
+        output.textContent = count;
+    });
+
+document.getElementById("reset")
+    .addEventListener("click", () => {
+        count = 0;
+        output.textContent = count;
+    });
+&lt;/script&gt;</code></pre>
+<h3>20.2 Project: Simple Calculator</h3>
+<pre><code>function calculate(a, operator, b) {
+    if (operator === "+") return a + b;
+    if (operator === "-") return a - b;
+    if (operator === "*") return a * b;
+
+    if (operator === "/") {
+        if (b === 0) return "Cannot divide by zero";
+        return a / b;
+    }
+
+    return "Invalid operator";
+}
+
+console.log(calculate(10, "+", 5));
+console.log(calculate(10, "*", 5));</code></pre>
+<h3>20.3 Project: To-Do List</h3>
+<p>A to-do list can use an array to hold tasks and DOM elements to display them. A user can enter a task, press an Add button, and see the new task appear. Additional features can include marking tasks complete, deleting tasks and saving the list to localStorage.</p>
+<h3>20.4 Project: Digital Library Search</h3>
+<p>A library search feature can store book information in an array of objects. When the user enters a query, JavaScript filters book titles and authors, then updates the result area. This combines arrays, objects, string methods, events and DOM manipulation.</p>
+<pre><code>const books = [
+    { title: "JavaScript Basics", author: "Aman" },
+    { title: "Operating System", author: "Ravi" },
+    { title: "Computer Networks", author: "Neha" }
+];
+
+function searchBooks(query) {
+    const term = query.toLowerCase();
+
+    return books.filter(book =>
+        book.title.toLowerCase().includes(term) ||
+        book.author.toLowerCase().includes(term)
+    );
+}
+
+console.log(searchBooks("computer"));</code></pre>
+<h3>20.5 Revision Checklist</h3>
+<ul>
+<li>Understand variables, data types and operators.</li>
+<li>Practise conditions, loops and functions.</li>
+<li>Understand arrays, objects and common methods.</li>
+<li>Learn DOM selection and event handling.</li>
+<li>Validate form inputs on the client and server.</li>
+<li>Practise JSON parsing and browser storage.</li>
+<li>Understand promises, async/await and fetch.</li>
+<li>Build at least two small projects from scratch.</li>
+</ul>
+<div class="exercise"><h3>Final Practice Questions</h3><ol><li>Write a program to find the largest of three numbers.</li><li>Write a function to calculate factorial.</li><li>Explain map, filter and reduce.</li><li>Build a button that changes page text.</li><li>Explain localStorage with an example.</li><li>Compare promises and async/await.</li><li>Write a fetch example with error handling.</li><li>Design a simple digital library search.</li></ol></div>
+<div class="page-number">Chapter 20</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>JavaScript Glossary</h2>
+<ul>
+<li><strong>Variable:</strong> A named binding that refers to a value.</li>
+<li><strong>Data Type:</strong> A category describing the kind of value.</li>
+<li><strong>Function:</strong> A reusable unit of code.</li>
+<li><strong>Parameter:</strong> A named input in a function definition.</li>
+<li><strong>Argument:</strong> A value supplied when calling a function.</li>
+<li><strong>Array:</strong> An ordered collection of values.</li>
+<li><strong>Object:</strong> A collection of properties.</li>
+<li><strong>DOM:</strong> Document Object Model.</li>
+<li><strong>Event:</strong> An occurrence to which code can respond.</li>
+<li><strong>Callback:</strong> A function passed to another function.</li>
+<li><strong>Promise:</strong> An object representing an eventual asynchronous result.</li>
+<li><strong>JSON:</strong> JavaScript Object Notation, a text data format.</li>
+<li><strong>API:</strong> Application Programming Interface.</li>
+<li><strong>localStorage:</strong> Browser storage for string key-value pairs.</li>
+<li><strong>Scope:</strong> The region where a binding can be accessed.</li>
+<li><strong>Arrow Function:</strong> A concise function expression using =&gt; syntax.</li>
+<li><strong>Exception:</strong> An error or unusual condition represented through JavaScript's exception mechanism.</li>
+<li><strong>Fetch API:</strong> A browser interface for making network requests.</li>
+</ul>
+<div class="page-number">Glossary</div>
+</section>
+
+<section class="page" id="questions">
+<h2>Important Examination Questions</h2>
+<h3>Short Answer Questions</h3>
+<ol>
+<li>Define JavaScript.</li>
+<li>What is the DOM?</li>
+<li>What is a variable?</li>
+<li>Differentiate let and const.</li>
+<li>What is a function?</li>
+<li>Define an array.</li>
+<li>What is an object?</li>
+<li>Define an event.</li>
+<li>What is JSON?</li>
+<li>What is a Promise?</li>
+<li>Define localStorage.</li>
+<li>What is an API?</li>
+<li>What is an arrow function?</li>
+<li>What is the fetch API?</li>
+<li>What is exception handling?</li>
+</ol>
+<h3>Long Answer Questions</h3>
+<ol>
+<li>Explain the role and uses of JavaScript in web development.</li>
+<li>Explain JavaScript data types and variable declarations.</li>
+<li>Describe operators and conditional statements with examples.</li>
+<li>Explain loops and their types.</li>
+<li>Describe functions, parameters, return values and scope.</li>
+<li>Explain arrays and common array methods.</li>
+<li>Explain objects and object destructuring.</li>
+<li>Describe DOM manipulation with examples.</li>
+<li>Explain event handling and event bubbling.</li>
+<li>Explain form validation and why server-side validation matters.</li>
+<li>Describe modern JavaScript features.</li>
+<li>Explain JSON, localStorage and sessionStorage.</li>
+<li>Explain promises and async/await.</li>
+<li>Describe the fetch API and error handling.</li>
+<li>Design a small JavaScript project.</li>
+</ol>
+<div class="note"><strong>Exam Tip:</strong> For programming questions, write the code clearly, show the expected output and explain the main logic in simple language.</div>
+<div class="page-number">Important Questions</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+<p>Use these resources for further study and to check current language behaviour.</p>
+<ol>
+<li>MDN Web Docs — JavaScript Guide.</li>
+<li>ECMAScript Language Specification.</li>
+<li>JavaScript.info — The Modern JavaScript Tutorial.</li>
+<li>MDN Web Docs — DOM, Events, Fetch API and Web Storage documentation.</li>
+<li>Node.js official documentation for server-side JavaScript.</li>
+</ol>
+<h3>Suggested Learning Plan</h3>
+<ul>
+<li>Complete the basics before moving to DOM manipulation.</li>
+<li>Write at least three small programs for each major topic.</li>
+<li>Practise using browser developer tools.</li>
+<li>Build a calculator, quiz and to-do list.</li>
+<li>Review errors and learn to debug rather than simply copying solutions.</li>
+<li>Read official documentation when you need details about a method.</li>
+</ul>
+<div class="info-box"><strong>End of Book</strong><br>JavaScript — Smart Digital Library, Student Edition 2026.</div>
+<div class="page-number">References</div>
+</section>
+
+<div class="action-row">
+<button type="button" onclick="window.print()">Print / Save as PDF</button>
+<button id="bottomBookmarkBtn" type="button" onclick="toggleBookmark()">☆ Save Bookmark</button>
+<button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">
+© 2026 Smart Digital Library | JavaScript
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* Generate a QR code unique to this JavaScript book page. */
+function refreshJavaScriptQR(){
+    const container = document.getElementById("javascriptQRCode");
+    const notice = document.getElementById("qrNotice");
+    if(!container) return;
+    container.innerHTML = "";
+
+    if(typeof QRCode === "undefined"){
+        container.textContent = "QR library could not load. Check your internet connection and refresh the page.";
+        return;
+    }
+
+    const bookURL = window.location.href;
+    new QRCode(container, {
+        text: bookURL,
+        width: 200,
+        height: 200,
+        colorDark: "#111111",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    if(notice && window.location.protocol === "file:"){
+        notice.textContent = "You are opening this file directly from your computer. The QR code can be generated, but it will not open on another phone yet. Publish this page online (for example, with GitHub Pages), open its online URL, and download the QR code again.";
+    }else if(notice){
+        notice.textContent = "This QR code points to this JavaScript book page: " + bookURL;
+    }
+}
+
+function downloadJavaScriptQR(){
+    const container = document.getElementById("javascriptQRCode");
+    if(!container) return;
+    const canvas = container.querySelector("canvas");
+    const image = container.querySelector("img");
+    let imageURL = "";
+
+    if(canvas){
+        imageURL = canvas.toDataURL("image/png");
+    }else if(image){
+        imageURL = image.src;
+    }else{
+        alert("QR Code abhi generate nahi hua. Internet connection check karke page refresh karo.");
+        return;
+    }
+
+    const link = document.createElement("a");
+    link.href = imageURL;
+    link.download = "JavaScript-Book-QR.png";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+}
+
+window.addEventListener("load", refreshJavaScriptQR);
+</script>
+<script>
+/* Use a unique key for every book in the library. */
+const bookmarkKey = "javascriptBookmark";
+const historyKey = "readingHistory";
+const bookTitle = "JavaScript";
+
+function toggleBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+    localStorage.setItem(bookmarkKey, String(!saved));
+    updateBookmark();
+}
+
+function updateBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+    const topButton = document.getElementById("topBookmarkBtn");
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    const status = document.getElementById("bookmarkStatus");
+
+    if(topButton){
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if(bottomButton){
+        bottomButton.textContent = saved ? "★ Remove Bookmark" : "☆ Save Bookmark";
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if(status){
+        status.textContent = saved
+            ? "★ This book is bookmarked"
+            : "☆ This book is not bookmarked";
+    }
+}
+
+function updateProgress(){
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0
+        ? Math.min(100, Math.max(0, (window.scrollY / total) * 100))
+        : 0;
+
+    const progressFill = document.getElementById("progressFill");
+
+    if(progressFill){
+        progressFill.style.width = progress + "%";
+    }
+}
+
+function saveReadingHistory(){
+    const sections = document.querySelectorAll(".cover,.page");
+    let currentPage = 1;
+
+    sections.forEach((section,index)=>{
+        if(section.getBoundingClientRect().top < window.innerHeight * 0.65){
+            currentPage = index + 1;
+        }
+    });
+
+    let history = [];
+
+    try{
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        if(!Array.isArray(history)) history = [];
+    }catch(error){
+        history = [];
+    }
+
+    const existing = history.findIndex(item => item.title === bookTitle);
+
+    const record = {
+        title: bookTitle,
+        icon: "🟨",
+        category: "Programming",
+        page: currentPage,
+        time: new Date().toLocaleString()
+    };
+
+    if(existing >= 0){
+        history[existing] = record;
+    }else{
+        history.push(record);
+    }
+
+    try{
+        localStorage.setItem(historyKey, JSON.stringify(history));
+    }catch(error){
+        console.warn("Reading history could not be saved.", error);
+    }
+}
+
+window.addEventListener("scroll",()=>{
+    updateProgress();
+    saveReadingHistory();
+},{passive:true});
+
+window.addEventListener("load",()=>{
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+</script>
+
+</body>
+</html>

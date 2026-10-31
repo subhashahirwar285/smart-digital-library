@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operating System - Smart Digital Library</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#173a63;--blue:#1565c0;--light:#e3f2fd;--ink:#263238}
+body{font-family:Georgia,"Times New Roman",serif;background:#edf2f7;color:var(--ink);line-height:1.8}
+.topbar{background:var(--navy);color:white;padding:13px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:Arial,sans-serif}
+.topbar a,.topbar button{color:white;text-decoration:none;border:1px solid #ffffff70;background:transparent;padding:8px 13px;border-radius:5px;cursor:pointer;font-size:14px}
+.topbar a:hover,.topbar button:hover{background:#ffffff20}
+.progress-track{height:5px;background:#d7e3ef;position:sticky;top:0;z-index:10}
+.progress-fill{height:5px;width:0;background:#2196f3}
+.layout{max-width:1250px;margin:25px auto;padding:0 18px;display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+.sidebar{background:white;padding:20px;border-radius:10px;box-shadow:0 3px 14px #173a6310;position:sticky;top:20px;max-height:85vh;overflow:auto;font-family:Arial,sans-serif}
+.sidebar h3{color:var(--navy);margin-bottom:12px}
+.sidebar a{display:block;color:#34495e;text-decoration:none;padding:7px 9px;border-radius:5px;font-size:13px;border-bottom:1px solid #edf1f5}
+.sidebar a:hover{background:var(--light);color:var(--blue)}
+.book{min-width:0}
+.cover{min-height:570px;background:linear-gradient(135deg,#102b4d,#145a9e 58%,#42a5f5);color:white;border-radius:12px;padding:55px 45px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 25px #173a6330}
+.cover:before,.cover:after{content:"";position:absolute;border:1px solid #ffffff35;border-radius:50%;width:380px;height:380px;right:-110px;top:50px}
+.cover:after{width:260px;height:260px;right:-50px;top:110px}
+.cover-top,.cover-main,.cover-bottom{position:relative;z-index:1}
+.cover-label{letter-spacing:4px;font:12px Arial,sans-serif;color:#c9e5ff}
+.cover-symbol{font-size:75px;margin:30px 0 5px}
+.cover h1{font:bold clamp(38px,6vw,65px)/1.08 Arial,sans-serif;max-width:650px;margin:10px 0 18px}
+.cover-subtitle{font:18px Arial,sans-serif;color:#d9ecff;max-width:550px}
+.cover-line{width:75px;height:5px;background:#90caf9;margin:25px 0}
+.cover-bottom{border-top:1px solid #ffffff55;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font:14px Arial,sans-serif}
+.page{background:white;margin-top:22px;padding:42px 48px;border-radius:8px;box-shadow:0 3px 14px #173a6310;scroll-margin-top:20px;min-height:300px}
+.page h2{font:bold 27px Arial,sans-serif;color:var(--navy);border-bottom:2px solid #dceaf7;padding-bottom:12px;margin-bottom:20px}
+.page h3{font:bold 19px Arial,sans-serif;color:var(--blue);margin:24px 0 10px}
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 28px}
+.page li{margin:6px 0}
+.page-number{text-align:right;border-top:1px solid #ddd;margin-top:35px;padding-top:12px;color:#718096;font:12px Arial,sans-serif}
+.info-box{background:#eef6ff;border-left:4px solid var(--blue);padding:14px 17px;margin:18px 0;border-radius:4px}
+.note{background:#fff8e6;border-left:4px solid #e0a326;padding:14px 17px;margin:18px 0}
+.exercise{background:#f4f7fa;padding:16px 20px;border-radius:7px;margin-top:20px}
+.exercise h3{margin-top:0}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;font-family:Arial,sans-serif}
+.action-row button{background:var(--blue);color:white;border:0;border-radius:5px;padding:9px 14px;cursor:pointer}
+.action-row button:hover{background:var(--navy)}
+.bookmark-status{font:13px Arial,sans-serif;color:#287443;margin-top:7px}
+.footer{text-align:center;padding:25px;color:#65758b;font:13px Arial,sans-serif}
+pre{background:#f4f7fa;padding:15px;overflow-x:auto;border-radius:6px;font-size:13px;line-height:1.6;margin:12px 0}
+code{font-family:Consolas,monospace}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:relative;top:0;max-height:300px}.cover{min-height:480px;padding:35px 25px}.page{padding:28px 23px}}
+@media print{
+body{background:white}
+.topbar,.progress-track,.sidebar,.action-row,.footer{display:none!important}
+.layout{display:block;max-width:100%;margin:0;padding:0}
+.cover,.page{box-shadow:none;border-radius:0;break-after:page;margin:0;min-height:95vh}
+.page{padding:20mm 18mm}
+.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<a href="index.html">← Back to Library</a>
+<strong>💻 Smart Digital Library</strong>
+<div>
+<button id="topBookmarkBtn" onclick="toggleBookmark()">☆ Bookmark</button>
+<a href="qr.html?book=os">QR Code</a>
+<button onclick="window.print()">Print</button>
+</div>
+</header>
+
+<div class="progress-track">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<div class="layout">
+
+<aside class="sidebar">
+<h3>📚 Contents</h3>
+<a href="#preface">Preface</a>
+<a href="#chapter1">1. Introduction to OS</a>
+<a href="#chapter2">2. Types of Operating Systems</a>
+<a href="#chapter3">3. OS Services and System Calls</a>
+<a href="#chapter4">4. Process Management</a>
+<a href="#chapter5">5. Process Scheduling</a>
+<a href="#chapter6">6. Threads and Multithreading</a>
+<a href="#chapter7">7. Process Synchronization</a>
+<a href="#chapter8">8. Deadlocks</a>
+<a href="#chapter9">9. Memory Management</a>
+<a href="#chapter10">10. Virtual Memory</a>
+<a href="#chapter11">11. File System Management</a>
+<a href="#chapter12">12. I/O and Device Management</a>
+<a href="#chapter13">13. Disk Scheduling</a>
+<a href="#chapter14">14. Protection and Security</a>
+<a href="#chapter15">15. Linux and Windows OS</a>
+<a href="#chapter16">16. Virtualization and Modern OS</a>
+<a href="#glossary">Glossary</a>
+<a href="#questions">Important Questions</a>
+<a href="#references">References</a>
+<div class="bookmark-status" id="bookmarkStatus"></div>
+</aside>
+
+<main class="book">
+
+<section class="cover">
+<div class="cover-top">
+<div class="cover-label">SMART DIGITAL LIBRARY • COMPUTER SCIENCE SERIES</div>
+<div class="cover-symbol">💻</div>
+</div>
+
+<div class="cover-main">
+<div class="cover-label">A COMPLETE STUDENT TEXTBOOK</div>
+<h1>OPERATING<br>SYSTEM</h1>
+<div class="cover-line"></div>
+<p class="cover-subtitle">
+Operating System Concepts, Process Management, CPU Scheduling,
+Memory Management, Deadlocks, File Systems and Security
+</p>
+</div>
+
+<div class="cover-bottom">
+<span>First Edition • 2026</span>
+<span>Smart Digital Library Team</span>
+</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+<p>An Operating System (OS) is essential system software that manages computer hardware and software resources. It provides an interface between users, applications and computer hardware.</p>
+
+<p>This textbook introduces operating system concepts in simple language. It covers operating system types, system calls, processes, CPU scheduling, threads, synchronization, deadlocks, memory management, virtual memory, file systems, device management and security.</p>
+
+<div class="info-box">
+<strong>How to use this book:</strong>
+Read each chapter, understand the examples, draw the required diagrams and practise the numerical problems related to CPU scheduling, page replacement and disk scheduling.
+</div>
+
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Understand the purpose and functions of an operating system.</li>
+<li>Differentiate between various operating system types.</li>
+<li>Explain processes, threads and CPU scheduling algorithms.</li>
+<li>Understand synchronization and deadlock handling.</li>
+<li>Learn memory allocation and virtual memory techniques.</li>
+<li>Understand file systems, disk scheduling and security.</li>
+<li>Identify basic features of Linux and Windows.</li>
+</ul>
+<div class="page-number">Preface • Page 1</div>
+</section>
+
+<section class="page" id="chapter1">
+<h2>Chapter 1: Introduction to Operating System</h2>
+
+<h3>1.1 What is an Operating System?</h3>
+<p>An Operating System is system software that manages computer hardware, software resources and program execution. It acts as an interface between the user and the computer hardware.</p>
+
+<h3>1.2 Main Objectives</h3>
+<ul>
+<li><strong>Convenience:</strong> Makes the computer easier to use.</li>
+<li><strong>Efficiency:</strong> Uses CPU, memory and devices effectively.</li>
+<li><strong>Resource Management:</strong> Allocates resources to applications.</li>
+<li><strong>Security:</strong> Helps protect data and system resources.</li>
+</ul>
+
+<h3>1.3 Main Functions of an OS</h3>
+<p>The operating system manages processes, memory, files, input/output devices, storage, security and communication between applications and hardware.</p>
+
+<h3>1.4 Components of a Computer System</h3>
+<p>A computer system includes hardware, the operating system, application programs and users. Hardware performs physical operations, while the OS coordinates the use of hardware resources.</p>
+
+<h3>1.5 Kernel</h3>
+<p>The kernel is the core component of an operating system. It manages important tasks such as CPU scheduling, memory management, device communication and system calls.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When you open a browser, the OS allocates memory, schedules CPU time and manages network and display operations.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define an operating system.</p>
+<p>2. Explain the main functions of an OS.</p>
+<p>3. What is a kernel?</p>
+</div>
+<div class="page-number">Chapter 1 • Page 2</div>
+</section>
+
+<section class="page" id="chapter2">
+<h2>Chapter 2: Types of Operating Systems</h2>
+
+<h3>2.1 Batch Operating System</h3>
+<p>A batch operating system collects similar jobs and executes them in batches without requiring continuous user interaction during execution.</p>
+
+<h3>2.2 Multiprogramming OS</h3>
+<p>Multiprogramming keeps multiple programs in memory so that the CPU can execute another program when one program waits for an input/output operation.</p>
+
+<h3>2.3 Multitasking OS</h3>
+<p>A multitasking operating system allows a user to work with multiple applications during the same period by sharing CPU time between tasks.</p>
+
+<h3>2.4 Time-Sharing OS</h3>
+<p>A time-sharing operating system divides CPU time into small intervals and gives multiple users or processes opportunities to execute.</p>
+
+<h3>2.5 Multiprocessing OS</h3>
+<p>A multiprocessing operating system uses two or more processors or CPU cores to execute tasks concurrently or in parallel.</p>
+
+<h3>2.6 Real-Time Operating System</h3>
+<p>A real-time operating system is designed to respond within specified timing constraints. It is used in industrial control, embedded devices and certain medical systems.</p>
+
+<h3>2.7 Distributed and Network OS</h3>
+<p>A network operating system supports computers connected through a network. A distributed system coordinates resources and work across multiple computers.</p>
+
+<h3>2.8 Embedded and Mobile OS</h3>
+<p>Embedded operating systems run on dedicated devices. Mobile operating systems, such as Android and iOS, support smartphones and tablets.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A smartphone uses a mobile operating system, while an industrial controller may use a real-time operating system.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain different types of operating systems.</p>
+<p>2. Differentiate multiprogramming and multitasking.</p>
+<p>3. What is a real-time operating system?</p>
+</div>
+<div class="page-number">Chapter 2 • Page 3</div>
+</section>
+
+<section class="page" id="chapter3">
+<h2>Chapter 3: OS Services and System Calls</h2>
+
+<h3>3.1 Operating System Services</h3>
+<p>Operating systems provide services such as program execution, input/output operations, file management, communication, error detection, resource allocation and security.</p>
+
+<h3>3.2 User Interface</h3>
+<p>A user interface allows people to interact with a computer. A command-line interface accepts text commands, while a graphical user interface uses windows, icons, menus and pointers.</p>
+
+<h3>3.3 System Calls</h3>
+<p>A system call allows an application to request a service from the operating system kernel.</p>
+
+<h3>3.4 Types of System Calls</h3>
+<ul>
+<li><strong>Process Control:</strong> Creating and terminating processes.</li>
+<li><strong>File Management:</strong> Opening, reading and writing files.</li>
+<li><strong>Device Management:</strong> Requesting device operations.</li>
+<li><strong>Information Maintenance:</strong> Obtaining system information.</li>
+<li><strong>Communication:</strong> Exchanging data between processes.</li>
+<li><strong>Protection:</strong> Managing access permissions.</li>
+</ul>
+
+<h3>3.5 User Mode and Kernel Mode</h3>
+<p>User mode restricts applications from directly performing privileged operations. Kernel mode allows the operating system to perform authorised operations that require elevated privileges.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When an application saves a file, it requests file operations through operating system services rather than directly controlling the storage hardware.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. What is a system call?</p>
+<p>2. Explain the categories of system calls.</p>
+<p>3. Differentiate user mode and kernel mode.</p>
+</div>
+<div class="page-number">Chapter 3 • Page 4</div>
+</section>
+
+<section class="page" id="chapter4">
+<h2>Chapter 4: Process Management</h2>
+
+<h3>4.1 What is a Process?</h3>
+<p>A process is a program in execution. It includes program instructions, current execution state, allocated resources and associated memory.</p>
+
+<h3>4.2 Program vs Process</h3>
+<p>A program is a set of stored instructions. A process is an active instance of a program that is being executed.</p>
+
+<h3>4.3 Process States</h3>
+<ul>
+<li><strong>New:</strong> The process is being created.</li>
+<li><strong>Ready:</strong> The process is waiting for CPU allocation.</li>
+<li><strong>Running:</strong> The CPU is executing the process.</li>
+<li><strong>Waiting:</strong> The process is waiting for an event or I/O operation.</li>
+<li><strong>Terminated:</strong> The process has completed or stopped.</li>
+</ul>
+
+<h3>4.4 Process Control Block (PCB)</h3>
+<p>A PCB stores information about a process, including its process ID, state, CPU registers, scheduling information and memory-management details.</p>
+
+<h3>4.5 Context Switching</h3>
+<p>Context switching occurs when the CPU stops executing one process and switches to another. The OS saves the current process state and restores the next process state.</p>
+
+<h3>4.6 Process Operations</h3>
+<p>Common process operations include creation, scheduling, blocking, waking up and termination.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When a music player and a web browser are both running, the OS manages their processes and shares CPU time between them.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define process and PCB.</p>
+<p>2. Explain the different process states.</p>
+<p>3. What is context switching?</p>
+</div>
+<div class="page-number">Chapter 4 • Page 5</div>
+</section>
+
+<section class="page" id="chapter5">
+<h2>Chapter 5: Process Scheduling</h2>
+
+<h3>5.1 Meaning of CPU Scheduling</h3>
+<p>CPU scheduling is the process of selecting a ready process for execution by the CPU.</p>
+
+<h3>5.2 Scheduling Objectives</h3>
+<ul>
+<li>Increase CPU utilisation.</li>
+<li>Increase throughput.</li>
+<li>Reduce waiting time.</li>
+<li>Reduce turnaround time.</li>
+<li>Provide good response time.</li>
+</ul>
+
+<h3>5.3 First Come, First Served (FCFS)</h3>
+<p>FCFS executes processes in the order in which they enter the ready queue. It is simple but may produce long waiting times.</p>
+
+<h3>5.4 Shortest Job First (SJF)</h3>
+<p>SJF selects the process with the shortest expected CPU burst. It can reduce average waiting time when burst lengths are known or estimated.</p>
+
+<h3>5.5 Priority Scheduling</h3>
+<p>Priority scheduling selects a process according to its assigned priority. Low-priority processes may suffer starvation unless suitable measures are used.</p>
+
+<h3>5.6 Round Robin (RR)</h3>
+<p>Round Robin assigns each ready process a fixed time quantum. If a process does not finish during its quantum, it returns to the ready queue.</p>
+
+<h3>5.7 Preemptive and Non-Preemptive Scheduling</h3>
+<p>In preemptive scheduling, the OS can interrupt a running process to schedule another process. In non-preemptive scheduling, a process generally keeps the CPU until it finishes or blocks.</p>
+
+<h3>5.8 Scheduling Formulas</h3>
+<div class="info-box">
+<strong>Turnaround Time</strong> = Completion Time − Arrival Time<br>
+<strong>Waiting Time</strong> = Turnaround Time − CPU Burst Time<br>
+<strong>Response Time</strong> = First CPU Start Time − Arrival Time
+</div>
+
+<div class="exercise">
+<h3>Practice Question</h3>
+<p>Three processes have burst times of 5, 3 and 2 milliseconds. Assuming all arrive at time 0, calculate their FCFS waiting times and average waiting time.</p>
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain FCFS, SJF and Round Robin.</p>
+<p>2. Differentiate preemptive and non-preemptive scheduling.</p>
+<p>3. Define waiting time and turnaround time.</p>
+</div>
+<div class="page-number">Chapter 5 • Page 6</div>
+</section>
+
+<section class="page" id="chapter6">
+<h2>Chapter 6: Threads and Multithreading</h2>
+
+<h3>6.1 What is a Thread?</h3>
+<p>A thread is a basic unit of CPU execution within a process. Threads in the same process typically share its code, data and resources while maintaining their own execution state and stack.</p>
+
+<h3>6.2 Single-Threaded Process</h3>
+<p>A single-threaded process has one thread of execution. It performs its tasks through that thread.</p>
+
+<h3>6.3 Multithreading</h3>
+<p>Multithreading allows a process to contain multiple threads that can perform different tasks concurrently.</p>
+
+<h3>6.4 Benefits of Threads</h3>
+<ul>
+<li>Improved responsiveness.</li>
+<li>Resource sharing within a process.</li>
+<li>Lower creation overhead in many systems compared with processes.</li>
+<li>Potential parallel execution on multiple CPU cores.</li>
+</ul>
+
+<h3>6.5 User-Level and Kernel-Level Threads</h3>
+<p>User-level threads are managed largely by a user-space library. Kernel-level threads are managed and scheduled with operating system support.</p>
+
+<h3>6.6 Process vs Thread</h3>
+<p>Processes generally have separate address spaces, while threads within one process normally share an address space. Threads can communicate efficiently, but shared data requires careful synchronisation.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A browser may use different threads for interface updates, background tasks and other activities so that one task does not unnecessarily block the whole application.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define thread and multithreading.</p>
+<p>2. Differentiate process and thread.</p>
+<p>3. Explain the benefits of multithreading.</p>
+</div>
+<div class="page-number">Chapter 6 • Page 7</div>
+</section>
+
+<section class="page" id="chapter7">
+<h2>Chapter 7: Process Synchronization</h2>
+
+<h3>7.1 Meaning of Synchronization</h3>
+<p>Process synchronization coordinates processes or threads that access shared data or resources.</p>
+
+<h3>7.2 Race Condition</h3>
+<p>A race condition occurs when a result depends on the unpredictable timing or order of concurrent operations.</p>
+
+<h3>7.3 Critical Section</h3>
+<p>A critical section is a part of a program where shared data or resources are accessed. Suitable controls help prevent conflicting operations.</p>
+
+<h3>7.4 Critical Section Requirements</h3>
+<ul>
+<li><strong>Mutual Exclusion:</strong> Conflicting critical-section operations must not occur simultaneously.</li>
+<li><strong>Progress:</strong> The selection of the next process should not be postponed indefinitely when the section is free.</li>
+<li><strong>Bounded Waiting:</strong> A process should not wait indefinitely to enter its critical section under the stated assumptions.</li>
+</ul>
+
+<h3>7.5 Mutex Locks</h3>
+<p>A mutex provides mutual exclusion. A thread locks the mutex before accessing protected data and unlocks it afterward.</p>
+
+<h3>7.6 Semaphores</h3>
+<p>A semaphore is a synchronisation mechanism that uses operations commonly called wait and signal. Binary semaphores can support mutual exclusion, while counting semaphores can manage multiple available resources.</p>
+
+<h3>7.7 Producer-Consumer Problem</h3>
+<p>The producer-consumer problem involves producers adding items to a shared buffer and consumers removing them. Synchronization ensures that the buffer is not accessed incorrectly when full or empty.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When multiple threads update the same account balance, synchronization helps prevent inconsistent results caused by simultaneous updates.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. What is a race condition?</p>
+<p>2. Explain the critical-section problem.</p>
+<p>3. Differentiate mutex and semaphore.</p>
+</div>
+<div class="page-number">Chapter 7 • Page 8</div>
+</section>
+
+<section class="page" id="chapter8">
+<h2>Chapter 8: Deadlocks</h2>
+
+<h3>8.1 What is Deadlock?</h3>
+<p>A deadlock is a situation in which a group of processes cannot proceed because each process is waiting for a resource or event that another process in the group must release or provide.</p>
+
+<h3>8.2 Four Necessary Conditions</h3>
+<ul>
+<li><strong>Mutual Exclusion:</strong> At least one resource cannot be shared simultaneously.</li>
+<li><strong>Hold and Wait:</strong> A process holds resources while waiting for others.</li>
+<li><strong>No Preemption:</strong> Resources cannot be forcibly taken away under the assumed model.</li>
+<li><strong>Circular Wait:</strong> Processes form a circular chain of resource dependencies.</li>
+</ul>
+
+<h3>8.3 Deadlock Prevention</h3>
+<p>Prevention designs the resource-allocation rules so that at least one necessary deadlock condition cannot hold.</p>
+
+<h3>8.4 Deadlock Avoidance</h3>
+<p>Avoidance checks whether granting a resource request would leave the system in a safe state. The Banker's Algorithm is a well-known example.</p>
+
+<h3>8.5 Deadlock Detection</h3>
+<p>Detection allows deadlocks to occur and uses system information to identify them.</p>
+
+<h3>8.6 Deadlock Recovery</h3>
+<p>Recovery may involve terminating selected processes or reclaiming resources using an appropriate recovery policy.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+Process A holds Resource 1 and waits for Resource 2, while Process B holds Resource 2 and waits for Resource 1. Neither can continue until the dependency is resolved.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define deadlock.</p>
+<p>2. Explain the four necessary conditions.</p>
+<p>3. Differentiate deadlock prevention and avoidance.</p>
+<p>4. What is the Banker's Algorithm?</p>
+</div>
+<div class="page-number">Chapter 8 • Page 9</div>
+</section>
+
+<section class="page" id="chapter9">
+<h2>Chapter 9: Memory Management</h2>
+
+<h3>9.1 Introduction</h3>
+<p>Memory management controls the allocation and release of main memory for processes and the operating system.</p>
+
+<h3>9.2 Logical and Physical Addresses</h3>
+<p>A logical address is generated by the CPU for a process. A physical address identifies a location in main memory after address translation.</p>
+
+<h3>9.3 Contiguous Memory Allocation</h3>
+<p>Contiguous allocation assigns a continuous region of memory to a process. Common placement strategies include first fit, best fit and worst fit.</p>
+
+<h3>9.4 First Fit</h3>
+<p>First fit selects the first available memory block that is large enough for the request.</p>
+
+<h3>9.5 Best Fit</h3>
+<p>Best fit selects the smallest available block that can satisfy the request.</p>
+
+<h3>9.6 Worst Fit</h3>
+<p>Worst fit selects the largest available block that can satisfy the request.</p>
+
+<h3>9.7 Fragmentation</h3>
+<p><strong>Internal fragmentation</strong> is unused space within an allocated block. <strong>External fragmentation</strong> occurs when free memory is split into separate small regions.</p>
+
+<h3>9.8 Paging</h3>
+<p>Paging divides logical memory into fixed-size pages and physical memory into fixed-size frames. A page table maps pages to frames.</p>
+
+<h3>9.9 Segmentation</h3>
+<p>Segmentation divides a program into logical units, such as code, data and stack. Segments can have different sizes.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+Paging allows a process's pages to occupy different physical memory frames rather than requiring the entire process to occupy one continuous block.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain paging and segmentation.</p>
+<p>2. Differentiate internal and external fragmentation.</p>
+<p>3. Explain first fit, best fit and worst fit.</p>
+</div>
+<div class="page-number">Chapter 9 • Page 10</div>
+</section>
+
+<section class="page" id="chapter10">
+<h2>Chapter 10: Virtual Memory</h2>
+
+<h3>10.1 Meaning of Virtual Memory</h3>
+<p>Virtual memory allows a process to use an address space that may be larger than the available physical memory. The operating system and hardware keep the required portions of memory available as needed.</p>
+
+<h3>10.2 Demand Paging</h3>
+<p>Demand paging loads a page into physical memory when it is needed rather than loading every page at the start.</p>
+
+<h3>10.3 Page Fault</h3>
+<p>A page fault occurs when a process accesses a page that is not currently available in physical memory. The OS handles the fault and may load the required page from storage.</p>
+
+<h3>10.4 Page Replacement</h3>
+<p>When no suitable free frame is available, the OS may select an existing page for replacement.</p>
+
+<h3>10.5 FIFO Algorithm</h3>
+<p>First In, First Out replaces the page that has been in memory for the longest time according to its arrival order.</p>
+
+<h3>10.6 LRU Algorithm</h3>
+<p>Least Recently Used replaces the page that has not been accessed for the longest time in the past.</p>
+
+<h3>10.7 Optimal Algorithm</h3>
+<p>The optimal algorithm replaces the page whose next use is farthest in the future. It is mainly used as a theoretical benchmark because future references are not normally known in advance.</p>
+
+<h3>10.8 Thrashing</h3>
+<p>Thrashing occurs when a system spends excessive time handling page faults and moving pages instead of making useful progress.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A computer can run applications whose combined virtual address spaces exceed physical RAM because only selected pages need to remain in RAM at any particular time.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. What is virtual memory?</p>
+<p>2. Explain page faults and page replacement.</p>
+<p>3. Differentiate FIFO, LRU and optimal page replacement.</p>
+<p>4. What is thrashing?</p>
+</div>
+<div class="page-number">Chapter 10 • Page 11</div>
+</section>
+
+<section class="page" id="chapter11">
+<h2>Chapter 11: File System Management</h2>
+
+<h3>11.1 What is a File?</h3>
+<p>A file is a named collection of information stored on a storage device. It may contain text, images, programs, documents or other data.</p>
+
+<h3>11.2 File Attributes</h3>
+<p>Common file attributes include name, type, size, location, timestamps, ownership and access permissions.</p>
+
+<h3>11.3 File Operations</h3>
+<p>Common operations include creating, opening, reading, writing, renaming, closing and deleting files.</p>
+
+<h3>11.4 Directory Structure</h3>
+<p>A directory organises files and other directories. Common structures include single-level, two-level, tree-structured and graph-based directories.</p>
+
+<h3>11.5 File Allocation Methods</h3>
+<ul>
+<li><strong>Contiguous Allocation:</strong> File blocks occupy consecutive storage locations.</li>
+<li><strong>Linked Allocation:</strong> File blocks are connected through links.</li>
+<li><strong>Indexed Allocation:</strong> An index structure identifies the blocks belonging to a file.</li>
+</ul>
+
+<h3>11.6 File System Examples</h3>
+<p>NTFS is commonly associated with Windows. ext4 is used by many Linux systems. APFS is used in Apple's modern operating systems.</p>
+
+<h3>11.7 Permissions</h3>
+<p>File permissions control who can read, write or execute a file. Exact permission mechanisms depend on the operating system and file system.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+Folders help organise college assignments by subject, while file permissions can restrict who is allowed to modify important documents.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain file attributes and operations.</p>
+<p>2. Describe directory structures.</p>
+<p>3. Explain contiguous, linked and indexed allocation.</p>
+</div>
+<div class="page-number">Chapter 11 • Page 12</div>
+</section>
+
+<section class="page" id="chapter12">
+<h2>Chapter 12: I/O and Device Management</h2>
+
+<h3>12.1 Input and Output Devices</h3>
+<p>Input devices provide data to the computer, while output devices present results. Examples include keyboards, mice, printers and displays.</p>
+
+<h3>12.2 Device Drivers</h3>
+<p>A device driver is software that allows the operating system to communicate with a particular hardware device.</p>
+
+<h3>12.3 Device Controllers</h3>
+<p>A device controller is hardware that manages a device or a group of devices and communicates with the CPU and operating system.</p>
+
+<h3>12.4 Interrupts</h3>
+<p>An interrupt signals that an event requires attention. The processor temporarily changes its execution flow to handle the event.</p>
+
+<h3>12.5 Polling</h3>
+<p>Polling involves checking a device or status condition repeatedly to determine whether an event has occurred.</p>
+
+<h3>12.6 Direct Memory Access (DMA)</h3>
+<p>DMA allows certain devices to transfer data to or from memory with reduced continuous CPU involvement.</p>
+
+<h3>12.7 Buffering and Spooling</h3>
+<p>Buffering temporarily stores data during transfer. Spooling queues jobs for a device, such as a printer, so that multiple requests can be managed in order.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A print queue stores multiple print jobs so that the printer can process them one at a time.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. What is a device driver?</p>
+<p>2. Explain interrupts and DMA.</p>
+<p>3. Differentiate buffering and spooling.</p>
+</div>
+<div class="page-number">Chapter 12 • Page 13</div>
+</section>
+
+<section class="page" id="chapter13">
+<h2>Chapter 13: Disk Scheduling</h2>
+
+<h3>13.1 Disk Scheduling</h3>
+<p>Disk scheduling determines the order in which pending storage requests are serviced. Traditional algorithms were designed largely around mechanical hard disks.</p>
+
+<h3>13.2 FCFS</h3>
+<p>First Come, First Served handles requests in arrival order. It is simple and fair by arrival order but may result in substantial head movement.</p>
+
+<h3>13.3 SSTF</h3>
+<p>Shortest Seek Time First selects the pending request closest to the current disk-head position. Some requests may wait a long time.</p>
+
+<h3>13.4 SCAN</h3>
+<p>The SCAN algorithm moves the disk head in one direction, servicing requests along the way, and then reverses direction.</p>
+
+<h3>13.5 C-SCAN</h3>
+<p>Circular SCAN services requests in one direction and then returns to the beginning of the disk range to continue servicing requests.</p>
+
+<h3>13.6 LOOK and C-LOOK</h3>
+<p>LOOK reverses at the last pending request in the current direction. C-LOOK services requests in one direction and then jumps to the other end of the pending-request range.</p>
+
+<h3>13.7 Performance Measurement</h3>
+<p>Total head movement can be calculated by adding the absolute differences between consecutive head positions in the service sequence.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+If a disk head moves from cylinder 40 to cylinder 70, the head movement for that step is |70 − 40| = 30 cylinders.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain FCFS and SSTF.</p>
+<p>2. Differentiate SCAN and C-SCAN.</p>
+<p>3. How is total disk-head movement calculated?</p>
+</div>
+<div class="page-number">Chapter 13 • Page 14</div>
+</section>
+
+<section class="page" id="chapter14">
+<h2>Chapter 14: Protection and Security</h2>
+
+<h3>14.1 Operating System Security</h3>
+<p>Operating system security protects system resources, accounts, programs and data from unauthorised access or misuse.</p>
+
+<h3>14.2 Authentication</h3>
+<p>Authentication verifies a user's identity using methods such as passwords, security keys or biometrics.</p>
+
+<h3>14.3 Authorization</h3>
+<p>Authorization determines which operations an authenticated user or process is permitted to perform.</p>
+
+<h3>14.4 Access Control</h3>
+<p>Access control restricts access to files, devices, applications and other resources according to defined permissions.</p>
+
+<h3>14.5 User Accounts and Privileges</h3>
+<p>Standard accounts usually have limited permissions. Administrative accounts can perform additional system-management tasks.</p>
+
+<h3>14.6 Malware and Updates</h3>
+<p>Malware is software designed to perform unauthorised or harmful actions. Security updates help address known vulnerabilities in operating systems and applications.</p>
+
+<h3>14.7 Security Best Practices</h3>
+<ul>
+<li>Use strong, unique passwords.</li>
+<li>Install updates from trusted sources.</li>
+<li>Use least-privilege accounts.</li>
+<li>Enable appropriate security protections.</li>
+<li>Back up important files regularly.</li>
+<li>Avoid opening suspicious attachments.</li>
+</ul>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A college computer lab can use separate student and administrator accounts to prevent ordinary users from changing important system settings.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Differentiate authentication and authorization.</p>
+<p>2. Explain access control.</p>
+<p>3. List important operating system security practices.</p>
+</div>
+<div class="page-number">Chapter 14 • Page 15</div>
+</section>
+
+<section class="page" id="chapter15">
+<h2>Chapter 15: Linux and Windows Operating Systems</h2>
+
+<h3>15.1 Linux</h3>
+<p>Linux is an open-source operating system kernel used in many distributions. Linux-based operating systems are common on servers, personal computers, embedded devices and cloud infrastructure.</p>
+
+<h3>15.2 Windows</h3>
+<p>Microsoft Windows is a family of operating systems that provides a graphical desktop environment, application support, device management and system administration tools.</p>
+
+<h3>15.3 Linux File System</h3>
+<p>Linux uses a hierarchical directory structure. The root directory is represented by /. Directories such as /home, /etc and /var have commonly used purposes.</p>
+
+<h3>15.4 Basic Linux Commands</h3>
+<pre><code>pwd       # Show current directory
+ls        # List directory contents
+cd        # Change directory
+mkdir     # Create a directory
+touch     # Create an empty file
+cat       # Display file contents
+cp        # Copy files
+mv        # Move or rename files
+rm        # Remove files
+</code></pre>
+
+<p>Commands may behave differently depending on permissions, distribution and shell configuration. Review a command before running it, especially if it deletes files.</p>
+
+<h3>15.5 Linux Permissions</h3>
+<p>Linux commonly represents permissions using read (r), write (w) and execute (x) for the owner, group and other users.</p>
+
+<h3>15.6 Windows Features</h3>
+<p>Windows supports a graphical interface, file management, user accounts, device drivers, process management and administrative tools.</p>
+
+<h3>15.7 Comparison</h3>
+<p>Linux distributions often offer extensive customisation and open-source software. Windows commonly provides broad support for commercial desktop applications. The best choice depends on the user's requirements.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A student can use Linux terminal commands to create folders and manage files, while Windows File Explorer offers a graphical way to perform similar tasks.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. What is Linux?</p>
+<p>2. Explain any five Linux commands.</p>
+<p>3. Differentiate Linux and Windows.</p>
+</div>
+<div class="page-number">Chapter 15 • Page 16</div>
+</section>
+
+<section class="page" id="chapter16">
+<h2>Chapter 16: Virtualization and Modern Operating Systems</h2>
+
+<h3>16.1 Virtualization</h3>
+<p>Virtualization allows computing resources to be represented as virtual resources. It can enable multiple isolated virtual machines to run on the same physical computer.</p>
+
+<h3>16.2 Virtual Machine</h3>
+<p>A virtual machine is a software-defined computer that runs its own operating system and applications within a virtualized environment.</p>
+
+<h3>16.3 Hypervisor</h3>
+<p>A hypervisor creates and manages virtual machines.</p>
+<ul>
+<li><strong>Type 1:</strong> Runs directly on the host hardware.</li>
+<li><strong>Type 2:</strong> Runs as an application on a host operating system.</li>
+</ul>
+
+<h3>16.4 Containers</h3>
+<p>Containers isolate applications and their dependencies while sharing the host operating system kernel. They generally have less overhead than full virtual machines.</p>
+
+<h3>16.5 Cloud Computing</h3>
+<p>Cloud computing provides computing resources such as virtual machines, storage, networks and managed services over a network.</p>
+
+<h3>16.6 Embedded Operating Systems</h3>
+<p>Embedded operating systems are designed for specialised devices such as appliances, industrial controllers and electronic equipment.</p>
+
+<h3>16.7 Mobile Operating Systems</h3>
+<p>Mobile operating systems manage smartphone hardware, applications, connectivity, permissions and battery use.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A student can use a virtual machine to practise installing Linux without replacing the main operating system on the laptop.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define virtualization.</p>
+<p>2. What is a hypervisor?</p>
+<p>3. Differentiate virtual machines and containers.</p>
+<p>4. Explain the role of operating systems in cloud computing.</p>
+</div>
+<div class="page-number">Chapter 16 • Page 17</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>Glossary</h2>
+<ul>
+<li><strong>Operating System:</strong> Software that manages hardware and system resources.</li>
+<li><strong>Kernel:</strong> Core component of an operating system.</li>
+<li><strong>Process:</strong> A program in execution.</li>
+<li><strong>Thread:</strong> A unit of execution within a process.</li>
+<li><strong>PCB:</strong> Process Control Block; stores process information.</li>
+<li><strong>Scheduling:</strong> Selecting a process for CPU execution.</li>
+<li><strong>Context Switching:</strong> Saving one execution state and restoring another.</li>
+<li><strong>Deadlock:</strong> A condition in which processes cannot proceed because of resource dependencies.</li>
+<li><strong>Semaphore:</strong> A synchronization mechanism.</li>
+<li><strong>Paging:</strong> Dividing memory into pages and frames.</li>
+<li><strong>Virtual Memory:</strong> A memory-management technique that provides a virtual address space.</li>
+<li><strong>Page Fault:</strong> An event caused when a required page is not currently in physical memory.</li>
+<li><strong>Thrashing:</strong> Excessive paging that reduces useful system work.</li>
+<li><strong>File System:</strong> A method of organising and managing stored files.</li>
+<li><strong>Device Driver:</strong> Software that enables OS communication with hardware.</li>
+<li><strong>Interrupt:</strong> A signal that requests processor attention.</li>
+<li><strong>DMA:</strong> Direct Memory Access.</li>
+<li><strong>Hypervisor:</strong> Software that manages virtual machines.</li>
+<li><strong>Authentication:</strong> Verification of identity.</li>
+<li><strong>Authorization:</strong> Determination of permitted actions.</li>
+</ul>
+<div class="page-number">Glossary • Page 18</div>
+</section>
+
+<section class="page" id="questions">
+<h2>Important Examination Questions</h2>
+
+<h3>Short Answer Questions</h3>
+<ol>
+<li>Define an operating system.</li>
+<li>What is a kernel?</li>
+<li>Define process and thread.</li>
+<li>What is a PCB?</li>
+<li>What is context switching?</li>
+<li>Define a system call.</li>
+<li>What is a semaphore?</li>
+<li>Define deadlock.</li>
+<li>What is paging?</li>
+<li>Define virtual memory.</li>
+<li>What is a page fault?</li>
+<li>Define a file system.</li>
+<li>What is an interrupt?</li>
+<li>What is a device driver?</li>
+<li>Define virtualization.</li>
+</ol>
+
+<h3>Long Answer Questions</h3>
+<ol>
+<li>Explain the functions and types of operating systems.</li>
+<li>Explain the process-state diagram and PCB.</li>
+<li>Compare FCFS, SJF, Priority and Round Robin scheduling.</li>
+<li>Explain process synchronization, critical sections and semaphores.</li>
+<li>Explain the four necessary conditions for deadlock.</li>
+<li>Describe deadlock prevention, avoidance, detection and recovery.</li>
+<li>Explain paging, segmentation and fragmentation.</li>
+<li>Compare FIFO, LRU and optimal page replacement.</li>
+<li>Explain file allocation methods.</li>
+<li>Describe disk scheduling algorithms.</li>
+<li>Explain Linux commands and file permissions.</li>
+<li>Differentiate virtual machines and containers.</li>
+</ol>
+
+<h3>Numerical Topics for Practice</h3>
+<ul>
+<li>FCFS, SJF, Priority and Round Robin CPU scheduling.</li>
+<li>Waiting time, turnaround time and response time.</li>
+<li>First fit, best fit and worst fit memory allocation.</li>
+<li>FIFO, LRU and optimal page replacement.</li>
+<li>SCAN, C-SCAN, SSTF and FCFS disk scheduling.</li>
+<li>Banker's Algorithm and safe-state problems.</li>
+</ul>
+
+<div class="note">
+<strong>Exam Tip:</strong>
+Practise diagrams, numerical problems and definitions. For algorithm questions, write the algorithm's steps, solve the example and show the final result clearly.
+</div>
+
+<div class="page-number">Important Questions • Page 19</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+
+<p>The following books and documentation can help students study operating systems in greater detail.</p>
+
+<ol>
+<li>Abraham Silberschatz, Peter B. Galvin and Greg Gagne, <em>Operating System Concepts</em>.</li>
+<li>Andrew S. Tanenbaum and Herbert Bos, <em>Modern Operating Systems</em>.</li>
+<li>William Stallings, <em>Operating Systems: Internals and Design Principles</em>.</li>
+<li>Official Linux documentation and manual pages.</li>
+<li>Microsoft Windows documentation.</li>
+<li>University operating system lecture notes and laboratory exercises.</li>
+</ol>
+
+<h3>Suggested Study Method</h3>
+<ul>
+<li>Study one chapter at a time.</li>
+<li>Draw process-state and memory-management diagrams.</li>
+<li>Solve CPU scheduling numerical questions.</li>
+<li>Practise page-replacement algorithms.</li>
+<li>Revise deadlock conditions and synchronization concepts.</li>
+<li>Practise basic Linux commands in a suitable environment.</li>
+<li>Revise short-answer questions before examinations.</li>
+</ul>
+
+<div class="info-box">
+<strong>End of Book</strong><br>
+Operating System — Smart Digital Library Team, First Edition 2026.
+</div>
+
+<div class="page-number">References • Page 20</div>
+</section>
+
+<div class="action-row">
+<button onclick="window.print()">Print / Save as PDF</button>
+<button id="bottomBookmarkBtn" onclick="toggleBookmark()">☆ Save Bookmark</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">
+© 2026 Smart Digital Library | Operating System
+</footer>
+
+<script>
+const bookmarkKey = "osBookmark";
+const historyKey = "readingHistory";
+
+function toggleBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+    localStorage.setItem(bookmarkKey, String(!saved));
+    updateBookmark();
+}
+
+function updateBookmark(){
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    const topButton = document.getElementById("topBookmarkBtn");
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    const status = document.getElementById("bookmarkStatus");
+
+    if(topButton){
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if(bottomButton){
+        bottomButton.textContent = saved ? "★ Remove Bookmark" : "☆ Save Bookmark";
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if(status){
+        status.textContent = saved
+            ? "★ This book is bookmarked"
+            : "☆ This book is not bookmarked";
+    }
+}
+
+function updateProgress(){
+    const scrollTop = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = total > 0 ? (scrollTop / total) * 100 : 0;
+    document.getElementById("progressFill").style.width = progress + "%";
+}
+
+function saveReadingHistory(){
+    const sections = document.querySelectorAll(".cover,.page");
+    let currentPage = 1;
+
+    sections.forEach((section,index)=>{
+        const rect = section.getBoundingClientRect();
+
+        if(rect.top < window.innerHeight * 0.65){
+            currentPage = index + 1;
+        }
+    });
+
+    let history = [];
+
+    try{
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+
+        if(!Array.isArray(history)){
+            history = [];
+        }
+    }catch(error){
+        history = [];
+    }
+
+    const existing = history.findIndex(
+        item => item.title === "Operating System"
+    );
+
+    const record = {
+        title: "Operating System",
+        icon: "💻",
+        category: "Operating System",
+        page: currentPage,
+        time: new Date().toLocaleString()
+    };
+
+    if(existing >= 0){
+        history[existing] = record;
+    }else{
+        history.push(record);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(history));
+}
+
+window.addEventListener("scroll",()=>{
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("load",()=>{
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+</script>
+
+</body>
+</html>

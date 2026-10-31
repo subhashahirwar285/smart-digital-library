@@ -1,0 +1,628 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Structures - Smart Digital Library</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#eef4fb;color:#243447;line-height:1.7}
+header{background:#173a63;color:white;padding:16px 7%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+header a{color:white;text-decoration:none}
+.cover{min-height:88vh;background:linear-gradient(135deg,#102e50,#1976d2);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:35px}
+.cover h1{font-size:clamp(36px,6vw,65px);margin:15px}
+.cover p{max-width:700px;font-size:18px}
+.cover button,.btn{border:0;background:#fff;color:#15569a;padding:12px 23px;border-radius:7px;font-weight:bold;cursor:pointer;margin-top:25px}
+.container{max-width:1000px;margin:25px auto;padding:0 15px}
+.section-page{background:white;margin:20px 0;padding:30px;border-radius:10px;box-shadow:0 3px 14px #0000000c}
+h2{color:#145b9e;border-bottom:2px solid #dceafa;padding-bottom:9px;margin-bottom:18px}
+h3{color:#1766a8;margin:22px 0 10px}
+p{margin:10px 0}
+ul,ol{padding-left:25px;margin:10px 0}
+li{margin:6px 0}
+.reader-controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0 22px}
+.reader-controls button{padding:10px 16px;border:0;border-radius:6px;background:#1766a8;color:white;cursor:pointer}
+.reader-controls button:hover{background:#104574}
+pre{background:#172536;color:#e7f2ff;padding:18px;border-radius:8px;overflow-x:auto;margin:14px 0;font-size:14px;line-height:1.6}
+code{font-family:Consolas,monospace}
+.note{background:#e8f3ff;border-left:4px solid #1976d2;padding:13px;margin:15px 0;border-radius:5px}
+.diagram{background:#f2f7fc;padding:16px;text-align:center;border:1px solid #d4e4f5;border-radius:8px;font-family:Consolas,monospace;overflow-x:auto;margin:15px 0}
+.toc a{display:block;color:#1766a8;text-decoration:none;padding:5px}
+.toc a:hover{text-decoration:underline}
+.progress-box{position:sticky;top:0;background:#fff;padding:8px 7%;z-index:5;box-shadow:0 2px 5px #0001}
+.progress-track{height:7px;background:#dce6f0;border-radius:10px;overflow:hidden}
+#progressBar{height:100%;width:0;background:#1976d2}
+footer{text-align:center;background:#173a63;color:white;padding:20px;margin-top:30px}
+@media(max-width:600px){.section-page{padding:20px}.cover{min-height:75vh}pre{font-size:12px}}
+@media print{header,.reader-controls,.progress-box,.cover button{display:none!important}body{background:white}.section-page{box-shadow:none;page-break-inside:avoid}}
+</style>
+</head>
+
+<body>
+
+<header>
+<a href="index.html">← Back to Library</a>
+<strong>SMART DIGITAL LIBRARY</strong>
+</header>
+
+<div class="cover">
+<div style="font-size:65px">📊</div>
+<h1>DATA STRUCTURES</h1>
+<p>A Complete Learning Guide to Arrays, Linked Lists, Stacks, Queues, Trees, Graphs, Searching, Sorting and Algorithms.</p>
+<p>Programming • Computer Science • Practical Examples</p>
+<button onclick="document.getElementById('preface').scrollIntoView({behavior:'smooth'})">START READING</button>
+</div>
+
+<div class="progress-box">
+<div class="progress-track"><div id="progressBar"></div></div>
+</div>
+
+<main class="container">
+
+<section class="section-page" id="preface">
+<h2>Preface</h2>
+
+<div class="reader-controls">
+<button onclick="toggleBookmark()" id="bookmarkBtn">☆ Add Bookmark</button>
+<button onclick="openQRCode()">▦ Generate QR</button>
+<button onclick="window.print()">Print Book</button>
+</div>
+
+<p>Data Structures is an important subject in computer science. It explains how data is organized, stored, accessed and modified in a computer system.</p>
+<p>This book introduces important data structures and algorithms with simple explanations, diagrams and C programming examples. It is designed for students who want to understand both theoretical concepts and practical implementation.</p>
+
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Understand the meaning and importance of data structures.</li>
+<li>Learn arrays, linked lists, stacks and queues.</li>
+<li>Understand trees, binary search trees and graphs.</li>
+<li>Perform searching and sorting operations.</li>
+<li>Understand hashing and algorithm complexity.</li>
+<li>Study practical applications of data structures.</li>
+</ul>
+</section>
+
+<section class="section-page toc" id="contents">
+<h2>Table of Contents</h2>
+<a href="#chapter1">1. Introduction to Data Structures</a>
+<a href="#chapter2">2. Classification of Data Structures</a>
+<a href="#chapter3">3. Arrays</a>
+<a href="#chapter4">4. Linked Lists</a>
+<a href="#chapter5">5. Stacks</a>
+<a href="#chapter6">6. Queues</a>
+<a href="#chapter7">7. Trees</a>
+<a href="#chapter8">8. Binary Search Trees</a>
+<a href="#chapter9">9. Graphs</a>
+<a href="#chapter10">10. Searching Algorithms</a>
+<a href="#chapter11">11. Sorting Algorithms</a>
+<a href="#chapter12">12. Hashing</a>
+<a href="#chapter13">13. Time and Space Complexity</a>
+<a href="#chapter14">14. Applications of Data Structures</a>
+<a href="#glossary">Glossary</a>
+<a href="#references">References</a>
+</section>
+
+<section class="section-page" id="chapter1">
+<h2>Chapter 1: Introduction to Data Structures</h2>
+<p>A data structure is a method of organizing and storing data in a computer so that it can be accessed and modified efficiently.</p>
+
+<h3>Why Are Data Structures Important?</h3>
+<ul>
+<li>They organize large amounts of information.</li>
+<li>They improve program efficiency.</li>
+<li>They make searching and sorting easier.</li>
+<li>They help manage memory effectively.</li>
+<li>They are used in databases, operating systems and applications.</li>
+</ul>
+
+<h3>Basic Operations</h3>
+<ul>
+<li>Insertion: Adding a new element.</li>
+<li>Deletion: Removing an element.</li>
+<li>Searching: Finding an element.</li>
+<li>Sorting: Arranging elements in order.</li>
+<li>Traversal: Visiting each element.</li>
+<li>Updating: Changing an existing element.</li>
+</ul>
+
+<div class="note">Example: A contact list stores names and phone numbers in an organized way. A suitable data structure makes it easier to search for a contact.</div>
+</section>
+
+<section class="section-page" id="chapter2">
+<h2>Chapter 2: Classification of Data Structures</h2>
+
+<h3>1. Primitive Data Structures</h3>
+<p>These are basic data types provided by programming languages.</p>
+<ul><li>Integer</li><li>Float</li><li>Character</li><li>Boolean</li></ul>
+
+<h3>2. Non-Primitive Data Structures</h3>
+<p>These are formed using primitive data types.</p>
+<ul><li>Array</li><li>Linked List</li><li>Stack</li><li>Queue</li><li>Tree</li><li>Graph</li></ul>
+
+<h3>Linear Data Structures</h3>
+<p>Elements are arranged in a sequence. Examples include arrays, linked lists, stacks and queues.</p>
+
+<h3>Non-Linear Data Structures</h3>
+<p>Elements are connected in hierarchical or network form. Examples include trees and graphs.</p>
+
+<div class="diagram">
+DATA STRUCTURES<br>
+├── Primitive<br>
+└── Non-Primitive<br>
+&nbsp;&nbsp;&nbsp;&nbsp;├── Linear<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;├── Array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;├── Linked List<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;├── Stack<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;└── Queue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── Non-Linear<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Tree<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── Graph
+</div>
+</section>
+
+<section class="section-page" id="chapter3">
+<h2>Chapter 3: Arrays</h2>
+<p>An array is a collection of elements of the same data type stored in contiguous memory locations. Each element is accessed using an index.</p>
+
+<h3>Types of Arrays</h3>
+<ul><li>One-dimensional array</li><li>Two-dimensional array</li><li>Multidimensional array</li></ul>
+
+<h3>Declaration in C</h3>
+<pre><code>int numbers[5] = {10, 20, 30, 40, 50};</code></pre>
+
+<h3>Traversing an Array</h3>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int a[5] = {10, 20, 30, 40, 50};
+
+    for(int i = 0; i &lt; 5; i++) {
+        printf("%d ", a[i]);
+    }
+
+    return 0;
+}</code></pre>
+
+<h3>Advantages</h3>
+<ul><li>Fast access using index.</li><li>Easy to traverse.</li><li>Simple to implement.</li></ul>
+
+<h3>Limitations</h3>
+<ul><li>Fixed size in ordinary static arrays.</li><li>Insertion and deletion may require shifting elements.</li></ul>
+</section>
+
+<section class="section-page" id="chapter4">
+<h2>Chapter 4: Linked Lists</h2>
+<p>A linked list is a linear data structure in which elements are stored in nodes. Each node contains data and a pointer to the next node.</p>
+
+<h3>Structure of a Node in C</h3>
+<pre><code>struct Node {
+    int data;
+    struct Node *next;
+};</code></pre>
+
+<h3>Types of Linked Lists</h3>
+<ul>
+<li>Singly Linked List</li>
+<li>Doubly Linked List</li>
+<li>Circular Linked List</li>
+</ul>
+
+<div class="diagram">HEAD → [10 | next] → [20 | next] → [30 | NULL]</div>
+
+<h3>Advantages</h3>
+<ul><li>Dynamic memory allocation.</li><li>Can grow or shrink during execution.</li><li>Insertion and deletion can be efficient when the position is known.</li></ul>
+
+<h3>Limitations</h3>
+<ul><li>No direct index-based access.</li><li>Extra memory is required for pointers.</li></ul>
+</section>
+
+<section class="section-page" id="chapter5">
+<h2>Chapter 5: Stacks</h2>
+<p>A stack is a linear data structure that follows the LIFO principle: Last In, First Out. The element inserted last is removed first.</p>
+
+<h3>Basic Stack Operations</h3>
+<ul><li>Push: Insert an element.</li><li>Pop: Remove the top element.</li><li>Peek: View the top element.</li><li>isEmpty: Check whether the stack is empty.</li></ul>
+
+<div class="diagram">
+TOP → | 30 |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 20 |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 10 |<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----
+</div>
+
+<h3>Push Operation in C</h3>
+<p>The push operation inserts a new value at the top of the stack. If the stack is full, stack overflow occurs.</p>
+
+<pre><code>void push(int value) {
+    if(top == SIZE - 1) {
+        printf("Stack Overflow");
+    } else {
+        stack[++top] = value;
+    }
+}</code></pre>
+
+<h3>Applications of Stack</h3>
+<ul><li>Function calls and recursion.</li><li>Undo and redo operations.</li><li>Expression evaluation.</li><li>Browser history navigation.</li></ul>
+</section>
+
+<section class="section-page" id="chapter6">
+<h2>Chapter 6: Queues</h2>
+<p>A queue is a linear data structure that follows FIFO: First In, First Out. The first inserted element is removed first.</p>
+
+<h3>Basic Operations</h3>
+<ul><li>Enqueue: Insert an element at the rear.</li><li>Dequeue: Remove an element from the front.</li><li>Front: View the first element.</li><li>Rear: View the last element.</li></ul>
+
+<div class="diagram">FRONT → [10] [20] [30] ← REAR</div>
+
+<h3>Types of Queues</h3>
+<ul><li>Simple Queue</li><li>Circular Queue</li><li>Priority Queue</li><li>Deque (Double Ended Queue)</li></ul>
+
+<h3>Applications</h3>
+<ul><li>Printer scheduling.</li><li>CPU task scheduling.</li><li>Customer service systems.</li><li>Data buffering.</li></ul>
+</section>
+
+<section class="section-page" id="chapter7">
+<h2>Chapter 7: Trees</h2>
+<p>A tree is a non-linear hierarchical data structure made up of nodes connected by edges.</p>
+
+<h3>Important Terminology</h3>
+<ul>
+<li>Root: The topmost node.</li>
+<li>Parent: A node having child nodes.</li>
+<li>Child: A node connected below another node.</li>
+<li>Leaf: A node without children.</li>
+<li>Edge: A connection between two nodes.</li>
+<li>Height: The longest downward path from a node to a leaf, measured in edges.</li>
+</ul>
+
+<div class="diagram">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;15<br>
+&nbsp;&nbsp;/ \&nbsp;&nbsp;/ \<br>
+&nbsp;2&nbsp;&nbsp;7 12 18
+</div>
+
+<h3>Tree Traversal</h3>
+<ul><li>Preorder: Root, Left, Right.</li><li>Inorder: Left, Root, Right.</li><li>Postorder: Left, Right, Root.</li></ul>
+
+<h3>Applications</h3>
+<p>File systems, organization charts, database indexing and decision-making systems use tree structures.</p>
+</section>
+
+<section class="section-page" id="chapter8">
+<h2>Chapter 8: Binary Search Trees</h2>
+<p>A Binary Search Tree (BST) is a binary tree in which values smaller than a node are placed in its left subtree and values greater than a node are placed in its right subtree.</p>
+
+<div class="diagram">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50<br>
+&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;70<br>
+&nbsp;/ \&nbsp;&nbsp;/ \<br>
+20 40 60 80
+</div>
+
+<h3>Important Operations</h3>
+<ul><li>Insertion</li><li>Searching</li><li>Deletion</li><li>Traversal</li></ul>
+
+<h3>Searching in a BST</h3>
+<p>Compare the target value with the current node. Move left if the target is smaller and right if it is larger.</p>
+
+<h3>Advantages</h3>
+<ul><li>Supports ordered data storage.</li><li>Searching can be efficient in a balanced BST.</li><li>Inorder traversal produces sorted values.</li></ul>
+
+<div class="note">A BST can become unbalanced. In that case, searching may take O(n) time.</div>
+</section>
+
+<section class="section-page" id="chapter9">
+<h2>Chapter 9: Graphs</h2>
+<p>A graph is a non-linear data structure consisting of vertices (nodes) and edges (connections).</p>
+
+<h3>Types of Graphs</h3>
+<ul><li>Directed Graph</li><li>Undirected Graph</li><li>Weighted Graph</li><li>Unweighted Graph</li><li>Connected Graph</li></ul>
+
+<div class="diagram">
+A ----- B<br>
+| \&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+|&nbsp;&nbsp;\&nbsp;&nbsp;|<br>
+C ----- D
+</div>
+
+<h3>Graph Representation</h3>
+<ul><li>Adjacency Matrix: A two-dimensional matrix represents connections.</li><li>Adjacency List: Each vertex stores a list of its neighboring vertices.</li></ul>
+
+<h3>Graph Traversal</h3>
+<ul><li>BFS: Breadth First Search uses a queue.</li><li>DFS: Depth First Search uses a stack or recursion.</li></ul>
+
+<h3>Applications</h3>
+<p>Social networks, road maps, computer networks and route planning use graphs.</p>
+</section>
+
+<section class="section-page" id="chapter10">
+<h2>Chapter 10: Searching Algorithms</h2>
+<p>Searching is the process of finding a particular element in a collection of data.</p>
+
+<h3>1. Linear Search</h3>
+<p>Linear Search checks each element one by one until the required value is found or the list ends.</p>
+
+<pre><code>int a[] = {10, 20, 30, 40, 50};
+int key = 30;
+
+for(int i = 0; i &lt; 5; i++) {
+    if(a[i] == key) {
+        printf("Found");
+        break;
+    }
+}</code></pre>
+
+<p>Time Complexity: O(n) in the worst case.</p>
+
+<h3>2. Binary Search</h3>
+<p>Binary Search repeatedly divides the search range into two halves. It requires the array to be sorted.</p>
+
+<pre><code>int a[] = {10, 20, 30, 40, 50};
+int key = 40;
+int low = 0, high = 4;
+
+while(low &lt;= high) {
+    int mid = low + (high - low) / 2;
+
+    if(a[mid] == key) {
+        printf("Found");
+        break;
+    }
+    else if(a[mid] &lt; key) {
+        low = mid + 1;
+    }
+    else {
+        high = mid - 1;
+    }
+}</code></pre>
+
+<h3>Comparison</h3>
+<ul><li>Linear Search works on sorted and unsorted arrays.</li><li>Binary Search requires sorted data.</li><li>Linear Search worst-case time: O(n).</li><li>Binary Search worst-case time: O(log n).</li></ul>
+</section>
+
+<section class="section-page" id="chapter11">
+<h2>Chapter 11: Sorting Algorithms</h2>
+<p>Sorting is the process of arranging data in a particular order, such as ascending or descending order.</p>
+
+<h3>1. Bubble Sort</h3>
+<p>Bubble Sort compares adjacent elements and swaps them when they are in the wrong order. This process continues until the array is sorted.</p>
+
+<pre><code>int a[] = {5, 3, 8, 2, 1};
+int n = 5;
+
+for(int i = 0; i &lt; n - 1; i++) {
+    for(int j = 0; j &lt; n - i - 1; j++) {
+        if(a[j] &gt; a[j + 1]) {
+            int temp = a[j];
+            a[j] = a[j + 1];
+            a[j + 1] = temp;
+        }
+    }
+}</code></pre>
+
+<p>After sorting, the array becomes: 1, 2, 3, 5, 8.</p>
+<p>Worst-case Time Complexity: O(n²).</p>
+
+<h3>2. Selection Sort</h3>
+<p>Selection Sort repeatedly selects the smallest element from the unsorted part and places it at the beginning.</p>
+
+<h3>3. Insertion Sort</h3>
+<p>Insertion Sort builds a sorted section by inserting each new element into its correct position.</p>
+
+<h3>4. Merge Sort</h3>
+<p>Merge Sort divides the array into smaller parts, sorts them and merges the sorted parts. Its time complexity is O(n log n).</p>
+
+<h3>5. Quick Sort</h3>
+<p>Quick Sort selects a pivot element and partitions the array around the pivot. Its average time complexity is O(n log n).</p>
+</section>
+
+<section class="section-page" id="chapter12">
+<h2>Chapter 12: Hashing</h2>
+<p>Hashing is a technique used to map a key to an index in a hash table using a hash function.</p>
+
+<h3>Hash Function</h3>
+<p>A hash function converts a key into a table index.</p>
+<pre><code>index = key % table_size;</code></pre>
+
+<h3>Collision</h3>
+<p>A collision occurs when two different keys produce the same hash table index.</p>
+
+<h3>Collision Handling Methods</h3>
+<ul><li>Chaining</li><li>Linear Probing</li><li>Quadratic Probing</li><li>Double Hashing</li></ul>
+
+<h3>Applications</h3>
+<ul><li>Database indexing.</li><li>Symbol tables in compilers.</li><li>Fast data lookup.</li><li>Caching systems.</li></ul>
+</section>
+
+<section class="section-page" id="chapter13">
+<h2>Chapter 13: Time and Space Complexity</h2>
+<p>Algorithm analysis helps us understand how much time and memory an algorithm requires as the input size increases.</p>
+
+<h3>Time Complexity</h3>
+<p>Time complexity describes how the number of operations grows with input size.</p>
+
+<h3>O(1) - Constant Time</h3>
+<p>The number of operations remains approximately constant as input size changes.</p>
+<pre><code>printf("%d", a[0]);</code></pre>
+
+<h3>O(n) - Linear Time</h3>
+<p>A single loop processes n elements.</p>
+<pre><code>for(int i = 0; i &lt; n; i++) {
+    printf("%d", a[i]);
+}</code></pre>
+
+<h3>O(n²) - Quadratic Time</h3>
+<p>A nested loop can perform approximately n multiplied by n operations.</p>
+<pre><code>for(int i = 0; i &lt; n; i++) {
+    for(int j = 0; j &lt; n; j++) {
+        printf("*");
+    }
+}</code></pre>
+
+<h3>O(log n) - Logarithmic Time</h3>
+<p>Binary Search reduces the remaining search range by half in each step.</p>
+
+<h3>Common Complexity Classes</h3>
+<ul>
+<li>O(1): Constant</li>
+<li>O(log n): Logarithmic</li>
+<li>O(n): Linear</li>
+<li>O(n log n): Linearithmic</li>
+<li>O(n²): Quadratic</li>
+</ul>
+
+<h3>Space Complexity</h3>
+<p>Space complexity describes the additional memory an algorithm needs while it runs.</p>
+
+<div class="note">An efficient algorithm generally aims to reduce unnecessary time and memory usage.</div>
+</section>
+
+<section class="section-page" id="chapter14">
+<h2>Chapter 14: Applications of Data Structures</h2>
+
+<h3>1. Operating Systems</h3>
+<p>Queues are used in process scheduling, while trees and other structures help manage system information.</p>
+
+<h3>2. Database Management</h3>
+<p>Trees and hashing help organize, index and retrieve records efficiently.</p>
+
+<h3>3. Web Browsers</h3>
+<p>Stacks can support navigation history and undo-like operations.</p>
+
+<h3>4. Social Networks</h3>
+<p>Graphs represent users and their relationships.</p>
+
+<h3>5. Navigation Systems</h3>
+<p>Graphs help represent locations and routes between them.</p>
+
+<h3>6. Compilers</h3>
+<p>Stacks, trees and hash tables are used in parsing, expression evaluation and symbol management.</p>
+</section>
+
+<section class="section-page" id="glossary">
+<h2>Glossary</h2>
+<ul>
+<li><b>Algorithm:</b> A step-by-step procedure for solving a problem.</li>
+<li><b>Array:</b> A collection of same-type elements stored in sequence.</li>
+<li><b>Node:</b> A basic unit of a linked structure.</li>
+<li><b>Pointer:</b> A variable that stores a memory address.</li>
+<li><b>Stack:</b> A LIFO data structure.</li>
+<li><b>Queue:</b> A FIFO data structure.</li>
+<li><b>Tree:</b> A hierarchical non-linear structure.</li>
+<li><b>Graph:</b> A structure made of vertices and edges.</li>
+<li><b>Hashing:</b> Mapping a key to a table index.</li>
+<li><b>Traversal:</b> Visiting elements of a data structure.</li>
+<li><b>Searching:</b> Finding a required element.</li>
+<li><b>Sorting:</b> Arranging elements in a specified order.</li>
+<li><b>Complexity:</b> A measure of an algorithm's resource requirements.</li>
+</ul>
+</section>
+
+<section class="section-page" id="references">
+<h2>References</h2>
+<ol>
+<li>Reema Thareja, Data Structures Using C, Oxford University Press.</li>
+<li>Ellis Horowitz, Sartaj Sahni and Susan Anderson-Freed, Fundamentals of Data Structures in C.</li>
+<li>Brian W. Kernighan and Dennis M. Ritchie, The C Programming Language.</li>
+<li>Classroom notes and practical programming exercises.</li>
+</ol>
+
+<h3>Practice Questions</h3>
+<ol>
+<li>What is a data structure?</li>
+<li>Explain the difference between linear and non-linear data structures.</li>
+<li>What is an array?</li>
+<li>Explain the LIFO principle of a stack.</li>
+<li>What is the difference between stack and queue?</li>
+<li>Explain linked lists and their types.</li>
+<li>What is a binary search tree?</li>
+<li>Differentiate between linear search and binary search.</li>
+<li>Explain Bubble Sort.</li>
+<li>What is hashing?</li>
+<li>Explain time complexity with examples.</li>
+<li>Write any five applications of data structures.</li>
+</ol>
+</section>
+
+</main>
+
+<footer>
+<p>Smart Digital Library | Data Structures Learning Book</p>
+<p>Learn • Practice • Improve</p>
+</footer>
+
+<script>
+const bookmarkKey = "dataStructuresBookmark";
+
+function toggleBookmark() {
+    const current = localStorage.getItem(bookmarkKey);
+    const button = document.getElementById("bookmarkBtn");
+
+    if (current === "true") {
+        localStorage.setItem(bookmarkKey, "false");
+        button.textContent = "☆ Add Bookmark";
+    } else {
+        localStorage.setItem(bookmarkKey, "true");
+        button.textContent = "★ Bookmarked";
+    }
+}
+
+function updateBookmarkButton() {
+    const button = document.getElementById("bookmarkBtn");
+    if (localStorage.getItem(bookmarkKey) === "true") {
+        button.textContent = "★ Bookmarked";
+    } else {
+        button.textContent = "☆ Add Bookmark";
+    }
+}
+
+function openQRCode() {
+    window.location.href = "qr.html?book=data-structures";
+}
+
+function saveToHistory() {
+    let history = [];
+
+    try {
+        history = JSON.parse(localStorage.getItem("readingHistory")) || [];
+    } catch (error) {
+        history = [];
+    }
+
+    const entry = {
+        title: "Data Structures",
+        icon: "📊",
+        category: "Computer Science",
+        page: "data-structures.html",
+        time: new Date().toLocaleString()
+    };
+
+    history = history.filter(item => item.page !== entry.page);
+    history.unshift(entry);
+
+    localStorage.setItem("readingHistory", JSON.stringify(history.slice(0, 50)));
+}
+
+function updateProgress() {
+    const scrollTop = window.scrollY;
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = totalHeight > 0 ? (scrollTop / totalHeight) * 100 : 0;
+    document.getElementById("progressBar").style.width = progress + "%";
+}
+
+window.addEventListener("scroll", updateProgress);
+window.addEventListener("load", function() {
+    updateBookmarkButton();
+    saveToHistory();
+    updateProgress();
+});
+</script>
+
+</body>
+</html>
+```

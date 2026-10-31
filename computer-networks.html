@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Networks - Smart Digital Library</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+--navy:#173a63;
+--blue:#1565c0;
+--light:#e3f2fd;
+--ink:#263238;
+}
+
+body{
+font-family:Georgia,"Times New Roman",serif;
+background:#edf2f7;
+color:var(--ink);
+line-height:1.8;
+}
+
+.topbar{
+background:var(--navy);
+color:white;
+padding:13px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+font-family:Arial,sans-serif;
+}
+
+.topbar a,.topbar button{
+color:white;
+text-decoration:none;
+border:1px solid #ffffff70;
+background:transparent;
+padding:8px 13px;
+border-radius:5px;
+cursor:pointer;
+font-size:14px;
+}
+
+.topbar a:hover,.topbar button:hover{
+background:#ffffff20;
+}
+
+.progress-track{
+height:5px;
+background:#d7e3ef;
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.progress-fill{
+height:5px;
+width:0;
+background:#2196f3;
+}
+
+.layout{
+max-width:1250px;
+margin:25px auto;
+padding:0 18px;
+display:grid;
+grid-template-columns:250px 1fr;
+gap:22px;
+align-items:start;
+}
+
+.sidebar{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 3px 14px #173a6310;
+position:sticky;
+top:20px;
+max-height:85vh;
+overflow:auto;
+font-family:Arial,sans-serif;
+}
+
+.sidebar h3{
+color:var(--navy);
+margin-bottom:12px;
+}
+
+.sidebar a{
+display:block;
+color:#34495e;
+text-decoration:none;
+padding:7px 9px;
+border-radius:5px;
+font-size:13px;
+border-bottom:1px solid #edf1f5;
+}
+
+.sidebar a:hover{
+background:var(--light);
+color:var(--blue);
+}
+
+.book{min-width:0}
+
+.cover{
+min-height:570px;
+background:linear-gradient(135deg,#102b4d,#145a9e 58%,#42a5f5);
+color:white;
+border-radius:12px;
+padding:55px 45px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+position:relative;
+overflow:hidden;
+box-shadow:0 8px 25px #173a6330;
+}
+
+.cover:before,.cover:after{
+content:"";
+position:absolute;
+border:1px solid #ffffff35;
+border-radius:50%;
+width:380px;
+height:380px;
+right:-110px;
+top:50px;
+}
+
+.cover:after{
+width:260px;
+height:260px;
+right:-50px;
+top:110px;
+}
+
+.cover-top,.cover-main,.cover-bottom{
+position:relative;
+z-index:1;
+}
+
+.cover-label{
+letter-spacing:3px;
+font:12px Arial,sans-serif;
+color:#c9e5ff;
+}
+
+.cover-symbol{
+font-size:75px;
+margin:30px 0 5px;
+}
+
+.cover h1{
+font:bold clamp(36px,6vw,65px)/1.08 Arial,sans-serif;
+max-width:650px;
+margin:10px 0 18px;
+}
+
+.cover-subtitle{
+font:18px Arial,sans-serif;
+color:#d9ecff;
+max-width:550px;
+}
+
+.cover-line{
+width:75px;
+height:5px;
+background:#90caf9;
+margin:25px 0;
+}
+
+.cover-bottom{
+border-top:1px solid #ffffff55;
+padding-top:20px;
+display:flex;
+justify-content:space-between;
+gap:15px;
+flex-wrap:wrap;
+font:14px Arial,sans-serif;
+}
+
+.page{
+background:white;
+margin-top:22px;
+padding:42px 48px;
+border-radius:8px;
+box-shadow:0 3px 14px #173a6310;
+scroll-margin-top:20px;
+min-height:300px;
+}
+
+.page h2{
+font:bold 27px Arial,sans-serif;
+color:var(--navy);
+border-bottom:2px solid #dceaf7;
+padding-bottom:12px;
+margin-bottom:20px;
+}
+
+.page h3{
+font:bold 19px Arial,sans-serif;
+color:var(--blue);
+margin:24px 0 10px;
+}
+
+.page p{margin:12px 0;text-align:justify}
+.page ul,.page ol{margin:10px 0 15px 28px}
+.page li{margin:6px 0}
+
+.page-number{
+text-align:right;
+border-top:1px solid #ddd;
+margin-top:35px;
+padding-top:12px;
+color:#718096;
+font:12px Arial,sans-serif;
+}
+
+.info-box{
+background:#eef6ff;
+border-left:4px solid var(--blue);
+padding:14px 17px;
+margin:18px 0;
+border-radius:4px;
+}
+
+.note{
+background:#fff8e6;
+border-left:4px solid #e0a326;
+padding:14px 17px;
+margin:18px 0;
+}
+
+.exercise{
+background:#f4f7fa;
+padding:16px 20px;
+border-radius:7px;
+margin-top:20px;
+}
+
+.exercise h3{margin-top:0}
+
+pre{
+background:#f4f7fa;
+padding:15px;
+overflow-x:auto;
+border-radius:6px;
+font-size:13px;
+line-height:1.7;
+margin:12px 0;
+white-space:pre-wrap;
+}
+
+.action-row{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin:15px 0;
+font-family:Arial,sans-serif;
+}
+
+.action-row button{
+background:var(--blue);
+color:white;
+border:0;
+border-radius:5px;
+padding:9px 14px;
+cursor:pointer;
+}
+
+.action-row button:hover{background:var(--navy)}
+
+.bookmark-status{
+font:13px Arial,sans-serif;
+color:#287443;
+margin-top:7px;
+}
+
+.footer{
+text-align:center;
+padding:25px;
+color:#65758b;
+font:13px Arial,sans-serif;
+}
+
+@media(max-width:850px){
+.layout{grid-template-columns:1fr}
+.sidebar{position:relative;top:0;max-height:300px}
+.cover{min-height:480px;padding:35px 25px}
+.page{padding:28px 23px}
+}
+
+@media print{
+body{background:white}
+.topbar,.progress-track,.sidebar,.action-row,.footer{
+display:none!important
+}
+.layout{
+display:block;
+max-width:100%;
+margin:0;
+padding:0
+}
+.cover,.page{
+box-shadow:none;
+border-radius:0;
+break-after:page;
+margin:0;
+min-height:95vh
+}
+.page{padding:20mm 18mm}
+.cover{
+-webkit-print-color-adjust:exact;
+print-color-adjust:exact
+}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<a href="index.html">← Back to Library</a>
+<strong>🌐 Smart Digital Library</strong>
+<div>
+<button id="topBookmarkBtn" onclick="toggleBookmark()">☆ Bookmark</button>
+<a href="qr.html?book=cn">QR Code</a>
+<button onclick="window.print()">Print</button>
+</div>
+</header>
+
+<div class="progress-track">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<div class="layout">
+
+<aside class="sidebar">
+<h3>📚 Contents</h3>
+<a href="#preface">Preface</a>
+<a href="#chapter1">1. Introduction to Networks</a>
+<a href="#chapter2">2. Network Types and Topologies</a>
+<a href="#chapter3">3. Network Devices and Media</a>
+<a href="#chapter4">4. OSI Reference Model</a>
+<a href="#chapter5">5. TCP/IP Model</a>
+<a href="#chapter6">6. Physical Layer</a>
+<a href="#chapter7">7. Data Link Layer</a>
+<a href="#chapter8">8. Ethernet and Switching</a>
+<a href="#chapter9">9. Network Layer and IP</a>
+<a href="#chapter10">10. IPv4 Addressing and Subnetting</a>
+<a href="#chapter11">11. IPv6 Addressing</a>
+<a href="#chapter12">12. Routing and Routing Protocols</a>
+<a href="#chapter13">13. Transport Layer: TCP and UDP</a>
+<a href="#chapter14">14. Application Layer Protocols</a>
+<a href="#chapter15">15. Wireless and Mobile Networks</a>
+<a href="#chapter16">16. Network Security and Troubleshooting</a>
+<a href="#chapter17">17. Cloud, Virtual and Modern Networks</a>
+<a href="#glossary">Glossary</a>
+<a href="#questions">Important Questions</a>
+<a href="#references">References</a>
+<div class="bookmark-status" id="bookmarkStatus"></div>
+</aside>
+
+<main class="book">
+
+<section class="cover">
+<div class="cover-top">
+<div class="cover-label">SMART DIGITAL LIBRARY • COMPUTER SCIENCE SERIES</div>
+<div class="cover-symbol">🌐</div>
+</div>
+
+<div class="cover-main">
+<div class="cover-label">A COMPLETE STUDENT TEXTBOOK</div>
+<h1>COMPUTER<br>NETWORKS</h1>
+<div class="cover-line"></div>
+<p class="cover-subtitle">
+Networking Fundamentals, OSI Model, TCP/IP, IP Addressing,
+Routing, Network Security and Practical Networking
+</p>
+</div>
+
+<div class="cover-bottom">
+<span>First Edition • 2026</span>
+<span>Smart Digital Library Team</span>
+</div>
+</section>
+
+<section class="page" id="preface">
+<h2>Preface</h2>
+<p>Computer networking is an important subject in computer science. It explains how computers and other digital devices communicate, exchange information and share resources.</p>
+
+<p>This textbook introduces networking concepts in a structured sequence, starting with basic communication and progressing to network models, devices, IP addressing, routing, transport protocols, application protocols, wireless networks and security.</p>
+
+<div class="info-box">
+<strong>How to use this book:</strong>
+Read the chapters in order, practise drawing network diagrams, compare protocols, and use a computer or networking simulator to explore basic networking concepts.
+</div>
+
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Understand the fundamentals of computer networks.</li>
+<li>Identify network types, topologies and transmission media.</li>
+<li>Explain the OSI and TCP/IP models.</li>
+<li>Understand Ethernet, switching and IP addressing.</li>
+<li>Learn subnetting, routing, TCP and UDP.</li>
+<li>Understand DNS, HTTP, DHCP and other application protocols.</li>
+<li>Identify basic network security and troubleshooting methods.</li>
+</ul>
+
+<div class="page-number">Preface • Page 1</div>
+</section>
+
+<section class="page" id="chapter1">
+<h2>Chapter 1: Introduction to Computer Networks</h2>
+
+<h3>1.1 What is a Computer Network?</h3>
+<p>A computer network is a group of interconnected computers and devices that communicate and share information or resources using communication links and agreed rules called protocols.</p>
+
+<h3>1.2 Objectives of Networking</h3>
+<ul>
+<li>Sharing files and information.</li>
+<li>Sharing printers and other resources.</li>
+<li>Supporting communication between users.</li>
+<li>Providing access to remote services.</li>
+<li>Improving resource utilisation and collaboration.</li>
+</ul>
+
+<h3>1.3 Basic Components</h3>
+<p>A network includes end devices, network interface cards, communication media, network devices and protocols. Examples of end devices are computers, smartphones, servers and printers.</p>
+
+<h3>1.4 Data Communication</h3>
+<p>Data communication is the exchange of data between devices through a transmission medium. Its basic components are sender, receiver, message, transmission medium and protocol.</p>
+
+<h3>1.5 Network Protocol</h3>
+<p>A protocol defines rules for communication, including message format, timing, addressing and how devices respond to received information.</p>
+
+<h3>1.6 Network Performance</h3>
+<p>Bandwidth describes a link's capacity. Throughput is the actual rate of successful data transfer. Latency is the time taken for data to travel between endpoints, and packet loss occurs when packets fail to reach their destination.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When a laptop opens a website, it communicates with a remote server through one or more networks using several protocols.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define a computer network.</p>
+<p>2. Explain the components of data communication.</p>
+<p>3. What is a network protocol?</p>
+<p>4. Differentiate bandwidth and throughput.</p>
+</div>
+
+<div class="page-number">Chapter 1 • Page 2</div>
+</section>
+
+<section class="page" id="chapter2">
+<h2>Chapter 2: Network Types and Topologies</h2>
+
+<h3>2.1 Personal Area Network (PAN)</h3>
+<p>A PAN connects personal devices over a short distance. Bluetooth connections between a phone and headphones are a common example.</p>
+
+<h3>2.2 Local Area Network (LAN)</h3>
+<p>A LAN connects devices within a limited area, such as a home, office, laboratory or college building.</p>
+
+<h3>2.3 Metropolitan Area Network (MAN)</h3>
+<p>A MAN connects networks across a city or a larger metropolitan area.</p>
+
+<h3>2.4 Wide Area Network (WAN)</h3>
+<p>A WAN connects networks across large geographical areas. The Internet is the most familiar example of a global network built from interconnected networks.</p>
+
+<h3>2.5 Network Topology</h3>
+<p>Topology describes how network devices and links are arranged physically or logically.</p>
+
+<ul>
+<li><strong>Bus:</strong> Devices share a common communication backbone.</li>
+<li><strong>Star:</strong> Devices connect to a central switch or hub.</li>
+<li><strong>Ring:</strong> Devices form a ring-shaped connection.</li>
+<li><strong>Mesh:</strong> Devices have multiple interconnections.</li>
+<li><strong>Tree:</strong> Devices are organised hierarchically.</li>
+<li><strong>Hybrid:</strong> Two or more topology types are combined.</li>
+</ul>
+
+<h3>2.6 Client-Server Network</h3>
+<p>In a client-server model, clients request services and servers provide them. Websites, email services and database applications commonly use this model.</p>
+
+<h3>2.7 Peer-to-Peer Network</h3>
+<p>In a peer-to-peer network, devices can share resources directly without relying entirely on a dedicated central server.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A college computer laboratory commonly uses a star topology in which computers connect to a central network switch.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Differentiate LAN, MAN and WAN.</p>
+<p>2. Explain star, bus, ring and mesh topologies.</p>
+<p>3. Differentiate client-server and peer-to-peer networks.</p>
+</div>
+
+<div class="page-number">Chapter 2 • Page 3</div>
+</section>
+
+<section class="page" id="chapter3">
+<h2>Chapter 3: Network Devices and Transmission Media</h2>
+
+<h3>3.1 Network Interface Card (NIC)</h3>
+<p>A NIC enables a device to connect to a network. Wired NICs use Ethernet connections, while wireless NICs provide Wi-Fi connectivity.</p>
+
+<h3>3.2 Hub</h3>
+<p>A hub repeats incoming signals to its other ports. It does not intelligently forward Ethernet frames based on destination MAC addresses.</p>
+
+<h3>3.3 Switch</h3>
+<p>A switch commonly operates at the data link layer and forwards Ethernet frames using MAC address information.</p>
+
+<h3>3.4 Router</h3>
+<p>A router forwards packets between different IP networks using routing information.</p>
+
+<h3>3.5 Modem</h3>
+<p>A modem performs signal conversion or modulation and demodulation appropriate to a communication technology. The exact role depends on the access network.</p>
+
+<h3>3.6 Wireless Access Point</h3>
+<p>A wireless access point allows Wi-Fi devices to connect to a local network.</p>
+
+<h3>3.7 Repeater and Bridge</h3>
+<p>A repeater regenerates or repeats signals to extend communication distance. A bridge connects network segments at the data link layer.</p>
+
+<h3>3.8 Transmission Media</h3>
+<ul>
+<li><strong>Twisted Pair:</strong> Commonly used in Ethernet cabling.</li>
+<li><strong>Coaxial Cable:</strong> Used in some broadband and communication systems.</li>
+<li><strong>Optical Fibre:</strong> Carries data as light and supports high capacity over suitable distances.</li>
+<li><strong>Wireless Media:</strong> Uses radio waves or other electromagnetic signals.</li>
+</ul>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A home router may combine routing, switching and Wi-Fi access point functions in one device.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain hub, switch and router.</p>
+<p>2. What is a network interface card?</p>
+<p>3. Compare twisted-pair cable and optical fibre.</p>
+<p>4. What is a wireless access point?</p>
+</div>
+
+<div class="page-number">Chapter 3 • Page 4</div>
+</section>
+
+<section class="page" id="chapter4">
+<h2>Chapter 4: OSI Reference Model</h2>
+
+<h3>4.1 Introduction</h3>
+<p>The Open Systems Interconnection (OSI) model is a seven-layer reference model used to understand network communication and organise networking functions.</p>
+
+<h3>4.2 The Seven Layers</h3>
+
+<ol>
+<li><strong>Physical Layer:</strong> Transmits raw bits through a physical medium.</li>
+<li><strong>Data Link Layer:</strong> Handles frames, MAC addressing and link-level delivery.</li>
+<li><strong>Network Layer:</strong> Handles logical addressing and packet routing.</li>
+<li><strong>Transport Layer:</strong> Supports end-to-end transport, segmentation and reliability where provided.</li>
+<li><strong>Session Layer:</strong> Describes session establishment and management functions.</li>
+<li><strong>Presentation Layer:</strong> Describes data representation, translation, compression and encryption functions.</li>
+<li><strong>Application Layer:</strong> Provides network-related services to applications.</li>
+</ol>
+
+<h3>4.3 Encapsulation</h3>
+<p>As data moves down the networking stack, each layer may add control information. At the receiving endpoint, the corresponding layers process and remove that information.</p>
+
+<h3>4.4 Protocol Data Units</h3>
+<p>Common terminology includes bits at the physical layer, frames at the data link layer, packets at the network layer and segments or datagrams at the transport layer.</p>
+
+<h3>4.5 Why the OSI Model is Important</h3>
+<p>The model helps students understand network functions, compare protocols and troubleshoot problems systematically.</p>
+
+<div class="info-box">
+<strong>Memory Tip:</strong>
+From bottom to top, the layers are Physical, Data Link, Network, Transport, Session, Presentation and Application.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain all seven OSI layers.</p>
+<p>2. What is encapsulation?</p>
+<p>3. Differentiate the network and transport layers.</p>
+</div>
+
+<div class="page-number">Chapter 4 • Page 5</div>
+</section>
+
+<section class="page" id="chapter5">
+<h2>Chapter 5: TCP/IP Model</h2>
+
+<h3>5.1 Introduction</h3>
+<p>The TCP/IP protocol suite provides the foundation for communication across the Internet and many private networks.</p>
+
+<h3>5.2 Application Layer</h3>
+<p>This layer includes protocols used by applications, such as HTTP, DNS, SMTP and DHCP.</p>
+
+<h3>5.3 Transport Layer</h3>
+<p>The transport layer provides communication between application processes. TCP offers a reliable, ordered byte stream, while UDP provides datagrams without built-in delivery guarantees.</p>
+
+<h3>5.4 Internet Layer</h3>
+<p>The Internet layer handles IP addressing and packet delivery across interconnected networks. IP does not itself guarantee delivery or ordering.</p>
+
+<h3>5.5 Network Access Layer</h3>
+<p>This layer covers communication over the local network medium, including technologies such as Ethernet and Wi-Fi.</p>
+
+<h3>5.6 OSI and TCP/IP Comparison</h3>
+<p>The OSI model has seven layers. A common four-layer TCP/IP teaching model combines the OSI session, presentation and application functions into the application layer and combines the physical and data link functions into the network access layer.</p>
+
+<h3>5.7 Encapsulation in TCP/IP</h3>
+<p>Application data is passed to the transport layer, then carried in IP packets and transmitted through a link-layer technology.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When a browser requests a web page, HTTP or HTTPS operates at the application level, TCP may carry the connection, IP routes packets and Ethernet or Wi-Fi carries them across a local link.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain the TCP/IP model.</p>
+<p>2. Compare OSI and TCP/IP.</p>
+<p>3. Explain the role of the Internet layer.</p>
+</div>
+
+<div class="page-number">Chapter 5 • Page 6</div>
+</section>
+
+<section class="page" id="chapter6">
+<h2>Chapter 6: Physical Layer</h2>
+
+<h3>6.1 Main Function</h3>
+<p>The physical layer is concerned with transmitting bits through a physical or wireless medium.</p>
+
+<h3>6.2 Signals</h3>
+<p>Data can be represented using electrical, optical or radio signals. Signal characteristics affect how information is transmitted.</p>
+
+<h3>6.3 Analog and Digital Signals</h3>
+<p>Analog signals vary continuously, while digital signals represent information using discrete values.</p>
+
+<h3>6.4 Bandwidth</h3>
+<p>Bandwidth can describe a frequency range or a link's nominal data capacity, depending on context. Data rates are commonly expressed in bits per second.</p>
+
+<h3>6.5 Transmission Modes</h3>
+<ul>
+<li><strong>Simplex:</strong> Communication in one direction.</li>
+<li><strong>Half-Duplex:</strong> Both directions are supported, but not simultaneously.</li>
+<li><strong>Full-Duplex:</strong> Both directions can operate simultaneously.</li>
+</ul>
+
+<h3>6.6 Transmission Impairments</h3>
+<p>Attenuation, noise and distortion can affect signal quality and communication reliability.</p>
+
+<h3>6.7 Multiplexing</h3>
+<p>Multiplexing combines multiple signals or data streams for transmission over a shared medium. Examples include frequency-division and time-division multiplexing.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+Full-duplex Ethernet allows devices to send and receive data simultaneously over a suitable connection.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain simplex, half-duplex and full-duplex.</p>
+<p>2. Differentiate analog and digital signals.</p>
+<p>3. What is multiplexing?</p>
+</div>
+
+<div class="page-number">Chapter 6 • Page 7</div>
+</section>
+
+<section class="page" id="chapter7">
+<h2>Chapter 7: Data Link Layer</h2>
+
+<h3>7.1 Main Functions</h3>
+<p>The data link layer supports communication across a single network link. Functions may include framing, MAC addressing, error detection and media access control.</p>
+
+<h3>7.2 Framing</h3>
+<p>Framing organises transmitted data into identifiable units called frames.</p>
+
+<h3>7.3 MAC Address</h3>
+<p>A MAC address identifies a network interface at the data link layer. Ethernet commonly uses 48-bit MAC addresses.</p>
+
+<h3>7.4 Error Detection</h3>
+<p>Techniques such as checksums and cyclic redundancy checks can help detect transmission errors. Error detection does not necessarily correct errors.</p>
+
+<h3>7.5 Flow Control</h3>
+<p>Flow control helps prevent a sender from overwhelming a receiver when a protocol provides this function.</p>
+
+<h3>7.6 Media Access Control</h3>
+<p>Media access control rules determine how devices share a communication medium. Different technologies use different mechanisms.</p>
+
+<h3>7.7 Ethernet Frames</h3>
+<p>An Ethernet frame contains fields such as destination MAC address, source MAC address, type or length information, payload and frame check sequence.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A switch examines destination MAC addresses to forward Ethernet frames toward the appropriate network port.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. What is framing?</p>
+<p>2. Explain MAC addressing.</p>
+<p>3. What is CRC?</p>
+<p>4. Describe the basic Ethernet frame fields.</p>
+</div>
+
+<div class="page-number">Chapter 7 • Page 8</div>
+</section>
+
+<section class="page" id="chapter8">
+<h2>Chapter 8: Ethernet and Switching</h2>
+
+<h3>8.1 Ethernet</h3>
+<p>Ethernet is a widely used family of wired networking technologies standardised by IEEE 802.3.</p>
+
+<h3>8.2 Ethernet Addressing</h3>
+<p>Ethernet frames use source and destination MAC addresses for communication across a local Ethernet network.</p>
+
+<h3>8.3 How a Switch Learns Addresses</h3>
+<p>A learning switch examines the source MAC address of incoming frames and records the associated port in its forwarding database.</p>
+
+<h3>8.4 Frame Forwarding</h3>
+<p>When a destination MAC address is known, a switch can forward the frame to the appropriate port. Unknown destinations may be flooded within the relevant VLAN, subject to normal forwarding rules.</p>
+
+<h3>8.5 Broadcast and Collision Domains</h3>
+<p>Switch ports normally separate collision domains. Broadcast traffic is generally limited by VLAN boundaries unless a device or configuration forwards it between networks.</p>
+
+<h3>8.6 VLAN</h3>
+<p>A Virtual Local Area Network divides a switched network into separate logical broadcast domains. VLANs can support network segmentation and administration.</p>
+
+<h3>8.7 Switching Loops and STP</h3>
+<p>Redundant Layer 2 links can create loops. Spanning Tree Protocol helps prevent forwarding loops in supported bridged networks.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A college may use separate VLANs for student computers, staff computers and administrative systems.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain the working of an Ethernet switch.</p>
+<p>2. What is a VLAN?</p>
+<p>3. What is the purpose of Spanning Tree Protocol?</p>
+</div>
+
+<div class="page-number">Chapter 8 • Page 9</div>
+</section>
+
+<section class="page" id="chapter9">
+<h2>Chapter 9: Network Layer and IP</h2>
+
+<h3>9.1 Network Layer</h3>
+<p>The network layer enables packets to travel between different IP networks using logical addressing and routing.</p>
+
+<h3>9.2 Internet Protocol</h3>
+<p>IP provides addressing and packet delivery across interconnected networks. IPv4 and IPv6 are the two principal versions used on the Internet.</p>
+
+<h3>9.3 IPv4</h3>
+<p>IPv4 uses 32-bit addresses, usually written as four decimal octets separated by dots.</p>
+
+<pre>Example IPv4 address:
+192.168.1.10</pre>
+
+<h3>9.4 Public and Private Addresses</h3>
+<p>Public addresses are globally routable under applicable Internet routing policies. Private IPv4 address ranges are intended for internal networks and are not globally routed as ordinary public destinations.</p>
+
+<h3>9.5 Packet Forwarding</h3>
+<p>A router examines a packet's destination IP address and uses its routing table to choose a next hop or outgoing interface.</p>
+
+<h3>9.6 Default Gateway</h3>
+<p>A default gateway is the router or other Layer 3 device that a host uses to reach destinations outside its directly connected network when no more specific route applies.</p>
+
+<h3>9.7 ICMP</h3>
+<p>Internet Control Message Protocol supports network diagnostic and error-reporting functions. The ping utility commonly uses ICMP echo messages where permitted.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A laptop on a home network sends traffic for an external website through its configured default gateway.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain the network layer.</p>
+<p>2. Differentiate public and private IPv4 addresses.</p>
+<p>3. What is a default gateway?</p>
+<p>4. Explain the role of ICMP.</p>
+</div>
+
+<div class="page-number">Chapter 9 • Page 10</div>
+</section>
+
+<section class="page" id="chapter10">
+<h2>Chapter 10: IPv4 Addressing and Subnetting</h2>
+
+<h3>10.1 IPv4 Address Structure</h3>
+<p>An IPv4 address contains 32 bits. A subnet mask identifies which bits represent the network prefix and which bits represent the host portion.</p>
+
+<h3>10.2 CIDR Notation</h3>
+<p>Classless Inter-Domain Routing notation writes an address followed by a slash and the number of prefix bits.</p>
+
+<pre>Example:
+192.168.1.0/24
+
+Network prefix: 24 bits
+Host portion: 8 bits</pre>
+
+<h3>10.3 Subnet Mask</h3>
+<p>The subnet mask represents the network prefix using binary ones, followed by zeros for the host portion.</p>
+
+<pre>/24 subnet mask:
+255.255.255.0</pre>
+
+<h3>10.4 Network and Broadcast Addresses</h3>
+<p>For a conventional IPv4 subnet with a prefix from /0 through /30, the network address has all host bits set to zero and the directed broadcast address has all host bits set to one. Special cases such as /31 point-to-point links and /32 host routes have different usage rules.</p>
+
+<h3>10.5 Number of Addresses</h3>
+<p>For a conventional subnet with h host bits, the total number of IPv4 addresses is 2<sup>h</sup>. In the usual subnetting case, two addresses are reserved for the network and broadcast addresses.</p>
+
+<div class="info-box">
+<strong>Example:</strong>
+For 192.168.1.0/24, there are 256 total addresses. In a conventional broadcast subnet, 254 addresses are available for hosts.
+</div>
+
+<h3>10.6 Subnetting</h3>
+<p>Subnetting divides an IP address block into smaller network prefixes. It can help organise networks, manage address allocation and separate broadcast domains.</p>
+
+<h3>10.7 Variable-Length Subnet Masking</h3>
+<p>VLSM allows subnets of different sizes to be allocated from an address block according to their requirements.</p>
+
+<div class="exercise">
+<h3>Practice Questions</h3>
+<p>1. What does /24 mean in CIDR notation?</p>
+<p>2. How many total addresses are in a /26 block?</p>
+<p>3. What is subnetting?</p>
+<p>4. Explain the purpose of a subnet mask.</p>
+</div>
+
+<div class="page-number">Chapter 10 • Page 11</div>
+</section>
+
+<section class="page" id="chapter11">
+<h2>Chapter 11: IPv6 Addressing</h2>
+
+<h3>11.1 Need for IPv6</h3>
+<p>IPv6 was developed to provide a much larger address space and support the continued growth of Internet-connected devices.</p>
+
+<h3>11.2 IPv6 Address Structure</h3>
+<p>IPv6 uses 128-bit addresses, commonly written as eight groups of hexadecimal digits separated by colons.</p>
+
+<pre>Example:
+2001:db8:1234:0000:0000:0000:0000:0001</pre>
+
+<h3>11.3 Address Shortening</h3>
+<p>Leading zeros within a group may be omitted. One consecutive run of all-zero groups can be compressed using a double colon (::) in a single address.</p>
+
+<pre>Expanded:
+2001:0db8:0000:0000:0000:0000:0000:0001
+
+Shortened:
+2001:db8::1</pre>
+
+<h3>11.4 IPv6 Address Types</h3>
+<ul>
+<li><strong>Unicast:</strong> Identifies an interface for one-to-one delivery.</li>
+<li><strong>Multicast:</strong> Identifies a group of interfaces.</li>
+<li><strong>Anycast:</strong> Identifies a group of interfaces where routing delivers traffic to an appropriate member, commonly the nearest according to routing.</li>
+</ul>
+
+<h3>11.5 IPv6 Features</h3>
+<p>IPv6 provides a substantially larger address space and simplifies some aspects of the base header. It also supports stateless address autoconfiguration and uses Neighbor Discovery for local-link functions.</p>
+
+<h3>11.6 IPv4 and IPv6</h3>
+<p>IPv4 uses 32-bit addresses, whereas IPv6 uses 128-bit addresses. Their packet formats and supporting mechanisms differ, so transition and coexistence technologies may be required.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+IPv6 enables networks to assign addresses from a vastly larger address space than IPv4.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Why was IPv6 introduced?</p>
+<p>2. Explain IPv6 address shortening.</p>
+<p>3. Compare IPv4 and IPv6.</p>
+</div>
+
+<div class="page-number">Chapter 11 • Page 12</div>
+</section>
+
+<section class="page" id="chapter12">
+<h2>Chapter 12: Routing and Routing Protocols</h2>
+
+<h3>12.1 What is Routing?</h3>
+<p>Routing is the process of determining paths through which packets can travel from one network to another.</p>
+
+<h3>12.2 Routing Table</h3>
+<p>A routing table contains destination prefixes and information such as next hops, outgoing interfaces and route metrics.</p>
+
+<h3>12.3 Static Routing</h3>
+<p>Static routes are manually configured by an administrator. They can be useful in small or predictable networks.</p>
+
+<h3>12.4 Dynamic Routing</h3>
+<p>Dynamic routing protocols allow routers to exchange information and update routes as network conditions change.</p>
+
+<h3>12.5 Distance Vector Routing</h3>
+<p>Distance vector protocols exchange route information using metrics that describe distance to destinations. RIP is a classic example.</p>
+
+<h3>12.6 Link State Routing</h3>
+<p>Link state protocols build a view of network topology and calculate paths using a shortest-path algorithm. OSPF is a common example.</p>
+
+<h3>12.7 Border Gateway Protocol</h3>
+<p>BGP exchanges routing information between autonomous systems and is a major routing protocol used on the global Internet.</p>
+
+<h3>12.8 Routing Metrics</h3>
+<p>Routing decisions may consider hop count, bandwidth-related costs, delay, administrative preferences and other protocol-specific metrics.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When a router receives a packet for a remote network, it consults its routing table to decide where to forward it.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define routing and routing table.</p>
+<p>2. Differentiate static and dynamic routing.</p>
+<p>3. Explain distance vector and link state routing.</p>
+<p>4. What is BGP?</p>
+</div>
+
+<div class="page-number">Chapter 12 • Page 13</div>
+</section>
+
+<section class="page" id="chapter13">
+<h2>Chapter 13: Transport Layer — TCP and UDP</h2>
+
+<h3>13.1 Transport Layer</h3>
+<p>The transport layer supports communication between application processes on different devices.</p>
+
+<h3>13.2 Port Numbers</h3>
+<p>Port numbers help identify application services or communication endpoints. TCP and UDP maintain separate port-number spaces.</p>
+
+<h3>13.3 TCP</h3>
+<p>Transmission Control Protocol provides a reliable, ordered byte stream. It uses mechanisms such as acknowledgements, retransmission, flow control and congestion control.</p>
+
+<h3>13.4 TCP Connection Establishment</h3>
+<p>TCP commonly establishes a connection using a three-way handshake involving SYN, SYN-ACK and ACK segments.</p>
+
+<h3>13.5 UDP</h3>
+<p>User Datagram Protocol provides message-oriented datagram delivery without TCP-style built-in reliability, ordering or connection establishment.</p>
+
+<h3>13.6 TCP vs UDP</h3>
+<ul>
+<li>TCP provides reliable, ordered byte-stream delivery.</li>
+<li>UDP sends independent datagrams with minimal protocol overhead.</li>
+<li>TCP is commonly used for web and file-transfer connections.</li>
+<li>UDP is commonly used where applications benefit from datagrams, such as DNS queries, voice and real-time communication, depending on the protocol.</li>
+</ul>
+
+<h3>13.7 Flow and Congestion Control</h3>
+<p>Flow control protects the receiver from being overwhelmed by incoming data. Congestion control helps manage the load placed on the network.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+An application that transfers a file may use TCP to obtain reliable ordered delivery, while a real-time application may use UDP when its design benefits from lower protocol overhead and handles loss itself.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain TCP and UDP.</p>
+<p>2. Differentiate flow control and congestion control.</p>
+<p>3. Explain the TCP three-way handshake.</p>
+<p>4. What is a port number?</p>
+</div>
+
+<div class="page-number">Chapter 13 • Page 14</div>
+</section>
+
+<section class="page" id="chapter14">
+<h2>Chapter 14: Application Layer Protocols</h2>
+
+<h3>14.1 HTTP and HTTPS</h3>
+<p>HTTP is used to transfer web resources. HTTPS protects HTTP communication using TLS, which provides encryption and server authentication when correctly configured.</p>
+
+<h3>14.2 Domain Name System (DNS)</h3>
+<p>DNS translates domain names into records such as IP addresses. It allows users to access services through names rather than remembering numeric addresses.</p>
+
+<h3>14.3 Dynamic Host Configuration Protocol</h3>
+<p>DHCP automatically provides network configuration information, which may include an IP address, subnet mask, default gateway and DNS servers.</p>
+
+<h3>14.4 File Transfer Protocol</h3>
+<p>FTP is a protocol for transferring files. Traditional FTP does not protect credentials or data through encryption, so secure alternatives may be preferable.</p>
+
+<h3>14.5 Email Protocols</h3>
+<ul>
+<li><strong>SMTP:</strong> Used to send or relay email.</li>
+<li><strong>IMAP:</strong> Allows clients to access and manage email stored on a server.</li>
+<li><strong>POP3:</strong> Supports retrieval of email from a server.</li>
+</ul>
+
+<h3>14.6 SSH</h3>
+<p>Secure Shell provides encrypted remote login and other secure communication functions.</p>
+
+<h3>14.7 SNMP</h3>
+<p>Simple Network Management Protocol supports monitoring and management of network devices.</p>
+
+<h3>14.8 Common Ports</h3>
+<ul>
+<li>HTTP: TCP port 80.</li>
+<li>HTTPS: TCP port 443; HTTP/3 uses QUIC over UDP port 443 by default.</li>
+<li>DNS: Port 53, commonly using UDP or TCP depending on the operation.</li>
+<li>SSH: TCP port 22.</li>
+<li>SMTP submission: Commonly TCP port 587.</li>
+<li>DHCP for IPv4: UDP ports 67 and 68.</li>
+</ul>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+When a user enters a website name, DNS may resolve the name and the browser then uses HTTP over a suitable secure or non-secure transport.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain HTTP and HTTPS.</p>
+<p>2. What is DNS?</p>
+<p>3. Explain the purpose of DHCP.</p>
+<p>4. Differentiate SMTP, IMAP and POP3.</p>
+</div>
+
+<div class="page-number">Chapter 14 • Page 15</div>
+</section>
+
+<section class="page" id="chapter15">
+<h2>Chapter 15: Wireless and Mobile Networks</h2>
+
+<h3>15.1 Wireless Networking</h3>
+<p>Wireless networking transmits information without requiring a physical cable between communicating devices.</p>
+
+<h3>15.2 Wi-Fi</h3>
+<p>Wi-Fi is based on IEEE 802.11 wireless networking standards. It is widely used in homes, offices, colleges and public access networks.</p>
+
+<h3>15.3 Wireless Access Point</h3>
+<p>An access point connects wireless clients to a local network. Home wireless routers often combine an access point with routing and switching features.</p>
+
+<h3>15.4 Bluetooth</h3>
+<p>Bluetooth supports short-range wireless communication between devices such as headphones, keyboards, phones and computers.</p>
+
+<h3>15.5 Cellular Networks</h3>
+<p>Cellular networks provide mobile communication through a system of radio access equipment and a core network. Technologies include 4G LTE and 5G.</p>
+
+<h3>15.6 Wireless Security</h3>
+<p>Wireless networks should use suitable modern security settings, strong credentials and updated equipment. WPA2 and WPA3 are widely used Wi-Fi security technologies.</p>
+
+<h3>15.7 Wireless Challenges</h3>
+<p>Wireless networks may experience interference, signal attenuation, congestion, limited coverage and variable throughput.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A smartphone can connect to a home Wi-Fi network for local connectivity and use a cellular network when Wi-Fi is unavailable.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain Wi-Fi and Bluetooth.</p>
+<p>2. What is a wireless access point?</p>
+<p>3. Explain the advantages and limitations of wireless networking.</p>
+<p>4. What is WPA3?</p>
+</div>
+
+<div class="page-number">Chapter 15 • Page 16</div>
+</section>
+
+<section class="page" id="chapter16">
+<h2>Chapter 16: Network Security and Troubleshooting</h2>
+
+<h3>16.1 Network Security</h3>
+<p>Network security protects systems, communication and data against unauthorised access, disruption and modification.</p>
+
+<h3>16.2 Confidentiality, Integrity and Availability</h3>
+<ul>
+<li><strong>Confidentiality:</strong> Information is available only to authorised parties.</li>
+<li><strong>Integrity:</strong> Information remains accurate and protected against unauthorised changes.</li>
+<li><strong>Availability:</strong> Services and information remain accessible when required.</li>
+</ul>
+
+<h3>16.3 Firewall</h3>
+<p>A firewall applies traffic rules to allow or block network communications according to its configuration.</p>
+
+<h3>16.4 Encryption</h3>
+<p>Encryption transforms readable information into a protected form using cryptographic methods. Secure network protocols use encryption to protect information in transit.</p>
+
+<h3>16.5 Authentication and Access Control</h3>
+<p>Authentication verifies identity, while access control limits what users and systems are permitted to do.</p>
+
+<h3>16.6 Common Network Problems</h3>
+<ul>
+<li>Incorrect IP configuration.</li>
+<li>Disconnected cables or weak wireless signals.</li>
+<li>Incorrect default gateway.</li>
+<li>DNS resolution problems.</li>
+<li>Firewall rules blocking required traffic.</li>
+<li>Network congestion or service outages.</li>
+</ul>
+
+<h3>16.7 Basic Troubleshooting Commands</h3>
+<pre>Windows:
+ipconfig
+ping
+tracert
+nslookup
+netstat
+
+Linux:
+ip addr
+ip route
+ping
+traceroute
+nslookup
+ss</pre>
+
+<p>Command availability varies by operating system. Use troubleshooting commands only on systems and networks you are authorised to inspect.</p>
+
+<h3>16.8 Troubleshooting Method</h3>
+<p>Identify the problem, check physical connectivity, inspect IP configuration, test local and remote reachability, check name resolution and review relevant device or service settings.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+If a computer can reach a website by IP address but not by domain name, checking DNS configuration may help identify the cause.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Explain the CIA triad.</p>
+<p>2. What is a firewall?</p>
+<p>3. Differentiate authentication and authorization.</p>
+<p>4. Explain basic network troubleshooting commands.</p>
+</div>
+
+<div class="page-number">Chapter 16 • Page 17</div>
+</section>
+
+<section class="page" id="chapter17">
+<h2>Chapter 17: Cloud, Virtual and Modern Networks</h2>
+
+<h3>17.1 Virtualization</h3>
+<p>Network virtualization creates logical network resources using software. It allows network configurations to be managed independently of some underlying physical details.</p>
+
+<h3>17.2 Virtual Machines and Virtual Networks</h3>
+<p>Virtual machines can use virtual network interfaces connected to virtual switches, virtual networks or physical network adapters.</p>
+
+<h3>17.3 Cloud Networking</h3>
+<p>Cloud platforms provide virtual networks, subnets, routing, gateways, load balancers and security controls.</p>
+
+<h3>17.4 Software-Defined Networking</h3>
+<p>Software-Defined Networking (SDN) separates aspects of network control from packet forwarding to make network behaviour more programmable and centrally manageable.</p>
+
+<h3>17.5 Network Function Virtualization</h3>
+<p>Network Function Virtualization (NFV) implements certain network functions as software rather than relying exclusively on dedicated hardware appliances.</p>
+
+<h3>17.6 Internet of Things</h3>
+<p>The Internet of Things connects physical devices equipped with sensors, software and network connectivity. These devices can exchange information with applications and other systems.</p>
+
+<h3>17.7 Content Delivery Networks</h3>
+<p>A Content Delivery Network (CDN) distributes content across multiple locations to improve availability and reduce delivery latency for users.</p>
+
+<div class="info-box">
+<strong>Practical Example / Application:</strong>
+A cloud-hosted website may use a virtual network, firewall rules and a load balancer to connect users to its application servers.
+</div>
+
+<div class="exercise">
+<h3>Important Questions</h3>
+<p>1. Define network virtualization.</p>
+<p>2. Explain SDN and NFV.</p>
+<p>3. What is cloud networking?</p>
+<p>4. Explain the role of a CDN.</p>
+</div>
+
+<div class="page-number">Chapter 17 • Page 18</div>
+</section>
+
+<section class="page" id="glossary">
+<h2>Glossary</h2>
+<ul>
+<li><strong>Bandwidth:</strong> A measure of link capacity or frequency range, depending on context.</li>
+<li><strong>Client:</strong> A device or application that requests a service.</li>
+<li><strong>DNS:</strong> Domain Name System.</li>
+<li><strong>DHCP:</strong> Dynamic Host Configuration Protocol.</li>
+<li><strong>Ethernet:</strong> A family of wired networking technologies.</li>
+<li><strong>Firewall:</strong> A system that controls network traffic using rules.</li>
+<li><strong>IP Address:</strong> A logical address used by the Internet Protocol.</li>
+<li><strong>IPv4:</strong> Internet Protocol version 4, using 32-bit addresses.</li>
+<li><strong>IPv6:</strong> Internet Protocol version 6, using 128-bit addresses.</li>
+<li><strong>LAN:</strong> Local Area Network.</li>
+<li><strong>MAC Address:</strong> A link-layer address used by technologies such as Ethernet.</li>
+<li><strong>OSI:</strong> Open Systems Interconnection.</li>
+<li><strong>Packet:</strong> A unit of data carried by a network-layer protocol.</li>
+<li><strong>Protocol:</strong> Rules governing communication between systems.</li>
+<li><strong>Router:</strong> A device that forwards packets between networks.</li>
+<li><strong>Subnet:</strong> A logically defined portion of an IP network.</li>
+<li><strong>TCP:</strong> Transmission Control Protocol.</li>
+<li><strong>UDP:</strong> User Datagram Protocol.</li>
+<li><strong>VLAN:</strong> Virtual Local Area Network.</li>
+<li><strong>WAN:</strong> Wide Area Network.</li>
+<li><strong>Wi-Fi:</strong> Wireless networking technology based on IEEE 802.11 standards.</li>
+</ul>
+
+<div class="page-number">Glossary • Page 19</div>
+</section>
+
+<section class="page" id="questions">
+<h2>Important Examination Questions</h2>
+
+<h3>Short Answer Questions</h3>
+<ol>
+<li>Define a computer network.</li>
+<li>What is a network protocol?</li>
+<li>Define LAN, MAN and WAN.</li>
+<li>What is network topology?</li>
+<li>Define a router and a switch.</li>
+<li>What is the OSI model?</li>
+<li>Define encapsulation.</li>
+<li>What is a MAC address?</li>
+<li>Define an IP address.</li>
+<li>What is subnetting?</li>
+<li>What is a default gateway?</li>
+<li>Define DNS and DHCP.</li>
+<li>What is a port number?</li>
+<li>Define firewall.</li>
+<li>What is network virtualization?</li>
+</ol>
+
+<h3>Long Answer Questions</h3>
+<ol>
+<li>Explain the types and topologies of computer networks.</li>
+<li>Explain all seven layers of the OSI model.</li>
+<li>Compare the OSI and TCP/IP models.</li>
+<li>Explain network devices and transmission media.</li>
+<li>Explain Ethernet switching and VLANs.</li>
+<li>Describe IPv4 addressing and subnetting.</li>
+<li>Compare IPv4 and IPv6.</li>
+<li>Explain static and dynamic routing.</li>
+<li>Differentiate TCP and UDP.</li>
+<li>Explain HTTP, HTTPS, DNS, DHCP and email protocols.</li>
+<li>Discuss wireless networking and Wi-Fi security.</li>
+<li>Explain network security and troubleshooting.</li>
+<li>Discuss cloud networking, SDN and NFV.</li>
+</ol>
+
+<h3>Practical Topics for Revision</h3>
+<ul>
+<li>Draw and label the OSI model.</li>
+<li>Compare OSI and TCP/IP layers.</li>
+<li>Identify common networking devices.</li>
+<li>Practise IPv4 address and subnet-mask calculations.</li>
+<li>Understand the purpose of common TCP and UDP ports.</li>
+<li>Practise basic network configuration commands.</li>
+<li>Identify common DNS, gateway and connectivity issues.</li>
+</ul>
+
+<div class="note">
+<strong>Exam Tip:</strong>
+Learn the definitions, draw labelled diagrams and practise subnetting. For comparison questions, use a table and explain each protocol's purpose.
+</div>
+
+<div class="page-number">Important Questions • Page 20</div>
+</section>
+
+<section class="page" id="references">
+<h2>References and Further Reading</h2>
+
+<p>The following resources can help students study computer networks in greater detail.</p>
+
+<ol>
+<li>Andrew S. Tanenbaum and David J. Wetherall, <em>Computer Networks</em>.</li>
+<li>James F. Kurose and Keith W. Ross, <em>Computer Networking: A Top-Down Approach</em>.</li>
+<li>Behrouz A. Forouzan, <em>Data Communications and Networking</em>.</li>
+<li>Official Internet Engineering Task Force (IETF) RFC documents.</li>
+<li>IEEE 802 networking standards documentation.</li>
+<li>Official networking documentation from equipment and operating system vendors.</li>
+</ol>
+
+<h3>Suggested Study Method</h3>
+<ul>
+<li>Study the OSI and TCP/IP models carefully.</li>
+<li>Draw network topology diagrams.</li>
+<li>Practise IP addressing and subnetting.</li>
+<li>Learn the roles of important networking protocols.</li>
+<li>Practise basic connectivity troubleshooting.</li>
+<li>Revise examination questions chapter by chapter.</li>
+</ul>
+
+<div class="info-box">
+<strong>End of Book</strong><br>
+Computer Networks — Smart Digital Library Team, First Edition 2026.
+</div>
+
+<div class="page-number">References • Page 21</div>
+</section>
+
+<div class="action-row">
+<button onclick="window.print()">Print / Save as PDF</button>
+<button id="bottomBookmarkBtn" onclick="toggleBookmark()">☆ Save Bookmark</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</button>
+</div>
+
+</main>
+</div>
+
+<footer class="footer">
+© 2026 Smart Digital Library | Computer Networks
+</footer>
+
+<script>
+const bookmarkKey = "computerNetworksBookmark";
+const historyKey = "readingHistory";
+
+function toggleBookmark() {
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    localStorage.setItem(bookmarkKey, String(!saved));
+
+    updateBookmark();
+}
+
+function updateBookmark() {
+    const saved = localStorage.getItem(bookmarkKey) === "true";
+
+    const topButton = document.getElementById("topBookmarkBtn");
+    const bottomButton = document.getElementById("bottomBookmarkBtn");
+    const status = document.getElementById("bookmarkStatus");
+
+    if (topButton) {
+        topButton.textContent = saved ? "★ Bookmarked" : "☆ Bookmark";
+        topButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if (bottomButton) {
+        bottomButton.textContent = saved ? "★ Remove Bookmark" : "☆ Save Bookmark";
+        bottomButton.setAttribute("aria-pressed", String(saved));
+    }
+
+    if (status) {
+        status.textContent = saved
+            ? "★ This book is bookmarked"
+            : "☆ This book is not bookmarked";
+    }
+}
+
+function updateProgress() {
+    const scrollTop = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+
+    const progress = total > 0 ? (scrollTop / total) * 100 : 0;
+
+    const progressFill = document.getElementById("progressFill");
+
+    if (progressFill) {
+        progressFill.style.width = progress + "%";
+    }
+}
+
+function saveReadingHistory() {
+    const sections = document.querySelectorAll(".cover, .page");
+    let currentPage = 1;
+
+    sections.forEach((section, index) => {
+        if (section.getBoundingClientRect().top < window.innerHeight * 0.65) {
+            currentPage = index + 1;
+        }
+    });
+
+    let history = [];
+
+    try {
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+
+        if (!Array.isArray(history)) {
+            history = [];
+        }
+    } catch (error) {
+        history = [];
+    }
+
+    const record = {
+        title: "Computer Networks",
+        icon: "🌐",
+        category: "Networking",
+        page: currentPage,
+        time: new Date().toLocaleString()
+    };
+
+    const existing = history.findIndex(
+        item => item.title === "Computer Networks"
+    );
+
+    if (existing >= 0) {
+        history[existing] = record;
+    } else {
+        history.push(record);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(history));
+}
+
+window.addEventListener("scroll", function() {
+    updateProgress();
+    saveReadingHistory();
+});
+
+window.addEventListener("storage", function(event) {
+    if (event.key === bookmarkKey) {
+        updateBookmark();
+    }
+});
+
+window.addEventListener("load", function() {
+    updateBookmark();
+    updateProgress();
+    saveReadingHistory();
+});
+</script>
+
+</body>
+</html>
