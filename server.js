@@ -3,8 +3,9 @@ const Database = require("better-sqlite3");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
+
 const db = new Database(path.join(__dirname, "library.db"));
 
 db.pragma("foreign_keys = ON");
