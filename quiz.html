@@ -818,34 +818,84 @@ let score = 0;
 let answered = false;
 let studentId = null;
 let requestNumber = 0;
-
 function getStudentId() {
-    const directId = localStorage.getItem("libraryUserId");
+    const possibleKeys = [
+        "libraryUserId",
+        "libraryUser",
+        "user",
+        "loggedInUser",
+        "studentId",
+        "student_id",
+        "currentUser",
+        "userData",
+        "student"
+    ];
 
-    if (directId && directId !== "undefined" && directId !== "null") {
-        return directId;
-    }
-
-    const possibleKeys = ["libraryUser", "user", "loggedInUser"];
-
+    // Check common localStorage keys
     for (const key of possibleKeys) {
         try {
-            const user = JSON.parse(localStorage.getItem(key) || "null");
+            const storedValue = localStorage.getItem(key);
 
-            if (user) {
-                const id = user.id ?? user.user_id ?? user.userId;
+            if (!storedValue || storedValue === "undefined" || storedValue === "null") {
+                continue;
+            }
 
-                if (id !== undefined && id !== null && id !== "") {
+            // Direct ID stored as a string or number
+            if (
+                ["libraryUserId", "studentId", "student_id"].includes(key) &&
+                /^\d+$/.test(storedValue.trim())
+            ) {
+                return storedValue.trim();
+            }
+
+            // User information stored as JSON
+            const user = JSON.parse(storedValue);
+
+            if (user && typeof user === "object") {
+                const id =
+                    user.id ??
+                    user.user_id ??
+                    user.userId ??
+                    user.student_id ??
+                    user.studentId;
+
+                if (id !== undefined && id !== null && String(id).trim() !== "") {
                     return String(id);
                 }
             }
         } catch (error) {
-            // Ignore invalid local storage data.
+            // Continue checking other keys
+        }
+    }
+
+    // Check other saved objects for student information
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+
+        try {
+            const value = localStorage.getItem(key);
+            const data = JSON.parse(value);
+
+            if (data && typeof data === "object" && !Array.isArray(data)) {
+                const id =
+                    data.id ??
+                    data.user_id ??
+                    data.userId ??
+                    data.student_id ??
+                    data.studentId;
+
+                if (id !== undefined && id !== null && String(id).trim() !== "") {
+                    return String(id);
+                }
+            }
+        } catch (error) {
+            // Ignore unrelated localStorage values
         }
     }
 
     return null;
 }
+
 
 function showStatus(message, type = "error") {
     const status = document.getElementById("status");
