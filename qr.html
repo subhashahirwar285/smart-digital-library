@@ -143,11 +143,11 @@
 
         document.getElementById("bookCategory").textContent = book.category;
 
-        new QRCode(document.getElementById("qrcode"), {
-            text: "http://10.193.73.56:3000/" + book.page,
-            width: 200,
-            height: 200
-        });
+       new QRCode(document.getElementById("qrcode"), {
+    text: new URL(book.page, window.location.href).href,
+    width: 200,
+    height: 200
+});
     </script>
 
 </body>
