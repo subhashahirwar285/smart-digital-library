@@ -753,13 +753,18 @@ app.get("/api/quiz/categories", (req, res) => {
 // Also accepts category=HTML & CSS/Java/Python
 // ==========================================
 
+
+// ==========================================
+// QUIZ QUESTIONS - UNLIMITED REPEAT ATTEMPTS
+// ==========================================
+
 app.get("/api/quiz/questions", (req, res) => {
     try {
         const studentId = Number(req.query.student_id);
 
         const requestedCategory = String(
             req.query.level || req.query.category || ""
-        ).trim();
+        ).trim().toLowerCase();
 
         const categoryMap = {
             "html & css": "HTML & CSS",
@@ -775,25 +780,25 @@ app.get("/api/quiz/questions", (req, res) => {
             hard: "hard"
         };
 
-        const category = categoryMap[requestedCategory.toLowerCase()];
+        const category = categoryMap[requestedCategory];
 
         if (!Number.isSafeInteger(studentId) || studentId <= 0) {
             return res.status(400).json({
                 success: false,
-                message: "Please log in again. Student ID is missing."
+                message: "Please log in again."
             });
         }
 
         if (!category) {
             return res.status(400).json({
                 success: false,
-                message: "Select a valid quiz category."
+                message: "Please select a valid quiz category."
             });
         }
 
-        const student = db.prepare(`
-            SELECT id FROM users WHERE id = ?
-        `).get(studentId);
+        const student = db.prepare(
+            "SELECT id FROM users WHERE id = ?"
+        ).get(studentId);
 
         if (!student) {
             return res.status(404).json({
@@ -802,26 +807,22 @@ app.get("/api/quiz/questions", (req, res) => {
             });
         }
 
+        // Previously attempted questions are also included.
+        // This allows unlimited repeat attempts.
         const questions = db.prepare(`
             SELECT
-                q.id,
-                q.question,
-                q.option_a,
-                q.option_b,
-                q.option_c,
-                q.option_d,
-                q.category
-            FROM quiz_questions q
-            WHERE q.category = ?
-              AND NOT EXISTS (
-                  SELECT 1
-                  FROM quiz_history h
-                  WHERE h.student_id = ?
-                    AND h.question_id = q.id
-              )
+                id,
+                question,
+                option_a,
+                option_b,
+                option_c,
+                option_d,
+                category
+            from quiz_questions
+            WHERE category = ?
             ORDER BY RANDOM()
             LIMIT 20
-        `).all(category, studentId);
+        `).all(category);
 
         const formattedQuestions = questions.map(q => ({
             id: q.id,
@@ -835,7 +836,7 @@ app.get("/api/quiz/questions", (req, res) => {
             ]
         }));
 
-        res.json({
+        return res.json({
             success: true,
             category,
             level: category,
@@ -843,21 +844,24 @@ app.get("/api/quiz/questions", (req, res) => {
             questions: formattedQuestions,
             message: formattedQuestions.length
                 ? "Questions loaded successfully."
-                : "You have already attempted all questions in this category."
+                : "No questions exist in this category yet."
         });
 
     } catch (error) {
         console.error("Load quiz questions error:", error);
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Unable to load quiz questions."
         });
     }
 });
 
+
+
+
 // ==========================================
-// SUBMIT QUIZ ANSWER
+// SUBMIT QUIZ ANSWER - REPEAT ATTEMPTS ENABLED
 // ==========================================
 
 app.post("/api/quiz/answer", (req, res) => {
@@ -882,14 +886,14 @@ app.post("/api/quiz/answer", (req, res) => {
     }
 
     try {
-        const student = db.prepare(`
-            SELECT id FROM users WHERE id = ?
-        `).get(studentId);
+        const student = db.prepare(
+            "SELECT id FROM users WHERE id = ?"
+        ).get(studentId);
 
         if (!student) {
             return res.status(404).json({
                 success: false,
-                message: "Student not found."
+                message: "Student not found. Please log in again."
             });
         }
 
@@ -909,10 +913,17 @@ app.post("/api/quiz/answer", (req, res) => {
         const isCorrect =
             selectedAnswer === question.correct_answer;
 
+        // Save the latest answer for this student and question.
+        // Existing history is updated instead of causing a UNIQUE error.
         db.prepare(`
             INSERT INTO quiz_history
-            (student_id, question_id, selected_answer, is_correct)
+                (student_id, question_id, selected_answer, is_correct)
             VALUES (?, ?, ?, ?)
+            ON CONFLICT(student_id, question_id)
+            DO UPDATE SET
+                selected_answer = excluded.selected_answer,
+                is_correct = excluded.is_correct,
+                answered_at = CURRENT_TIMESTAMP
         `).run(
             studentId,
             questionId,
@@ -920,33 +931,21 @@ app.post("/api/quiz/answer", (req, res) => {
             isCorrect ? 1 : 0
         );
 
-        res.json({
+        return res.json({
             success: true,
             is_correct: isCorrect,
             correct_answer: question.correct_answer,
-            message: isCorrect ? "Correct answer!" : "Incorrect answer."
+            message: isCorrect
+                ? "Correct answer! Well done."
+                : "Incorrect answer. Keep practising!"
         });
 
     } catch (error) {
-        if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
-            return res.status(409).json({
-                success: false,
-                message: "You have already answered this question."
-            });
-        }
-
-        if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-            return res.status(404).json({
-                success: false,
-                message: "Student or question not found."
-            });
-        }
-
         console.error("Save quiz answer error:", error);
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Unable to save answer."
+            message: "Unable to save your answer."
         });
     }
 });
