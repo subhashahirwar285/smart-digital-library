@@ -6,6 +6,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
+// ==========================================
+// DATABASE CONNECTION
+// ==========================================
+
 const db = new Database(path.join(__dirname, "library.db"));
 
 db.pragma("foreign_keys = ON");
@@ -66,7 +70,14 @@ ON quiz_history(student_id);
 
 CREATE INDEX IF NOT EXISTS idx_quiz_history_question
 ON quiz_history(question_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_quiz_question_category
+ON quiz_questions(question, category);
 `);
+
+// ==========================================
+// DEFAULT BOOKS
+// ==========================================
 
 const defaultBooks = [
     {
@@ -104,6 +115,10 @@ const insertBook = db.prepare(`
 db.transaction(() => {
     defaultBooks.forEach(book => insertBook.run(book));
 })();
+
+// ==========================================
+// QUIZ QUESTIONS: EASY, MEDIUM, HARD
+// ==========================================
 
 const questionSets = {
     easy: [
@@ -176,32 +191,9 @@ const questionSets = {
     ]
 };
 
-db.exec(`
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_quiz_question_category
-    ON quiz_questions(question, category);
-`);
-
-const insertQuestion = db.prepare(`
-    INSERT OR IGNORE INTO quiz_questions
-    (question, option_a, option_b, option_c, option_d, correct_answer, category)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-`);
-
-db.transaction(() => {
-    for (const [level, questions] of Object.entries(questionSets)) {
-        for (const item of questions) {
-            insertQuestion.run(
-                item[0],
-                item[1][0],
-                item[1][1],
-                item[1][2],
-                item[1][3],
-                String.fromCharCode(65 + item[2]),
-                level
-            );
-        }
-    }
-})();
+// ==========================================
+// SUBJECT QUESTION BANKS
+// ==========================================
 
 const subjectQuestionBanks = {
     "HTML & CSS": [
@@ -274,22 +266,21 @@ const subjectQuestionBanks = {
     ]
 };
 
-const questionTemplates = [
-    term => `What is ${term}?`,
-    term => `Which statement correctly describes ${term}?`,
-    term => `Choose the correct definition of ${term}.`,
-    term => `What is the main purpose of ${term}?`,
-    term => `Which option best explains ${term}?`,
-    term => `In programming, what does ${term} mean?`,
-    term => `Which description matches ${term}?`,
-    term => `Identify the correct concept for ${term}.`,
-    term => `Which statement about ${term} is correct?`,
-    term => `Select the best explanation of ${term}.`
-];
+// ==========================================
+// INSERT QUESTIONS INTO DATABASE
+// ==========================================
 
-const insertSubjectQuestion = db.prepare(`
+const insertQuestion = db.prepare(`
     INSERT OR IGNORE INTO quiz_questions
-    (question, option_a, option_b, option_c, option_d, correct_answer, category)
+    (
+        question,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_answer,
+        category
+    )
     VALUES (?, ?, ?, ?, ?, ?, ?)
 `);
 
@@ -305,13 +296,40 @@ const shuffleArray = array => {
 };
 
 db.transaction(() => {
+    for (const [level, questions] of Object.entries(questionSets)) {
+        for (const item of questions) {
+            insertQuestion.run(
+                item[0],
+                item[1][0],
+                item[1][1],
+                item[1][2],
+                item[1][3],
+                String.fromCharCode(65 + item[2]),
+                level
+            );
+        }
+    }
+
+    const templates = [
+        term => `What is ${term}?`,
+        term => `Which statement correctly describes ${term}?`,
+        term => `Choose the correct definition of ${term}.`,
+        term => `What is the main purpose of ${term}?`,
+        term => `Which option best explains ${term}?`,
+        term => `In programming, what does ${term} mean?`,
+        term => `Which description matches ${term}?`,
+        term => `Identify the correct concept for ${term}.`,
+        term => `Which statement about ${term} is correct?`,
+        term => `Select the best explanation of ${term}.`
+    ];
+
     for (const [category, concepts] of Object.entries(subjectQuestionBanks)) {
         for (const [term, correct, distractors] of concepts) {
-            for (const template of questionTemplates) {
+            for (const template of templates) {
                 const options = shuffleArray([correct, ...distractors]);
                 const correctIndex = options.indexOf(correct);
 
-                insertSubjectQuestion.run(
+                insertQuestion.run(
                     template(term),
                     options[0],
                     options[1],
@@ -325,13 +343,25 @@ db.transaction(() => {
     }
 })();
 
+// ==========================================
+// MIDDLEWARE
+// ==========================================
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
+// ==========================================
+// HOME
+// ==========================================
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "login.html"));
 });
+
+// ==========================================
+// SIGNUP
+// ==========================================
 
 app.post("/api/signup", (req, res) => {
     const { name, email, password } = req.body;
@@ -378,6 +408,10 @@ app.post("/api/signup", (req, res) => {
     }
 });
 
+// ==========================================
+// LOGIN
+// ==========================================
+
 app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
 
@@ -422,6 +456,10 @@ app.post("/api/login", (req, res) => {
     }
 });
 
+// ==========================================
+// STUDENT PROFILE
+// ==========================================
+
 app.get("/api/student/:id", (req, res) => {
     const studentId = Number(req.params.id);
 
@@ -458,8 +496,8 @@ app.get("/api/student/:id", (req, res) => {
 });
 
 app.put("/api/student/:id", (req, res) => {
-    const { name, email } = req.body;
     const studentId = Number(req.params.id);
+    const { name, email } = req.body;
 
     if (
         !Number.isSafeInteger(studentId) ||
@@ -509,6 +547,10 @@ app.put("/api/student/:id", (req, res) => {
         });
     }
 });
+
+// ==========================================
+// BOOKS
+// ==========================================
 
 app.get("/api/books", (req, res) => {
     try {
@@ -567,6 +609,10 @@ app.get("/api/books/:id", (req, res) => {
         });
     }
 });
+
+// ==========================================
+// READING PROGRESS
+// ==========================================
 
 app.put("/api/reading-progress", (req, res) => {
     const { student_id, book_id, progress } = req.body;
@@ -674,6 +720,10 @@ app.get("/api/reading-progress/:studentId", (req, res) => {
     }
 });
 
+// ==========================================
+// QUIZ CATEGORIES
+// ==========================================
+
 app.get("/api/quiz/categories", (req, res) => {
     try {
         const categories = db.prepare(`
@@ -697,43 +747,50 @@ app.get("/api/quiz/categories", (req, res) => {
     }
 });
 
+// ==========================================
+// QUIZ QUESTIONS
+// Accepts level=easy/medium/hard
+// Also accepts category=HTML & CSS/Java/Python
+// ==========================================
+
 app.get("/api/quiz/questions", (req, res) => {
-    const studentId = Number(req.query.student_id);
-    const requestedCategory = String(
-        req.query.category || req.query.level || ""
-    ).trim();
-
-    const categoryMap = {
-        "html & css": "HTML & CSS",
-        "html and css": "HTML & CSS",
-        html: "HTML & CSS",
-        css: "HTML & CSS",
-        java: "Java",
-        "java programming": "Java",
-        python: "Python",
-        "python programming": "Python",
-        easy: "easy",
-        medium: "medium",
-        hard: "hard"
-    };
-
-    const category = categoryMap[requestedCategory.toLowerCase()];
-
-    if (!Number.isSafeInteger(studentId) || studentId <= 0) {
-        return res.status(400).json({
-            success: false,
-            message: "Please log in again. Student ID is missing."
-        });
-    }
-
-    if (!category) {
-        return res.status(400).json({
-            success: false,
-            message: "Select a valid quiz category."
-        });
-    }
-
     try {
+        const studentId = Number(req.query.student_id);
+
+        const requestedCategory = String(
+            req.query.level || req.query.category || ""
+        ).trim();
+
+        const categoryMap = {
+            "html & css": "HTML & CSS",
+            "html and css": "HTML & CSS",
+            html: "HTML & CSS",
+            css: "HTML & CSS",
+            java: "Java",
+            "java programming": "Java",
+            python: "Python",
+            "python programming": "Python",
+            easy: "easy",
+            medium: "medium",
+            hard: "hard"
+        };
+
+        const category = categoryMap[requestedCategory.toLowerCase()];
+
+        if (!Number.isSafeInteger(studentId) || studentId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Please log in again. Student ID is missing."
+            });
+        }
+
+        if (!category) {
+            return res.status(400).json({
+                success: false,
+                message: "Select a valid quiz category."
+            });
+        }
+
         const student = db.prepare(`
             SELECT id FROM users WHERE id = ?
         `).get(studentId);
@@ -763,7 +820,10 @@ app.get("/api/quiz/questions", (req, res) => {
                     AND h.question_id = q.id
               )
             ORDER BY RANDOM()
-        `).all(category, studentId).map(q => ({
+            LIMIT 20
+        `).all(category, studentId);
+
+        const formattedQuestions = questions.map(q => ({
             id: q.id,
             question: q.question,
             category: q.category,
@@ -779,9 +839,13 @@ app.get("/api/quiz/questions", (req, res) => {
             success: true,
             category,
             level: category,
-            total: questions.length,
-            questions
+            total: formattedQuestions.length,
+            questions: formattedQuestions,
+            message: formattedQuestions.length
+                ? "Questions loaded successfully."
+                : "You have already attempted all questions in this category."
         });
+
     } catch (error) {
         console.error("Load quiz questions error:", error);
 
@@ -792,12 +856,17 @@ app.get("/api/quiz/questions", (req, res) => {
     }
 });
 
+// ==========================================
+// SUBMIT QUIZ ANSWER
+// ==========================================
+
 app.post("/api/quiz/answer", (req, res) => {
     const studentId = Number(req.body.student_id);
     const questionId = Number(req.body.question_id);
+
     const selectedAnswer = String(
         req.body.selected_answer || ""
-    ).toUpperCase();
+    ).trim().toUpperCase();
 
     if (
         !Number.isSafeInteger(studentId) ||
@@ -837,7 +906,8 @@ app.post("/api/quiz/answer", (req, res) => {
             });
         }
 
-        const isCorrect = selectedAnswer === question.correct_answer;
+        const isCorrect =
+            selectedAnswer === question.correct_answer;
 
         db.prepare(`
             INSERT INTO quiz_history
@@ -856,6 +926,7 @@ app.post("/api/quiz/answer", (req, res) => {
             correct_answer: question.correct_answer,
             message: isCorrect ? "Correct answer!" : "Incorrect answer."
         });
+
     } catch (error) {
         if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
             return res.status(409).json({
@@ -879,6 +950,10 @@ app.post("/api/quiz/answer", (req, res) => {
         });
     }
 });
+
+// ==========================================
+// QUIZ HISTORY
+// ==========================================
 
 app.get("/api/quiz/history/:studentId", (req, res) => {
     const studentId = Number(req.params.studentId);
@@ -919,8 +994,12 @@ app.get("/api/quiz/history/:studentId", (req, res) => {
         const summary = db.prepare(`
             SELECT
                 COUNT(*) AS attempted,
-                COALESCE(SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END), 0) AS correct,
-                COALESCE(SUM(CASE WHEN is_correct = 0 THEN 1 ELSE 0 END), 0) AS wrong
+                COALESCE(
+                    SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END), 0
+                ) AS correct,
+                COALESCE(
+                    SUM(CASE WHEN is_correct = 0 THEN 1 ELSE 0 END), 0
+                ) AS wrong
             FROM quiz_history
             WHERE student_id = ?
         `).get(studentId);
@@ -930,6 +1009,7 @@ app.get("/api/quiz/history/:studentId", (req, res) => {
             summary,
             history
         });
+
     } catch (error) {
         console.error("Quiz history error:", error);
 
@@ -940,25 +1020,44 @@ app.get("/api/quiz/history/:studentId", (req, res) => {
     }
 });
 
+// ==========================================
+// TEST API
+// ==========================================
+
 app.get("/api/test", (req, res) => {
-    const questionCount = db.prepare(`
-        SELECT COUNT(*) AS total FROM quiz_questions
-    `).get().total;
+    try {
+        const questionCount = db.prepare(`
+            SELECT COUNT(*) AS total
+            FROM quiz_questions
+        `).get().total;
 
-    const categoryCounts = db.prepare(`
-        SELECT category, COUNT(*) AS total
-        FROM quiz_questions
-        GROUP BY category
-        ORDER BY category
-    `).all();
+        const categoryCounts = db.prepare(`
+            SELECT category, COUNT(*) AS total
+            FROM quiz_questions
+            GROUP BY category
+            ORDER BY category
+        `).all();
 
-    res.json({
-        success: true,
-        message: "Smart Digital Library Backend is Working!",
-        quizQuestions: questionCount,
-        categories: categoryCounts
-    });
+        res.json({
+            success: true,
+            message: "Smart Digital Library Backend is Working!",
+            quizQuestions: questionCount,
+            categories: categoryCounts
+        });
+
+    } catch (error) {
+        console.error("Test API error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Backend test failed."
+        });
+    }
 });
+
+// ==========================================
+// 404 HANDLER
+// ==========================================
 
 app.use((req, res) => {
     res.status(404).json({
@@ -967,16 +1066,30 @@ app.use((req, res) => {
     });
 });
 
+// ==========================================
+// START SERVER
+// ==========================================
+
 const server = app.listen(PORT, HOST, () => {
     const questionCount = db.prepare(`
-        SELECT COUNT(*) AS total FROM quiz_questions
+        SELECT COUNT(*) AS total
+        FROM quiz_questions
     `).get().total;
 
-    console.log(`Smart Digital Library running at http://localhost:${PORT}`);
+    console.log("======================================");
+    console.log("Smart Digital Library is running!");
+    console.log(`Local URL: http://localhost:${PORT}`);
     console.log(`Quiz questions in database: ${questionCount}`);
+    console.log("======================================");
 });
 
+// ==========================================
+// SAFE SHUTDOWN
+// ==========================================
+
 function shutdown() {
+    console.log("\nShutting down server...");
+
     server.close(() => {
         db.close();
         process.exit(0);
