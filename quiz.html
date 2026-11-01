@@ -7,671 +7,92 @@
 <title>Programming Quiz | Smart Digital Library</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --blue: #1769d2;
-    --dark-blue: #12366b;
-    --light-blue: #eaf3ff;
-    --text: #172b4d;
-    --muted: #64748b;
-    --white: #ffffff;
-    --green: #15803d;
-    --red: #dc2626;
-}
-
-body {
-    min-height: 100vh;
-    font-family: "Segoe UI", Arial, sans-serif;
-    color: var(--text);
-    background:
-        radial-gradient(ellipse at top left, rgba(255,255,255,.22), transparent 40%),
-        linear-gradient(135deg, #1769d2 0%, #287fe5 48%, #0d4ca3 100%);
-}
-
-/* Header */
-
-.header {
-    width: 100%;
-    padding: 19px 6%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    color: white;
-    background: rgba(8, 43, 99, .28);
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    backdrop-filter: blur(12px);
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.brand-icon {
-    width: 46px;
-    height: 46px;
-    display: grid;
-    place-items: center;
-    border-radius: 14px;
-    background: white;
-    color: var(--blue);
-    font-size: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.12);
-}
-
-.brand-name {
-    font-size: 19px;
-    font-weight: 750;
-    letter-spacing: -.4px;
-}
-
-.brand-subtitle {
-    margin-top: 3px;
-    font-size: 12px;
-    color: #dbeafe;
-}
-
-.back-link {
-    color: white;
-    text-decoration: none;
-    border: 1px solid rgba(255,255,255,.45);
-    padding: 10px 17px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 650;
-    transition: .25s;
-}
-
-.back-link:hover {
-    background: white;
-    color: var(--blue);
-}
-
-/* Main */
-
-.container {
-    width: min(1080px, 91%);
-    margin: 0 auto;
-    padding: 48px 0 55px;
-}
-
-.hero {
-    text-align: center;
-    color: white;
-    margin-bottom: 35px;
-}
-
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 15px;
-    border-radius: 30px;
-    background: rgba(255,255,255,.14);
-    border: 1px solid rgba(255,255,255,.3);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.3px;
-    text-transform: uppercase;
-}
-
-.hero h1 {
-    margin-top: 19px;
-    font-size: clamp(30px, 5vw, 45px);
-    font-weight: 800;
-    letter-spacing: -1.2px;
-}
-
-.hero h1 span {
-    color: #ffdf83;
-}
-
-.hero p {
-    max-width: 540px;
-    margin: 13px auto 0;
-    line-height: 1.7;
-    color: #e4efff;
-    font-size: 15px;
-}
-
-/* Level heading */
-
-.section-heading {
-    color: white;
-    margin-bottom: 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-}
-
-.section-heading h2 {
-    font-size: 20px;
-    font-weight: 750;
-}
-
-.level-count {
-    font-size: 12px;
-    padding: 7px 12px;
-    border-radius: 30px;
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.25);
-}
-
-/* Cards */
-
-.levels {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 21px;
-}
-
-.level-card {
-    position: relative;
-    overflow: hidden;
-    min-height: 270px;
-    padding: 26px 23px 23px;
-    border: 1px solid rgba(255,255,255,.8);
-    border-radius: 23px;
-    box-shadow: 0 14px 35px rgba(4, 32, 83, .18);
-    transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.level-card::before {
-    content: "";
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    right: -65px;
-    top: -70px;
-    background: rgba(255,255,255,.55);
-}
-
-.level-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 22px 42px rgba(4, 32, 83, .26);
-}
-
-.easy {
-    background: linear-gradient(145deg, #ffffff, #f0f6ff);
-}
-
-.medium {
-    background: linear-gradient(145deg, #fff0f5, #ffdce8);
-    border-color: #ffc5d8;
-}
-
-.hard {
-    background: linear-gradient(145deg, #fff5e9, #ffdfb5);
-    border-color: #ffd09a;
-}
-
-.level-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    position: relative;
-    z-index: 1;
-}
-
-.level-icon {
-    width: 57px;
-    height: 57px;
-    display: grid;
-    place-items: center;
-    border-radius: 17px;
-    font-size: 28px;
-}
-
-.easy .level-icon {
-    background: #e1edff;
-}
-
-.medium .level-icon {
-    background: #ffd0e0;
-}
-
-.hard .level-icon {
-    background: #ffcc8c;
-}
-
-.level-tag {
-    padding: 7px 10px;
-    border-radius: 30px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: .7px;
-}
-
-.easy .level-tag {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.medium .level-tag {
-    background: #ffc8dc;
-    color: #9d174d;
-}
-
-.hard .level-tag {
-    background: #ffcf99;
-    color: #9a3412;
-}
-
-.level-card h3 {
-    position: relative;
-    z-index: 1;
-    margin-top: 22px;
-    font-size: 23px;
-    font-weight: 800;
-}
-
-.level-card p {
-    position: relative;
-    z-index: 1;
-    margin-top: 9px;
-    min-height: 43px;
-    color: #52627a;
-    font-size: 13px;
-    line-height: 1.65;
-}
-
-.level-bottom {
-    position: relative;
-    z-index: 1;
-    margin-top: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.level-label {
-    font-size: 11px;
-    font-weight: 750;
-    color: #52627a;
-    text-transform: uppercase;
-    letter-spacing: .6px;
-}
-
-.start-btn {
-    border: none;
-    cursor: pointer;
-    color: white;
-    background: #1769d2;
-    border-radius: 11px;
-    padding: 11px 15px;
-    font-size: 12px;
-    font-weight: 750;
-    transition: .2s;
-}
-
-.start-btn:hover {
-    background: #0d4ca3;
-    transform: translateY(-2px);
-}
-
-.medium .start-btn {
-    background: #be185d;
-}
-
-.medium .start-btn:hover {
-    background: #9d174d;
-}
-
-.hard .start-btn {
-    background: #c45b12;
-}
-
-.hard .start-btn:hover {
-    background: #9a3412;
-}
-
-/* Status */
-
-.status {
-    display: none;
-    margin-top: 20px;
-    padding: 14px 17px;
-    border-radius: 13px;
-    background: white;
-    color: #334155;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.status.show {
-    display: block;
-}
-
-.status.error {
-    border-left: 5px solid #dc2626;
-}
-
-.status.success {
-    border-left: 5px solid #16a34a;
-}
-
-/* Quiz panel */
-
-.quiz-box, .result-box {
-    display: none;
-    margin-top: 32px;
-    padding: 28px;
-    background: white;
-    border-radius: 22px;
-    box-shadow: 0 18px 45px rgba(4, 32, 83, .22);
-}
-
-.quiz-box.active, .result-box.active {
-    display: block;
-}
-
-.quiz-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.quiz-level {
-    display: inline-block;
-    padding: 7px 12px;
-    background: #eaf3ff;
-    color: #1769d2;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 750;
-}
-
-.question-count {
-    color: #64748b;
-    font-size: 13px;
-    font-weight: 650;
-}
-
-.progress-track {
-    height: 7px;
-    background: #e8eef7;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 25px;
-}
-
-.progress-bar {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #1769d2, #61a5ff);
-    border-radius: 10px;
-    transition: width .3s;
-}
-
-.question-text {
-    font-size: 21px;
-    line-height: 1.55;
-    margin-bottom: 22px;
-    overflow-wrap: anywhere;
-}
-
-.options {
-    display: grid;
-    gap: 12px;
-}
-
-.option {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    text-align: left;
-    padding: 15px;
-    border: 1px solid #dbe4f0;
-    border-radius: 13px;
-    background: #fff;
-    color: #26364d;
-    font-size: 14px;
-    line-height: 1.5;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.option:hover:not(:disabled) {
-    border-color: #1769d2;
-    background: #f1f7ff;
-}
-
-.option-letter {
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    background: #edf3fb;
-    color: #334155;
-    font-weight: 750;
-}
-
-.option.correct {
-    border-color: #16a34a;
-    background: #f0fdf4;
-    color: #166534;
-}
-
-.option.correct .option-letter {
-    background: #16a34a;
-    color: white;
-}
-
-.option.wrong {
-    border-color: #ef4444;
-    background: #fef2f2;
-    color: #991b1b;
-}
-
-.option.wrong .option-letter {
-    background: #dc2626;
-    color: white;
-}
-
-.option:disabled {
-    cursor: default;
-}
-
-.feedback {
-    display: none;
-    margin-top: 18px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.feedback.show {
-    display: block;
-}
-
-.feedback.correct {
-    background: #f0fdf4;
-    color: #166534;
-}
-
-.feedback.wrong {
-    background: #fef2f2;
-    color: #991b1b;
-}
-
-.quiz-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 23px;
-}
-
-.secondary-btn, .primary-btn {
-    padding: 12px 18px;
-    border-radius: 11px;
-    font-size: 13px;
-    font-weight: 750;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.secondary-btn {
-    border: 1px solid #dbe4f0;
-    background: white;
-    color: #334155;
-}
-
-.secondary-btn:hover {
-    background: #f1f5f9;
-}
-
-.primary-btn {
-    border: none;
-    background: #1769d2;
-    color: white;
-}
-
-.primary-btn:hover {
-    background: #0d4ca3;
-}
-
-.primary-btn:disabled {
-    opacity: .45;
-    cursor: not-allowed;
-}
-
-/* Result */
-
-.result-box {
-    text-align: center;
-    padding: 36px 25px;
-}
-
-.result-icon {
-    width: 78px;
-    height: 78px;
-    margin: 0 auto 18px;
-    display: grid;
-    place-items: center;
-    background: #eaf3ff;
-    border-radius: 50%;
-    font-size: 38px;
-}
-
-.result-box h2 {
-    font-size: 27px;
-    margin-bottom: 10px;
-}
-
-.result-box p {
-    color: #64748b;
-    line-height: 1.7;
-}
-
-.score {
-    color: #1769d2;
-    font-size: 39px;
-    font-weight: 850;
-    margin: 20px 0;
-}
-
-.result-actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 22px;
-}
-
-/* Footer */
-
-.footer {
-    text-align: center;
-    color: #e2edff;
-    font-size: 12px;
-    padding: 18px 10px 25px;
-}
-
-/* Responsive */
-
-@media (max-width: 760px) {
-    .levels {
-        grid-template-columns: 1fr;
-        max-width: 440px;
-        margin: 0 auto;
-    }
-
-    .level-card {
-        min-height: auto;
-    }
-
-    .level-card p {
-        min-height: auto;
-    }
-
-    .container {
-        padding-top: 35px;
-    }
-
-    .hero {
-        margin-bottom: 27px;
-    }
-
-    .quiz-box {
-        padding: 20px;
-    }
-
-    .question-text {
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 420px) {
-    .header {
-        padding: 14px 4%;
-    }
-
-    .brand-name {
-        font-size: 15px;
-    }
-
-    .brand-icon {
-        width: 40px;
-        height: 40px;
-    }
-
-    .back-link {
-        padding: 9px 11px;
-        font-size: 12px;
-    }
-
-    .container {
-        width: 92%;
-    }
-
-    .quiz-actions {
-        align-items: stretch;
-    }
-
-    .quiz-actions button {
-        flex: 1;
-    }
-}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#1769d2;--dark-blue:#12366b;--light-blue:#eaf3ff;--text:#172b4d;--muted:#64748b;--white:#fff;--green:#15803d;--red:#dc2626}
+body{min-height:100vh;font-family:"Segoe UI",Arial,sans-serif;color:var(--text);background:radial-gradient(ellipse at top left,rgba(255,255,255,.22),transparent 40%),linear-gradient(135deg,#1769d2 0%,#287fe5 48%,#0d4ca3 100%)}
+.header{width:100%;padding:19px 6%;display:flex;align-items:center;justify-content:space-between;gap:15px;color:white;background:rgba(8,43,99,.28);border-bottom:1px solid rgba(255,255,255,.2);backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:white;color:var(--blue);font-size:25px;box-shadow:0 5px 15px rgba(0,0,0,.12)}
+.brand-name{font-size:19px;font-weight:750;letter-spacing:-.4px}
+.brand-subtitle{margin-top:3px;font-size:12px;color:#dbeafe}
+.back-link{color:white;text-decoration:none;border:1px solid rgba(255,255,255,.45);padding:10px 17px;border-radius:12px;font-size:13px;font-weight:650;transition:.25s}
+.back-link:hover{background:white;color:var(--blue)}
+.container{width:min(1080px,91%);margin:0 auto;padding:48px 0 55px}
+.hero{text-align:center;color:white;margin-bottom:35px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:30px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);font-size:12px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase}
+.hero h1{margin-top:19px;font-size:clamp(30px,5vw,45px);font-weight:800;letter-spacing:-1.2px}
+.hero h1 span{color:#ffdf83}
+.hero p{max-width:540px;margin:13px auto 0;line-height:1.7;color:#e4efff;font-size:15px}
+.section-heading{color:white;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.section-heading h2{font-size:20px;font-weight:750}
+.level-count{font-size:12px;padding:7px 12px;border-radius:30px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25)}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:21px}
+.level-card{position:relative;overflow:hidden;min-height:270px;padding:26px 23px 23px;border:1px solid rgba(255,255,255,.8);border-radius:23px;box-shadow:0 14px 35px rgba(4,32,83,.18);transition:transform .25s,box-shadow .25s}
+.level-card::before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-65px;top:-70px;background:rgba(255,255,255,.55)}
+.level-card:hover{transform:translateY(-7px);box-shadow:0 22px 42px rgba(4,32,83,.26)}
+.easy{background:linear-gradient(145deg,#fff,#f0f6ff)}
+.medium{background:linear-gradient(145deg,#fff0f5,#ffdce8);border-color:#ffc5d8}
+.hard{background:linear-gradient(145deg,#fff5e9,#ffdfb5);border-color:#ffd09a}
+.level-top{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
+.level-icon{width:57px;height:57px;display:grid;place-items:center;border-radius:17px;font-size:28px}
+.easy .level-icon{background:#e1edff}
+.medium .level-icon{background:#ffd0e0}
+.hard .level-icon{background:#ffcc8c}
+.level-tag{padding:7px 10px;border-radius:30px;font-size:10px;font-weight:800;letter-spacing:.7px}
+.easy .level-tag{background:#dbeafe;color:#1d4ed8}
+.medium .level-tag{background:#ffc8dc;color:#9d174d}
+.hard .level-tag{background:#ffcf99;color:#9a3412}
+.level-card h3{position:relative;z-index:1;margin-top:22px;font-size:23px;font-weight:800}
+.level-card p{position:relative;z-index:1;margin-top:9px;min-height:43px;color:#52627a;font-size:13px;line-height:1.65}
+.level-bottom{position:relative;z-index:1;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.level-label{font-size:11px;font-weight:750;color:#52627a;text-transform:uppercase;letter-spacing:.6px}
+.start-btn{border:none;cursor:pointer;color:white;background:#1769d2;border-radius:11px;padding:11px 15px;font-size:12px;font-weight:750;transition:.2s}
+.start-btn:hover{background:#0d4ca3;transform:translateY(-2px)}
+.medium .start-btn{background:#be185d}
+.medium .start-btn:hover{background:#9d174d}
+.hard .start-btn{background:#c45b12}
+.hard .start-btn:hover{background:#9a3412}
+.status{display:none;margin-top:20px;padding:14px 17px;border-radius:13px;background:white;color:#334155;font-size:14px;line-height:1.6}
+.status.show{display:block}
+.status.error{border-left:5px solid #dc2626}
+.status.success{border-left:5px solid #16a34a}
+.quiz-box,.result-box{display:none;margin-top:32px;padding:28px;background:white;border-radius:22px;box-shadow:0 18px 45px rgba(4,32,83,.22)}
+.quiz-box.active,.result-box.active{display:block}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.quiz-level{display:inline-block;padding:7px 12px;background:#eaf3ff;color:#1769d2;border-radius:20px;font-size:12px;font-weight:750}
+.question-count{color:#64748b;font-size:13px;font-weight:650}
+.progress-track{height:7px;background:#e8eef7;border-radius:10px;overflow:hidden;margin-bottom:25px}
+.progress-bar{width:0%;height:100%;background:linear-gradient(90deg,#1769d2,#61a5ff);border-radius:10px;transition:width .3s}
+.question-text{font-size:21px;line-height:1.55;margin-bottom:22px;overflow-wrap:anywhere}
+.options{display:grid;gap:12px}
+.option{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:15px;border:1px solid #dbe4f0;border-radius:13px;background:#fff;color:#26364d;font-size:14px;line-height:1.5;cursor:pointer;transition:.2s}
+.option:hover:not(:disabled){border-color:#1769d2;background:#f1f7ff}
+.option-letter{flex-shrink:0;width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#edf3fb;color:#334155;font-weight:750}
+.option.correct{border-color:#16a34a;background:#f0fdf4;color:#166534}
+.option.correct .option-letter{background:#16a34a;color:white}
+.option.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b}
+.option.wrong .option-letter{background:#dc2626;color:white}
+.option:disabled{cursor:default}
+.feedback{display:none;margin-top:18px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6}
+.feedback.show{display:block}
+.feedback.correct{background:#f0fdf4;color:#166534}
+.feedback.wrong{background:#fef2f2;color:#991b1b}
+.quiz-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:23px}
+.secondary-btn,.primary-btn{padding:12px 18px;border-radius:11px;font-size:13px;font-weight:750;cursor:pointer;transition:.2s}
+.secondary-btn{border:1px solid #dbe4f0;background:white;color:#334155}
+.secondary-btn:hover{background:#f1f5f9}
+.primary-btn{border:none;background:#1769d2;color:white}
+.primary-btn:hover{background:#0d4ca3}
+.primary-btn:disabled{opacity:.45;cursor:not-allowed}
+.result-box{text-align:center;padding:36px 25px}
+.result-icon{width:78px;height:78px;margin:0 auto 18px;display:grid;place-items:center;background:#eaf3ff;border-radius:50%;font-size:38px}
+.result-box h2{font-size:27px;margin-bottom:10px}
+.result-box p{color:#64748b;line-height:1.7}
+.score{color:#1769d2;font-size:39px;font-weight:850;margin:20px 0}
+.result-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:22px}
+.footer{text-align:center;color:#e2edff;font-size:12px;padding:18px 10px 25px}
+@media(max-width:760px){.levels{grid-template-columns:1fr;max-width:440px;margin:0 auto}.level-card{min-height:auto}.level-card p{min-height:auto}.container{padding-top:35px}.hero{margin-bottom:27px}.quiz-box{padding:20px}.question-text{font-size:18px}}
+@media(max-width:420px){.header{padding:14px 4%}.brand-name{font-size:15px}.brand-icon{width:40px;height:40px}.back-link{padding:9px 11px;font-size:12px}.container{width:92%}.quiz-actions{align-items:stretch}.quiz-actions button{flex:1}}
 </style>
 </head>
 
@@ -685,7 +106,6 @@ body {
             <div class="brand-subtitle">Learn • Practice • Improve</div>
         </div>
     </div>
-
     <a href="dasbord.html" class="back-link">← Dashboard</a>
 </header>
 
@@ -704,21 +124,16 @@ body {
         </div>
 
         <div class="levels">
-
             <article class="level-card easy">
                 <div class="level-top">
                     <div class="level-icon">🌱</div>
                     <span class="level-tag">BEGINNER</span>
                 </div>
-
                 <h3>Easy</h3>
                 <p>Start with programming basics and build a strong foundation.</p>
-
                 <div class="level-bottom">
                     <span class="level-label">Level 01</span>
-                    <button class="start-btn" onclick="startQuiz('easy')">
-                        Start Quiz →
-                    </button>
+                    <button class="start-btn" onclick="startQuiz('easy')">Start Quiz →</button>
                 </div>
             </article>
 
@@ -727,15 +142,11 @@ body {
                     <div class="level-icon">🎯</div>
                     <span class="level-tag">INTERMEDIATE</span>
                 </div>
-
                 <h3>Medium</h3>
                 <p>Challenge yourself with concepts that need more practice.</p>
-
                 <div class="level-bottom">
                     <span class="level-label">Level 02</span>
-                    <button class="start-btn" onclick="startQuiz('medium')">
-                        Start Quiz →
-                    </button>
+                    <button class="start-btn" onclick="startQuiz('medium')">Start Quiz →</button>
                 </div>
             </article>
 
@@ -744,18 +155,13 @@ body {
                     <div class="level-icon">🏆</div>
                     <span class="level-tag">ADVANCED</span>
                 </div>
-
                 <h3>Hard</h3>
                 <p>Test your deeper understanding of programming concepts.</p>
-
                 <div class="level-bottom">
                     <span class="level-label">Level 03</span>
-                    <button class="start-btn" onclick="startQuiz('hard')">
-                        Start Quiz →
-                    </button>
+                    <button class="start-btn" onclick="startQuiz('hard')">Start Quiz →</button>
                 </div>
             </article>
-
         </div>
     </section>
 
@@ -772,16 +178,12 @@ body {
         </div>
 
         <h2 id="questionText" class="question-text">Loading question...</h2>
-
         <div id="options" class="options"></div>
-
         <div id="feedback" class="feedback"></div>
 
         <div class="quiz-actions">
             <button class="secondary-btn" onclick="backToLevels()">← All Levels</button>
-            <button id="nextBtn" class="primary-btn" onclick="nextQuestion()" disabled>
-                Next Question →
-            </button>
+            <button id="nextBtn" class="primary-btn" onclick="nextQuestion()" disabled>Next Question →</button>
         </div>
     </section>
 
@@ -793,12 +195,8 @@ body {
         <p id="scoreDetails"></p>
 
         <div class="result-actions">
-            <button class="primary-btn" onclick="startQuiz(currentLevel)">
-                Try Again
-            </button>
-            <button class="secondary-btn" onclick="backToLevels()">
-                Choose Another Level
-            </button>
+            <button class="primary-btn" onclick="startQuiz(currentLevel)">Try Again</button>
+            <button class="secondary-btn" onclick="backToLevels()">Choose Another Level</button>
         </div>
     </section>
 
@@ -818,96 +216,57 @@ let score = 0;
 let answered = false;
 let studentId = null;
 let requestNumber = 0;
+let attemptHistory = new Set();
 
 function getStudentId() {
-    const possibleKeys = [
-        "libraryUserId",
-        "libraryUser",
-        "user",
-        "loggedInUser",
-        "studentId",
-        "student_id",
-        "currentUser",
-        "userData",
-        "student"
+    const keys = [
+        "libraryUserId", "libraryUser", "user", "loggedInUser",
+        "studentId", "student_id", "currentUser", "userData", "student"
     ];
 
-    // Check common localStorage keys
-    for (const key of possibleKeys) {
-        try {
-            const storedValue = localStorage.getItem(key);
-
-            if (!storedValue || storedValue === "undefined" || storedValue === "null") {
-                continue;
-            }
-
-            // Direct ID stored as a string or number
-            if (
-                ["libraryUserId", "studentId", "student_id"].includes(key) &&
-                /^\d+$/.test(storedValue.trim())
-            ) {
-                return storedValue.trim();
-            }
-
-            // User information stored as JSON
-            const user = JSON.parse(storedValue);
-
-            if (user && typeof user === "object") {
-                const id =
-                    user.id ??
-                    user.user_id ??
-                    user.userId ??
-                    user.student_id ??
-                    user.studentId;
-
-                if (id !== undefined && id !== null && String(id).trim() !== "") {
-                    return String(id);
-                }
-            }
-        } catch (error) {
-            // Continue checking other keys
-        }
-    }
-
-    // Check other saved objects for student information
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-
+    for (const key of keys) {
         try {
             const value = localStorage.getItem(key);
-            const data = JSON.parse(value);
+            if (!value || value === "undefined" || value === "null") continue;
 
-            if (data && typeof data === "object" && !Array.isArray(data)) {
-                const id =
-                    data.id ??
-                    data.user_id ??
-                    data.userId ??
-                    data.student_id ??
-                    data.studentId;
+            if (["libraryUserId", "studentId", "student_id"].includes(key) &&
+                /^\d+$/.test(value.trim())) {
+                return value.trim();
+            }
 
-                if (id !== undefined && id !== null && String(id).trim() !== "") {
+            const user = JSON.parse(value);
+            if (user && typeof user === "object") {
+                const id = user.id ?? user.user_id ?? user.userId ??
+                           user.student_id ?? user.studentId;
+                if (id !== undefined && id !== null && String(id).trim()) {
                     return String(id);
                 }
             }
-        } catch (error) {
-            // Ignore unrelated localStorage values
-        }
+        } catch (error) {}
     }
 
     return null;
 }
 
+function shuffleArray(array) {
+    const shuffled = [...array];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
+}
 
 function showStatus(message, type = "error") {
     const status = document.getElementById("status");
-
     status.textContent = message;
     status.className = "status show " + type;
 }
 
 function hideStatus() {
     const status = document.getElementById("status");
-
     status.textContent = "";
     status.className = "status";
 }
@@ -931,14 +290,11 @@ async function startQuiz(level) {
     studentId = getStudentId();
 
     hideStatus();
-
     document.getElementById("quizBox").classList.remove("active");
     document.getElementById("resultBox").classList.remove("active");
 
     if (!studentId) {
-        showStatus(
-            "Student login information was not found. Please log in first, then open the quiz again."
-        );
+        showStatus("Student login information was not found. Please log in first, then open the quiz again.");
         return;
     }
 
@@ -946,9 +302,7 @@ async function startQuiz(level) {
         button.getAttribute("onclick") === `startQuiz('${level}')`
     );
 
-    if (clickedButton) {
-        setLoading(clickedButton, true);
-    }
+    if (clickedButton) setLoading(clickedButton, true);
 
     try {
         const response = await fetch(
@@ -960,17 +314,18 @@ async function startQuiz(level) {
         if (thisRequest !== requestNumber) return;
 
         if (!response.ok || data.success === false) {
-            throw new Error(data.message || data.error || "Could not load quiz questions.");
+            throw new Error(data.message || data.error || "Could not load questions.");
         }
 
         if (!Array.isArray(data.questions) || data.questions.length === 0) {
             showStatus(
-                "No new questions available for this level. Your question history has been preserved. Please check the questions stored in the database."
+                "No questions were returned by the server for this level. To repeat completed questions, the server API must return previously attempted questions too.",
+                "error"
             );
             return;
         }
 
-        questions = data.questions;
+        questions = shuffleArray(data.questions);
         currentIndex = 0;
         score = 0;
         answered = false;
@@ -979,23 +334,47 @@ async function startQuiz(level) {
         document.getElementById("quizBox").classList.add("active");
 
         renderQuestion();
+
         document.getElementById("quizBox").scrollIntoView({
             behavior: "smooth",
             block: "start"
         });
-
     } catch (error) {
         if (thisRequest !== requestNumber) return;
-
-        showStatus(
-            "Unable to load the quiz. Make sure the server is running and the quiz API is available. " +
-            error.message
-        );
+        showStatus("Unable to load the quiz: " + error.message, "error");
     } finally {
         if (clickedButton && thisRequest === requestNumber) {
             setLoading(clickedButton, false);
         }
     }
+}
+
+function normalizeOptions(rawOptions) {
+    let options = rawOptions;
+
+    if (typeof options === "string") {
+        try {
+            options = JSON.parse(options);
+        } catch (error) {
+            return [];
+        }
+    }
+
+    if (Array.isArray(options)) {
+        return options.map((value, index) => ({
+            key: String.fromCharCode(65 + index),
+            text: String(value ?? "")
+        }));
+    }
+
+    if (options && typeof options === "object") {
+        return Object.entries(options).map(([key, value]) => ({
+            key: key.replace(/^option[_-]?/i, "").toUpperCase(),
+            text: String(value ?? "")
+        }));
+    }
+
+    return [];
 }
 
 function renderQuestion() {
@@ -1027,56 +406,31 @@ function renderQuestion() {
     feedback.textContent = "";
     feedback.className = "feedback";
 
-    document.getElementById("nextBtn").disabled = true;
-    document.getElementById("nextBtn").textContent =
+    const nextBtn = document.getElementById("nextBtn");
+    nextBtn.disabled = true;
+    nextBtn.textContent =
         currentIndex === questions.length - 1 ? "View Results →" : "Next Question →";
 
-    let options = question.options;
+    const options = normalizeOptions(question.options);
 
-    if (typeof options === "string") {
-        try {
-            options = JSON.parse(options);
-        } catch (error) {
-            options = [];
-        }
-    }
-
-    if (Array.isArray(options)) {
-        options = options.map((value, index) => ({
-            key: String.fromCharCode(65 + index),
-            text: value
-        }));
-    } else if (options && typeof options === "object") {
-        options = Object.entries(options).map(([key, value]) => ({
-            key: key.replace(/^option[_-]?/i, "").toUpperCase(),
-            text: value
-        }));
-    } else {
-        options = [];
-    }
-
-    options.forEach((option, index) => {
+    shuffleArray(options).forEach(option => {
         const button = document.createElement("button");
         button.className = "option";
 
         const letter = document.createElement("span");
         letter.className = "option-letter";
-        letter.textContent = option.key || String.fromCharCode(65 + index);
+        letter.textContent = option.key;
 
         const text = document.createElement("span");
-        text.textContent = option.text ?? "";
+        text.textContent = option.text;
 
-        button.appendChild(letter);
-        button.appendChild(text);
-
-        button.addEventListener("click", () => {
-            submitAnswer(button, option.key, option.text);
-        });
+        button.append(letter, text);
+        button.addEventListener("click", () => submitAnswer(button, option.key, option.text));
 
         optionsContainer.appendChild(button);
     });
 
-    if (options.length === 0) {
+    if (!options.length) {
         feedback.textContent = "The options for this question could not be loaded.";
         feedback.className = "feedback show wrong";
     }
@@ -1090,14 +444,10 @@ async function submitAnswer(selectedButton, selectedKey, selectedText) {
     const allOptions = document.querySelectorAll(".option");
     allOptions.forEach(button => button.disabled = true);
 
-    selectedButton.style.opacity = "0.8";
-
     try {
         const response = await fetch(`${API_BASE}/api/quiz/answer`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 student_id: studentId,
                 question_id: questions[currentIndex].id,
@@ -1119,16 +469,15 @@ async function submitAnswer(selectedButton, selectedKey, selectedText) {
         } else {
             selectedButton.classList.add("wrong");
 
+            const correctAnswer = data.correct_answer;
+
             allOptions.forEach(button => {
                 const optionText = button.querySelector("span:last-child").textContent;
-                const correctAnswer = data.correct_answer;
+                const optionKey = button.querySelector(".option-letter").textContent;
 
-                if (
-                    correctAnswer !== undefined &&
-                    correctAnswer !== null &&
+                if (correctAnswer !== undefined && correctAnswer !== null &&
                     (optionText === String(correctAnswer) ||
-                     button.querySelector(".option-letter").textContent === String(correctAnswer).toUpperCase())
-                ) {
+                     optionKey === String(correctAnswer).toUpperCase())) {
                     button.classList.add("correct");
                 }
             });
@@ -1139,20 +488,18 @@ async function submitAnswer(selectedButton, selectedKey, selectedText) {
             (correct ? "Correct answer! Well done." : "That's not correct. Keep practising!");
 
         feedback.className = "feedback show " + (correct ? "correct" : "wrong");
-
         document.getElementById("nextBtn").disabled = false;
 
     } catch (error) {
         answered = false;
+
         allOptions.forEach(button => {
             button.disabled = false;
             button.classList.remove("wrong", "correct");
-            button.style.opacity = "1";
         });
 
         const feedback = document.getElementById("feedback");
-        feedback.textContent =
-            "Your answer could not be saved. Please try again. " + error.message;
+        feedback.textContent = "Your answer could not be saved. Please try again. " + error.message;
         feedback.className = "feedback show wrong";
     }
 }
@@ -1177,11 +524,8 @@ function finishQuiz() {
     const total = questions.length;
     const percentage = total ? Math.round((score / total) * 100) : 0;
 
-    document.getElementById("scoreText").textContent =
-        `${score} / ${total}`;
-
-    document.getElementById("scoreDetails").textContent =
-        `Accuracy: ${percentage}%`;
+    document.getElementById("scoreText").textContent = `${score} / ${total}`;
+    document.getElementById("scoreDetails").textContent = `Accuracy: ${percentage}%`;
 
     let message;
 
@@ -1210,10 +554,7 @@ function backToLevels() {
 
     hideStatus();
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    window.scrollTo({top: 0, behavior: "smooth"});
 }
 </script>
 
